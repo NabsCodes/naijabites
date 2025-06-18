@@ -1,66 +1,85 @@
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { LogoSingleIcon } from "@/components/icons/logo-single-icon";
+import { Logo2Icon } from "@/components/icons/logo-2-icon";
+import {
+  FaXTwitter,
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+} from "react-icons/fa6";
 
 export default function Footer() {
   return (
-    <footer className="bg-green-deep text-white">
+    <footer className="bg-green-deep">
       {/* Main Footer Content */}
-      <div className="container-padding py-12">
+      <div className="container-padding py-12 md:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-            {/* Branding Section */}
-            <div className="lg:col-span-4">
-              <div className="rounded-2xl bg-lemon-light p-6 text-gray-900">
-                <h3 className="mb-3 text-xl font-bold text-gray-900">
+            {/* Left Side - Yellow/Cream Background */}
+            <div className="relative overflow-hidden rounded-3xl bg-[#F5F8C0] p-8 lg:col-span-5">
+              {/* Logo-single-icon positioned prominently at bottom right */}
+              <div className="absolute -bottom-1 -right-8 opacity-20">
+                <LogoSingleIcon width={230} height={230} />
+              </div>
+
+              <div className="relative z-10 max-w-md lg:max-w-lg xl:max-w-md">
+                <h3 className="mb-4 text-2xl font-semibold leading-tight text-gray-900 lg:text-4xl">
                   Bringing the market close to you
                 </h3>
-                <p className="mb-4 text-sm leading-relaxed text-gray-700">
+                <p className="mb-8 text-sm leading-relaxed text-gray-700 md:text-base xl:max-w-xs">
                   Affordable Nigerian staples, delivered fast and reliably. Join
                   a growing community of customers who value quality,
                   affordability, and convenience.
                 </p>
 
                 {/* Social Media Icons */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <Link
                     href="#"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-green-deep text-white transition-colors hover:bg-green-700"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
+                    aria-label="Facebook"
                   >
-                    <Facebook className="h-4 w-4" />
+                    <FaFacebook className="h-5 w-5" />
                   </Link>
                   <Link
                     href="#"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-green-deep text-white transition-colors hover:bg-green-700"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
+                    aria-label="Twitter"
                   >
-                    <Twitter className="h-4 w-4" />
+                    <FaXTwitter className="h-5 w-5" />
                   </Link>
                   <Link
                     href="#"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-green-deep text-white transition-colors hover:bg-green-700"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
+                    aria-label="Instagram"
                   >
-                    <Instagram className="h-4 w-4" />
+                    <FaInstagram className="h-5 w-5" />
                   </Link>
                   <Link
                     href="#"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-green-deep text-white transition-colors hover:bg-green-700"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
+                    aria-label="LinkedIn"
                   >
-                    <Linkedin className="h-4 w-4" />
+                    <FaLinkedin className="h-5 w-5" />
                   </Link>
                 </div>
               </div>
             </div>
 
-            {/* Links Section */}
-            <div className="lg:col-span-8">
+            {/* Right Side - Gray Background with Logo-2 */}
+            <div className="relative flex flex-col justify-between gap-8 overflow-hidden rounded-3xl bg-[#EDF2EE] p-8 lg:col-span-7">
+              {/* Top Section - 4 Column Grid: 3 Link Columns + Logo */}
               <div className="grid grid-cols-1 gap-8 sm:grid-cols-4">
                 {/* Explore Column */}
                 <div>
-                  <h4 className="mb-4 text-lg font-semibold">Explore</h4>
+                  <h4 className="mb-4 text-sm font-medium text-gray-500">
+                    Explore
+                  </h4>
                   <ul className="space-y-3">
                     <li>
                       <Link
                         href="/products"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         Shop Products
                       </Link>
@@ -68,7 +87,7 @@ export default function Footer() {
                     <li>
                       <Link
                         href="/about"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         About Us
                       </Link>
@@ -76,7 +95,7 @@ export default function Footer() {
                     <li>
                       <Link
                         href="/faq"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         FAQs
                       </Link>
@@ -86,20 +105,22 @@ export default function Footer() {
 
                 {/* My Account Column */}
                 <div>
-                  <h4 className="mb-4 text-lg font-semibold">My Account</h4>
+                  <h4 className="mb-4 text-sm font-medium text-gray-500">
+                    Account
+                  </h4>
                   <ul className="space-y-3">
                     <li>
                       <Link
                         href="/auth"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
-                        My Account
+                        Profile
                       </Link>
                     </li>
                     <li>
                       <Link
                         href="/orders"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         Order History
                       </Link>
@@ -107,7 +128,7 @@ export default function Footer() {
                     <li>
                       <Link
                         href="/cart"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         Shopping Cart
                       </Link>
@@ -117,12 +138,14 @@ export default function Footer() {
 
                 {/* Support Column */}
                 <div>
-                  <h4 className="mb-4 text-lg font-semibold">Support</h4>
+                  <h4 className="mb-4 text-sm font-medium text-gray-500">
+                    Support
+                  </h4>
                   <ul className="space-y-3">
                     <li>
                       <Link
                         href="/contact"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         Contact Us
                       </Link>
@@ -130,7 +153,7 @@ export default function Footer() {
                     <li>
                       <Link
                         href="/returns"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         Return policy
                       </Link>
@@ -138,7 +161,7 @@ export default function Footer() {
                     <li>
                       <Link
                         href="/terms"
-                        className="text-sm text-gray-300 transition-colors hover:text-white"
+                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
                       >
                         Terms & Condition
                       </Link>
@@ -147,37 +170,20 @@ export default function Footer() {
                 </div>
 
                 {/* Logo Column */}
-                <div className="flex justify-end">
-                  <Link href="/" className="flex items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-lemon-light">
-                      <span className="text-lg font-bold text-green-deep">
-                        🛒
-                      </span>
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-bold leading-tight text-white">
-                        NAIJA
-                      </h2>
-                      <p className="text-xs font-semibold leading-tight text-lemon-light">
-                        BITES
-                      </p>
-                    </div>
-                  </Link>
+                <div className="flex justify-center sm:justify-end">
+                  <Logo2Icon width={115} height={54} />
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-green-600">
-        <div className="container-padding py-4">
-          <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col items-center justify-center text-center">
-              <p className="text-sm text-gray-300">
-                © 2023 Naijabites. All rights reserved.
-              </p>
+              {/* Border Separator */}
+              <div className="border-t border-gray-400"></div>
+
+              {/* Bottom Section - Copyright */}
+              <div className="flex items-center justify-center">
+                <p className="text-center text-sm text-gray-600">
+                  © {new Date().getFullYear()} Naijabites. All rights reserved.
+                </p>
+              </div>
             </div>
           </div>
         </div>

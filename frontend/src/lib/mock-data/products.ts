@@ -10,9 +10,20 @@ import {
 import { categories } from "./categories";
 import { brands } from "./brands";
 
-// Helper function to generate product rating
-const generateRating = (averageRating: number): ProductRating => {
-  const count = Math.floor(Math.random() * 150) + 20;
+// Helper function to generate product rating with consistent values
+const generateRating = (
+  averageRating: number,
+  productId: string,
+): ProductRating => {
+  // Use product ID to create a consistent seed for the rating count
+  let seed = 0;
+  for (let i = 0; i < productId.length; i++) {
+    seed += productId.charCodeAt(i);
+  }
+
+  // Generate consistent count based on seed
+  const count = 20 + (seed % 130); // Range: 20-149
+
   const distribution = {
     5: Math.floor(
       count * (averageRating >= 4.5 ? 0.6 : averageRating >= 4 ? 0.4 : 0.2),
@@ -40,7 +51,7 @@ const generateRating = (averageRating: number): ProductRating => {
   };
 };
 
-// Helper function to generate review
+// Helper function to generate review with consistent data
 const generateReviews = (productId: string, count: number): Review[] => {
   const userNames = [
     "Chidi Okafor",
@@ -99,8 +110,10 @@ const generateReviews = (productId: string, count: number): Review[] => {
   ];
 
   return Array.from({ length: count }, (_, index) => {
-    const review =
-      reviewTemplates[Math.floor(Math.random() * reviewTemplates.length)];
+    // Use consistent seeding for reviews too
+    const reviewIndex = index % reviewTemplates.length;
+    const review = reviewTemplates[reviewIndex];
+
     return {
       id: `review-${productId}-${index + 1}`,
       productId,
@@ -110,13 +123,13 @@ const generateReviews = (productId: string, count: number): Review[] => {
       rating: review.rating,
       title: review.title,
       comment: review.comment,
-      isVerifiedPurchase: Math.random() > 0.3,
-      helpfulCount: Math.floor(Math.random() * 20),
+      isVerifiedPurchase: index % 5 !== 0, // 80% are verified purchases
+      helpfulCount: (index % 3) + (index % 7), // Consistent helpful count
       createdAt: new Date(
-        Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000,
+        Date.now() - (index + 1) * 3 * 24 * 60 * 60 * 1000, // Reviews spread over last 3 months
       ).toISOString(),
       updatedAt: new Date(
-        Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000,
+        Date.now() - (index + 1) * 3 * 24 * 60 * 60 * 1000,
       ).toISOString(),
     };
   });
@@ -191,7 +204,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: true,
     isOnSale: true,
-    rating: generateRating(4.5),
+    rating: generateRating(4.5, "dangote-rice-50kg"),
     reviews: generateReviews("dangote-rice-50kg", 45),
     tags: ["rice", "staple", "Nigerian", "parboiled", "long-grain"],
     seoMetadata: {
@@ -256,7 +269,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: false,
     isOnSale: false,
-    rating: generateRating(4.3),
+    rating: generateRating(4.3, "mama-gold-rice-25kg"),
     reviews: generateReviews("mama-gold-rice-25kg", 32),
     tags: ["rice", "staple", "Nigerian", "parboiled"],
     seoMetadata: {
@@ -339,7 +352,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: true,
     isOnSale: false,
-    rating: generateRating(4.7),
+    rating: generateRating(4.7, "brown-beans-5kg"),
     reviews: generateReviews("brown-beans-5kg", 28),
     tags: ["beans", "protein", "Nigerian", "legumes", "moi-moi", "akara"],
     seoMetadata: {
@@ -427,7 +440,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: false,
     isOnSale: true,
-    rating: generateRating(4.2),
+    rating: generateRating(4.2, "pounded-yam-flour-2kg"),
     reviews: generateReviews("pounded-yam-flour-2kg", 19),
     tags: ["yam", "flour", "instant", "Nigerian", "traditional", "swallow"],
     seoMetadata: {
@@ -509,7 +522,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: true,
     isOnSale: false,
-    rating: generateRating(4.8),
+    rating: generateRating(4.8, "maggi-chicken-cubes-100-pieces"),
     reviews: generateReviews("maggi-chicken-cubes-100-pieces", 67),
     tags: ["seasoning", "maggi", "chicken", "cubes", "Nigerian", "cooking"],
     seoMetadata: {
@@ -586,7 +599,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: false,
     isOnSale: false,
-    rating: generateRating(4.6),
+    rating: generateRating(4.6, "knorr-crayfish-seasoning-1kg"),
     reviews: generateReviews("knorr-crayfish-seasoning-1kg", 23),
     tags: [
       "crayfish",
@@ -667,7 +680,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: false,
     isOnSale: false,
-    rating: generateRating(4.4),
+    rating: generateRating(4.4, "frozen-ugu-leaves-500g"),
     reviews: generateReviews("frozen-ugu-leaves-500g", 15),
     tags: ["ugu", "vegetables", "frozen", "Nigerian", "leaves", "soup"],
     seoMetadata: {
@@ -757,7 +770,7 @@ export const products: Product[] = [
     isOrganic: false,
     isFeatured: false,
     isOnSale: false,
-    rating: generateRating(4.1),
+    rating: generateRating(4.1, "chivita-active-orange-1l"),
     reviews: generateReviews("chivita-active-orange-1l", 24),
     tags: ["juice", "orange", "beverage", "vitamin C", "chivita"],
     seoMetadata: {

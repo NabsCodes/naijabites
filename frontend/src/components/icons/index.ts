@@ -1,0 +1,8 @@
+export { HomeIcon } from "./home-icon";
+export { ShopIcon } from "./shop-icon";
+export { CartIcon } from "./cart-icon";
+export { AboutIcon } from "./about-icon";
+export { ContactIcon } from "./contact-icon";
+export { LogoIcon } from "./logo-icon";
+export { LogoSingleIcon } from "./logo-single-icon";
+export { Logo2Icon } from "./logo-2-icon";

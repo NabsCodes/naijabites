@@ -3,34 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -96,41 +68,67 @@ a {
   }
 }
 
-/* Custom Spacing Utilities */
+/* Optimized Spacing Utilities for E-commerce */
 @layer components {
-  /* Container padding for consistent horizontal spacing */
+  /* Container padding with improved responsive breakpoints */
   .container-padding {
-    @apply px-6 sm:px-8 lg:px-12 xl:px-16;
+    @apply px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16;
   }
 
-  /* Section spacing for consistent vertical spacing between sections */
-  .section-spacing {
-    @apply py-16 sm:py-20 lg:py-24 xl:py-28;
+  /* Compact container padding for tighter layouts */
+  .container-padding-sm {
+    @apply px-4 sm:px-6 lg:px-6 xl:px-8;
   }
 
-  /* Smaller section spacing for less prominent sections */
+  /* Wide container padding for hero sections */
+  .container-padding-lg {
+    @apply px-6 sm:px-8 lg:px-12 xl:px-16 2xl:px-20;
+  }
+
+  /* Compact section spacing for dense layouts */
   .section-spacing-sm {
-    @apply py-12 sm:py-16 lg:py-20;
+    @apply py-8 sm:py-12 lg:py-16;
   }
 
-  /* Large section spacing for hero sections */
+  /* Large section spacing for hero and featured sections */
   .section-spacing-lg {
+    @apply py-16 sm:py-20 lg:py-28 xl:py-32;
+  }
+
+  /* Extra large section spacing for major sections */
+  .section-spacing-xl {
     @apply py-20 sm:py-24 lg:py-32 xl:py-40;
   }
 
-  /* Content spacing for consistent gaps between content elements */
+  /* Content spacing with better hierarchy */
   .content-spacing {
+    @apply space-y-4 sm:space-y-6 lg:space-y-8;
+  }
+
+  .content-spacing-lg {
     @apply space-y-6 sm:space-y-8 lg:space-y-12;
   }
 
-  /* Grid spacing for consistent gaps in grid layouts */
+  /* Grid spacing for product grids and layouts */
   .grid-spacing {
-    @apply gap-6 sm:gap-8 lg:gap-10;
+    @apply gap-4 sm:gap-6 lg:gap-8;
   }
 
-  /* Card padding for consistent internal spacing */
+  .grid-spacing-lg {
+    @apply gap-6 sm:gap-8 lg:gap-10 xl:gap-12;
+  }
+
+  /* Card padding with consistent internal spacing */
   .card-padding {
-    @apply p-6 sm:p-8 lg:p-10;
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  .card-padding-sm {
+    @apply p-3 sm:p-4 lg:p-6;
+  }
+
+  .card-padding-lg {
+    @apply p-6 sm:p-8 lg:p-10 xl:p-12;
   }
 
   /* Form spacing for consistent form layouts */
@@ -140,7 +138,55 @@ a {
 
   /* Header spacing for page headers */
   .header-spacing {
-    @apply mb-8 sm:mb-12 lg:mb-16;
+    @apply mb-6 sm:mb-8 lg:mb-12 xl:mb-16;
+  }
+
+  /* Button spacing for action groups */
+  .button-spacing {
+    @apply space-y-3 sm:space-x-4 sm:space-y-0 sm:space-y-4;
+  }
+
+  /* Text content max-width for optimal reading */
+  .content-width {
+    @apply mx-auto max-w-2xl;
+  }
+
+  .content-width-lg {
+    @apply mx-auto max-w-4xl;
+  }
+
+  /* Container classes for different content types */
+  .page-container {
+    @apply mx-auto max-w-7xl;
+  }
+
+  .content-container {
+    @apply mx-auto max-w-4xl;
+  }
+
+  .narrow-container {
+    @apply mx-auto max-w-2xl;
+  }
+
+  .wide-container {
+    @apply mx-auto max-w-8xl;
+  }
+
+  /* Responsive grid utilities */
+  .responsive-grid-2 {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2;
+  }
+
+  .responsive-grid-3 {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .responsive-grid-4 {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  .responsive-grid-6 {
+    @apply grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6;
   }
 }
 

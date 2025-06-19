@@ -70,6 +70,12 @@ export default function Footer() {
             <div className="relative flex flex-col justify-between gap-8 overflow-hidden rounded-3xl bg-[#EDF2EE] p-8 lg:col-span-7">
               {/* Top Section - 4 Column Grid: 3 Link Columns + Logo */}
               <div className="grid grid-cols-1 gap-8 sm:grid-cols-4">
+                {/* Logo Column */}
+                <div className="flex justify-start sm:hidden">
+                  <Link href="/" className="h-14 flex-shrink-0">
+                    <Logo2Icon width={115} height={54} />
+                  </Link>
+                </div>
                 {/* Explore Column */}
                 <div>
                   <h4 className="mb-4 text-sm font-medium text-gray-500">
@@ -170,8 +176,10 @@ export default function Footer() {
                 </div>
 
                 {/* Logo Column */}
-                <div className="flex justify-center sm:justify-end">
-                  <Logo2Icon width={115} height={54} />
+                <div className="hidden justify-end sm:flex">
+                  <Link href="/" className="h-14 flex-shrink-0">
+                    <Logo2Icon width={115} height={54} />
+                  </Link>
                 </div>
               </div>
 

@@ -22,7 +22,7 @@ export function ProductListingSection() {
               <ProductCard
                 key={product.id}
                 product={product}
-                className="h-full w-full"
+                className="h-fit w-full"
               />
             ))}
           </div>

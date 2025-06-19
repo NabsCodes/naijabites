@@ -40,8 +40,8 @@ Visit our website at [NaijaBites.com](https://naijabites.com) to start shopping!
 
    ```bash
    cd frontend
-   npm install
-   npm run dev
+   pnpm install
+   pnpm run dev
    ```
 
 3. **Open your browser**

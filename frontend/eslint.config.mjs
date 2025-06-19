@@ -23,7 +23,26 @@ const eslintConfig = [
     "plugin:@typescript-eslint/recommended",
     "prettier",
   ),
+  // Configuration for JavaScript/JSX files
   {
+    files: ["**/*.{js,jsx}"],
+    rules: {
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react/no-unescaped-entities": "off",
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ], // Keep active for JS files
+      "prettier/prettier": ["error", {}, { usePrettierrc: true }],
+    },
+  },
+  // Configuration for TypeScript files
+  {
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -53,13 +72,14 @@ const eslintConfig = [
     rules: {
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
-      "no-unused-vars": "warn",
+      "no-unused-vars": "off", // MUST be off for TypeScript files to avoid conflicts
       "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
         },
       ],
       "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -67,6 +87,8 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "warn",
       "prettier/prettier": ["error", {}, { usePrettierrc: true }],
     },
+  },
+  {
     ignores: [
       "*.config.js",
       "*.config.ts",

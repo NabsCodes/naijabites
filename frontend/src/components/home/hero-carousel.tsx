@@ -57,7 +57,7 @@ export default function HeroCarousel() {
             setApi={setApi}
             opts={{
               align: "start",
-              loop: false,
+              loop: true,
             }}
             plugins={[autoplayRef.current]}
             className="w-full"
@@ -66,18 +66,14 @@ export default function HeroCarousel() {
               {/* Slide 1 */}
               <CarouselItem>
                 <Card className="border-0 shadow-none">
-                  <div className="relative h-[400px] w-full bg-lemon-light sm:h-[500px] lg:h-[640px]">
-                    {/* Background Image */}
-                    <Image
-                      src="/images/hero-content-1-desktop.webp"
-                      alt="Fresh Nigerian groceries"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-                      quality={90}
-                      priority
-                    />
-
+                  <div
+                    style={{
+                      backgroundImage: "url('/images/hero-bg-first.webp')",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    className="relative h-[400px] w-full bg-lemon-light bg-cover bg-center sm:h-[500px] lg:h-[640px]"
+                  >
                     {/* Content - Centered */}
                     <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-4 sm:gap-8 sm:px-6 lg:gap-12 lg:px-8">
                       <div className="flex flex-col items-center gap-4">
@@ -108,18 +104,14 @@ export default function HeroCarousel() {
               {/* Slide 2 */}
               <CarouselItem>
                 <Card className="border-0 shadow-none">
-                  <div className="relative h-[400px] w-full bg-[#EDF2EE] sm:h-[500px] lg:h-[640px]">
-                    {/* Background Image */}
-                    <Image
-                      src="/images/hero-content-2-desktop.webp"
-                      alt="Fresh organic vegetables"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-                      quality={90}
-                      priority
-                    />
-
+                  <div
+                    style={{
+                      backgroundImage: "url('/images/hero-bg-second.webp')",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    className="relative h-[400px] w-full bg-[#EDF2EE] sm:h-[500px] lg:h-[640px]"
+                  >
                     {/* Unified Responsive Layout */}
                     <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-4 md:grid md:grid-cols-[1.2fr_1fr] md:items-center md:gap-4 md:px-8 lg:gap-8 lg:px-12">
                       {/* Left Side - Grocery Image (Hidden on Mobile) */}

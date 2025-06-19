@@ -25,7 +25,8 @@ export const simpleProducts: SimpleProduct[] = [
     id: "maggi-cubes-250g",
     name: "Maggi Star Seasoning Cubes",
     shortDescription: "250g x 6 Cans",
-    // image: "/images/maggi-cubes-250g.png",
+    image:
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=400&fit=crop&crop=entropy&auto=format&q=80",
     price: 12000,
     slug: "maggi-cubes-250g",
     category: "Seasonings & Spices",

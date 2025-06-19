@@ -40,22 +40,22 @@ const initialCartItems = [
   },
   {
     id: "2",
-    productId: "maggi-chicken-cubes-100pcs",
+    productId: "maggi-chicken-cubes-100-pieces",
     variantId: undefined,
     quantity: 1,
     price: 12.99,
     salePrice: 10.99,
-    product: products.find((p) => p.slug === "maggi-chicken-cubes-100pcs")!,
+    product: products.find((p) => p.slug === "maggi-chicken-cubes-100-pieces")!,
     variant: undefined,
   },
   {
     id: "3",
-    productId: "pounded-yam-flour-4kg",
+    productId: "pounded-yam-flour-2kg",
     variantId: undefined,
     quantity: 3,
     price: 18.99,
     salePrice: undefined,
-    product: products.find((p) => p.slug === "pounded-yam-flour-4kg")!,
+    product: products.find((p) => p.slug === "pounded-yam-flour-2kg")!,
     variant: undefined,
   },
 ];
@@ -129,8 +129,9 @@ export default function CartPage() {
                 </h1>
                 <p className="text-gray-600">
                   {cartItems.length} {cartItems.length === 1 ? "item" : "items"}{" "}
-                  in your cart
+                  in your cart.
                 </p>
+                <p className="text-gray-600">Total: ${total.toFixed(2)}</p>
               </div>
             </div>
           </div>
@@ -139,7 +140,7 @@ export default function CartPage() {
 
       {cartItems.length === 0 ? (
         /* Empty Cart */
-        <section className="section-spacing">
+        <section className="py-12">
           <div className="container-padding">
             <div className="mx-auto max-w-2xl text-center">
               <div className="mb-6 text-6xl">🛒</div>
@@ -175,7 +176,7 @@ export default function CartPage() {
           </div>
         </section>
       ) : (
-        <section className="section-spacing">
+        <section className="py-12">
           <div className="container-padding">
             <div className="mx-auto max-w-7xl">
               <div className="grid gap-8 lg:grid-cols-3">

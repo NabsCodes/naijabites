@@ -84,10 +84,6 @@ out/
 .nuxt
 dist
 
-# Gatsby files
-.cache/
-# public - DO NOT ignore for Next.js projects
-
 # Vuepress build output
 .vuepress/dist
 

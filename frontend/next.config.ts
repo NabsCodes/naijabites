@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Optimize static asset serving
+  generateEtags: false,
+  poweredByHeader: false,
 };
 
 export default nextConfig;

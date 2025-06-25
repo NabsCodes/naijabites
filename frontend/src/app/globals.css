@@ -143,7 +143,7 @@
 
   /* Button spacing for action groups */
   .button-spacing {
-    @apply space-y-3 sm:space-x-4 sm:space-y-0 sm:space-y-4;
+    @apply space-y-3 sm:space-x-4 sm:space-y-4;
   }
 
   /* Text content max-width for optimal reading */

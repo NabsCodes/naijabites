@@ -124,29 +124,6 @@ export default function MobileNav({
                       <div className="space-y-5">
                         <div>
                           <p className="mb-3 text-sm font-medium text-gray-700">
-                            Search Products
-                          </p>
-                          <form onSubmit={handleSearch} className="flex">
-                            <div className="flex flex-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                              <Input
-                                type="text"
-                                placeholder="Search for products..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="h-11 flex-1 rounded-none border-0 bg-white px-4 text-sm text-gray-700 placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
-                              />
-                              <Button
-                                type="submit"
-                                className="h-11 rounded-none border-0 bg-lemon-dark px-4 text-sm font-semibold text-white shadow-none hover:bg-lemon-dark/90"
-                              >
-                                <Search className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </form>
-                        </div>
-
-                        <div>
-                          <p className="mb-3 text-sm font-medium text-gray-700">
                             Delivery Location
                           </p>
                           <DropdownMenu>
@@ -191,6 +168,28 @@ export default function MobileNav({
                               ))}
                             </DropdownMenuContent>
                           </DropdownMenu>
+                        </div>
+                        <div>
+                          <p className="mb-3 text-sm font-medium text-gray-700">
+                            Search Products
+                          </p>
+                          <form onSubmit={handleSearch} className="flex">
+                            <div className="flex flex-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+                              <Input
+                                type="text"
+                                placeholder="Search for products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="h-11 flex-1 rounded-none border-0 bg-white px-4 text-sm text-gray-700 placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                              />
+                              <Button
+                                type="submit"
+                                className="h-11 rounded-none border-0 bg-lemon-dark px-4 text-sm font-semibold text-white shadow-none hover:bg-lemon-dark/90"
+                              >
+                                <Search className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </form>
                         </div>
                       </div>
                     </div>

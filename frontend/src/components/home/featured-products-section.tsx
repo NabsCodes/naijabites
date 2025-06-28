@@ -9,7 +9,7 @@ export function FeaturedProductsSection() {
   return (
     <section className="py-10">
       <div className="container-padding">
-        <div className="mx-auto max-w-7xl">
+        <div className="section-container">
           <div className="mb-12 flex items-center justify-between">
             <div>
               <h2 className="mb-4 text-h2 font-bold text-gray-900">

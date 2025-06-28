@@ -69,7 +69,7 @@ export default function Header() {
       {/* Desktop Header */}
       <div className="hidden md:block">
         <div className="container-padding">
-          <div className="page-container py-4 lg:py-6">
+          <div className="section-container py-4 lg:py-6">
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-8">
               {/* Logo Section */}
               <div className="flex items-center">

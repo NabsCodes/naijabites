@@ -12,17 +12,6 @@ module.exports = {
       fontFamily: {
         sans: ["Poppins", "ui-sans-serif", "system-ui"],
       },
-      fontSize: {
-        "display-lg": ["56px", { lineHeight: "1.1", fontWeight: "700" }],
-        "display-md": ["56px", { lineHeight: "1.1", fontWeight: "700" }],
-        "display-sm": ["48px", { lineHeight: "1.2", fontWeight: "700" }],
-        h1: ["40px", { lineHeight: "1.2", fontWeight: "700" }],
-        h2: ["36px", { lineHeight: "1.25", fontWeight: "600" }],
-        h3: ["32px", { lineHeight: "1.25", fontWeight: "600" }],
-        h4: ["28px", { lineHeight: "1.3", fontWeight: "600" }],
-        h5: ["24px", { lineHeight: "1.3", fontWeight: "500" }],
-        h6: ["20px", { lineHeight: "1.4", fontWeight: "500" }],
-      },
       fontWeight: {
         regular: "400",
         medium: "500",

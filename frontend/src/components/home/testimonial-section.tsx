@@ -13,7 +13,7 @@ export const TestimonialSection = () => {
       className="bg-cover bg-center bg-no-repeat py-12 md:py-16 lg:py-20"
     >
       <div className="container-padding">
-        <div className="mx-auto max-w-7xl">
+        <div className="section-container">
           <div className="grid grid-cols-1 gap-4 rounded-3xl bg-white p-6 sm:p-8 md:grid-cols-2 md:gap-8">
             {/* Left Side - Content */}
             <div className="flex flex-col gap-6 lg:gap-8">

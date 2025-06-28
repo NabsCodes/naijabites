@@ -5,7 +5,7 @@ export function ProductListingSection() {
   return (
     <section className="rounded-t-[20px] bg-[#f9f9f9] md:rounded-t-[40px]">
       <div className="container-padding relative py-10 md:py-16 lg:py-20">
-        <div className="mx-auto max-w-7xl">
+        <div className="section-container">
           {/* Section Header */}
           <div className="mb-8 sm:mb-10">
             <h2 className="mb-3 text-center text-2xl font-bold text-gray-900 sm:mb-4 sm:text-3xl md:text-left md:text-4xl lg:text-5xl">

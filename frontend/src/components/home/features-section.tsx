@@ -38,7 +38,7 @@ export function FeaturesSection() {
   return (
     <section className="bg-white py-12 md:py-16 lg:py-20">
       <div className="container-padding">
-        <div className="mx-auto max-w-7xl">
+        <div className="section-container">
           {/* Section Header */}
           <div className="mb-8 text-center sm:mb-10 lg:mb-12">
             <h2 className="mb-3 text-2xl font-bold text-gray-900 sm:mb-4 sm:text-3xl md:text-4xl lg:text-5xl">

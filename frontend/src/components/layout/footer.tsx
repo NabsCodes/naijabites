@@ -13,7 +13,7 @@ export default function Footer() {
     <footer className="bg-green-deep">
       {/* Main Footer Content */}
       <div className="container-padding py-12 md:py-16 lg:py-20">
-        <div className="mx-auto max-w-7xl">
+        <div className="section-container">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             {/* Left Side - Yellow/Cream Background */}
             <div className="relative overflow-hidden rounded-3xl bg-[#F5F8C0] p-8 lg:col-span-5">

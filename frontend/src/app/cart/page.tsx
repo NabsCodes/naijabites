@@ -144,7 +144,7 @@ export default function CartPage() {
           <div className="container-padding">
             <div className="mx-auto max-w-2xl text-center">
               <div className="mb-6 text-6xl">🛒</div>
-              <h2 className="mb-4 text-h2 font-bold text-gray-900">
+              <h2 className="text-h2 mb-4 font-bold text-gray-900">
                 Your cart is empty
               </h2>
               <p className="mb-8 text-lg text-gray-600">

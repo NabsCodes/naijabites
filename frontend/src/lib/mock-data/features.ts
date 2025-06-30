@@ -6,6 +6,14 @@ export interface Feature {
   description: string;
 }
 
+export interface Offering {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  alt: string;
+}
+
 export const features: Feature[] = [
   {
     icon: Truck,
@@ -27,7 +35,7 @@ export const features: Feature[] = [
   },
 ];
 
-export const offeringsCarousel = [
+export const offeringsCarousel: Offering[] = [
   {
     id: 1,
     title: "Authentic Products",

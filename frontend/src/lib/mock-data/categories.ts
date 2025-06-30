@@ -1,382 +1,119 @@
-import { Category, Subcategory } from "@/types";
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  handle: string; // For Shopify compatibility
+  description?: string;
+  productCount: number;
+  isActive: boolean;
+}
 
-export const subcategories: Subcategory[] = [
-  // Fresh Produce subcategories
+// Categories matching your sidebar design
+export const categories: Category[] = [
   {
-    id: "fresh-vegetables",
-    name: "Fresh Vegetables",
-    slug: "fresh-vegetables",
-    categoryId: "fresh-produce",
+    id: "all-products",
+    name: "All Products",
+    slug: "all-products",
+    handle: "all-products",
+    description: "Browse our complete collection",
+    productCount: 156,
     isActive: true,
-    sortOrder: 1,
-    productCount: 45,
   },
   {
-    id: "fresh-fruits",
-    name: "Fresh Fruits",
-    slug: "fresh-fruits",
-    categoryId: "fresh-produce",
+    id: "rice-grains",
+    name: "Rice & Grains",
+    slug: "rice-grains",
+    handle: "rice-grains",
+    description: "Premium rice varieties and grains",
+    productCount: 24,
     isActive: true,
-    sortOrder: 2,
-    productCount: 38,
   },
   {
-    id: "herbs-spices",
-    name: "Herbs & Spices",
-    slug: "herbs-spices",
-    categoryId: "fresh-produce",
+    id: "noodles-pasta",
+    name: "Noodles & Pasta",
+    slug: "noodles-pasta",
+    handle: "noodles-pasta",
+    description: "Instant noodles and pasta varieties",
+    productCount: 32,
     isActive: true,
-    sortOrder: 3,
-    productCount: 22,
   },
-
-  // Grains & Staples subcategories
   {
-    id: "rice-varieties",
-    name: "Rice Varieties",
-    slug: "rice-varieties",
-    categoryId: "grains-staples",
-    isActive: true,
-    sortOrder: 1,
+    id: "tomato-sauces",
+    name: "Tomato & Sauces",
+    slug: "tomato-sauces",
+    handle: "tomato-sauces",
+    description: "Tomato paste, sauces, and condiments",
     productCount: 18,
+    isActive: true,
   },
   {
-    id: "beans-legumes",
-    name: "Beans & Legumes",
-    slug: "beans-legumes",
-    categoryId: "grains-staples",
-    isActive: true,
-    sortOrder: 2,
-    productCount: 25,
-  },
-  {
-    id: "flour-grains",
-    name: "Flour & Grains",
-    slug: "flour-grains",
-    categoryId: "grains-staples",
-    isActive: true,
-    sortOrder: 3,
-    productCount: 20,
-  },
-  {
-    id: "tubers",
-    name: "Yam, Cassava & Tubers",
-    slug: "tubers",
-    categoryId: "grains-staples",
-    isActive: true,
-    sortOrder: 4,
-    productCount: 12,
-  },
-
-  // Protein subcategories
-  {
-    id: "fish-seafood",
-    name: "Fish & Seafood",
-    slug: "fish-seafood",
-    categoryId: "protein",
-    isActive: true,
-    sortOrder: 1,
+    id: "seasonings-spices",
+    name: "Seasonings & Spices",
+    slug: "seasonings-spices",
+    handle: "seasonings-spices",
+    description: "Nigerian spices and seasonings",
     productCount: 28,
+    isActive: true,
   },
   {
-    id: "meat-poultry",
-    name: "Meat & Poultry",
-    slug: "meat-poultry",
-    categoryId: "protein",
-    isActive: true,
-    sortOrder: 2,
-    productCount: 22,
-  },
-  {
-    id: "eggs-dairy",
-    name: "Eggs & Dairy",
-    slug: "eggs-dairy",
-    categoryId: "protein",
-    isActive: true,
-    sortOrder: 3,
+    id: "cooking-oils",
+    name: "Cooking Oils & Essentials",
+    slug: "cooking-oils",
+    handle: "cooking-oils",
+    description: "Cooking oils and kitchen essentials",
     productCount: 15,
+    isActive: true,
   },
+  {
+    id: "snacks-beverages",
+    name: "Snacks & Beverages",
+    slug: "snacks-beverages",
+    handle: "snacks-beverages",
+    description: "Snacks, drinks, and beverages",
+    productCount: 39,
+    isActive: true,
+  },
+];
 
-  // Pantry Essentials subcategories
+// Header navigation categories (top level)
+export const headerCategories = [
+  {
+    id: "all-products",
+    name: "All Products",
+    href: "/shop/products",
+  },
+  {
+    id: "noodles-pasta",
+    name: "Noodles & Pasta",
+    href: "/shop/categories/noodles-pasta",
+  },
+  {
+    id: "spices-seasonings",
+    name: "Spices & Seasonings",
+    href: "/shop/categories/seasonings-spices",
+  },
   {
     id: "cooking-oils",
     name: "Cooking Oils",
-    slug: "cooking-oils",
-    categoryId: "pantry-essentials",
-    isActive: true,
-    sortOrder: 1,
-    productCount: 12,
+    href: "/shop/categories/cooking-oils",
   },
   {
-    id: "seasonings",
-    name: "Seasonings & Cubes",
-    slug: "seasonings",
-    categoryId: "pantry-essentials",
-    isActive: true,
-    sortOrder: 2,
-    productCount: 18,
-  },
-  {
-    id: "sauces-condiments",
-    name: "Sauces & Condiments",
-    slug: "sauces-condiments",
-    categoryId: "pantry-essentials",
-    isActive: true,
-    sortOrder: 3,
-    productCount: 24,
-  },
-  {
-    id: "canned-goods",
-    name: "Canned Goods",
-    slug: "canned-goods",
-    categoryId: "pantry-essentials",
-    isActive: true,
-    sortOrder: 4,
-    productCount: 30,
-  },
-
-  // Beverages subcategories
-  {
-    id: "soft-drinks",
-    name: "Soft Drinks",
-    slug: "soft-drinks",
-    categoryId: "beverages",
-    isActive: true,
-    sortOrder: 1,
-    productCount: 25,
-  },
-  {
-    id: "juices",
-    name: "Juices & Smoothies",
-    slug: "juices",
-    categoryId: "beverages",
-    isActive: true,
-    sortOrder: 2,
-    productCount: 20,
-  },
-  {
-    id: "water",
-    name: "Water & Hydration",
-    slug: "water",
-    categoryId: "beverages",
-    isActive: true,
-    sortOrder: 3,
-    productCount: 8,
-  },
-  {
-    id: "tea-coffee",
-    name: "Tea & Coffee",
-    slug: "tea-coffee",
-    categoryId: "beverages",
-    isActive: true,
-    sortOrder: 4,
-    productCount: 15,
-  },
-  {
-    id: "alcoholic",
-    name: "Alcoholic Beverages",
-    slug: "alcoholic",
-    categoryId: "beverages",
-    isActive: true,
-    sortOrder: 5,
-    productCount: 18,
-  },
-
-  // Snacks subcategories
-  {
-    id: "traditional-snacks",
-    name: "Traditional Snacks",
-    slug: "traditional-snacks",
-    categoryId: "snacks",
-    isActive: true,
-    sortOrder: 1,
-    productCount: 22,
-  },
-  {
-    id: "biscuits-crackers",
-    name: "Biscuits & Crackers",
-    slug: "biscuits-crackers",
-    categoryId: "snacks",
-    isActive: true,
-    sortOrder: 2,
-    productCount: 18,
-  },
-  {
-    id: "nuts-seeds",
-    name: "Nuts & Seeds",
-    slug: "nuts-seeds",
-    categoryId: "snacks",
-    isActive: true,
-    sortOrder: 3,
-    productCount: 12,
-  },
-  {
-    id: "sweets-candy",
-    name: "Sweets & Candy",
-    slug: "sweets-candy",
-    categoryId: "snacks",
-    isActive: true,
-    sortOrder: 4,
-    productCount: 15,
-  },
-
-  // Household subcategories
-  {
-    id: "cleaning-supplies",
-    name: "Cleaning Supplies",
-    slug: "cleaning-supplies",
-    categoryId: "household",
-    isActive: true,
-    sortOrder: 1,
-    productCount: 25,
-  },
-  {
-    id: "personal-care",
-    name: "Personal Care",
-    slug: "personal-care",
-    categoryId: "household",
-    isActive: true,
-    sortOrder: 2,
-    productCount: 30,
-  },
-  {
-    id: "baby-care",
-    name: "Baby Care",
-    slug: "baby-care",
-    categoryId: "household",
-    isActive: true,
-    sortOrder: 3,
-    productCount: 18,
-  },
-  {
-    id: "kitchen-supplies",
-    name: "Kitchen Supplies",
-    slug: "kitchen-supplies",
-    categoryId: "household",
-    isActive: true,
-    sortOrder: 4,
-    productCount: 20,
-  },
-];
-
-export const categories: Category[] = [
-  {
-    id: "fresh-produce",
-    name: "Fresh Produce",
-    slug: "fresh-produce",
-    description:
-      "Fresh vegetables, fruits, and herbs sourced from Nigerian farms",
-    image:
-      "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🥬",
-    isActive: true,
-    sortOrder: 1,
-    productCount: 105,
-    subcategories: subcategories.filter(
-      (sub) => sub.categoryId === "fresh-produce",
-    ),
-  },
-  {
-    id: "grains-staples",
-    name: "Grains & Staples",
-    slug: "grains-staples",
-    description: "Rice, beans, flour, yam, and other Nigerian staple foods",
-    image:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🌾",
-    isActive: true,
-    sortOrder: 2,
-    productCount: 75,
-    subcategories: subcategories.filter(
-      (sub) => sub.categoryId === "grains-staples",
-    ),
-  },
-  {
-    id: "protein",
-    name: "Protein & Dairy",
-    slug: "protein",
-    description: "Fresh fish, meat, poultry, eggs, and dairy products",
-    image:
-      "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🐟",
-    isActive: true,
-    sortOrder: 3,
-    productCount: 65,
-    subcategories: subcategories.filter((sub) => sub.categoryId === "protein"),
-  },
-  {
-    id: "pantry-essentials",
-    name: "Pantry Essentials",
-    slug: "pantry-essentials",
-    description: "Cooking oils, seasonings, sauces, and canned goods",
-    image:
-      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🧄",
-    isActive: true,
-    sortOrder: 4,
-    productCount: 84,
-    subcategories: subcategories.filter(
-      (sub) => sub.categoryId === "pantry-essentials",
-    ),
-  },
-  {
-    id: "beverages",
-    name: "Beverages",
-    slug: "beverages",
-    description:
-      "Soft drinks, juices, water, tea, coffee, and alcoholic beverages",
-    image:
-      "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🥤",
-    isActive: true,
-    sortOrder: 5,
-    productCount: 86,
-    subcategories: subcategories.filter(
-      (sub) => sub.categoryId === "beverages",
-    ),
+    id: "rice-grains",
+    name: "Rice & Grains",
+    href: "/shop/categories/rice-grains",
   },
   {
     id: "snacks",
-    name: "Snacks & Sweets",
-    slug: "snacks",
-    description: "Traditional snacks, biscuits, nuts, and confectionery",
-    image:
-      "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🍿",
-    isActive: true,
-    sortOrder: 6,
-    productCount: 67,
-    subcategories: subcategories.filter((sub) => sub.categoryId === "snacks"),
-  },
-  {
-    id: "household",
-    name: "Household & Personal Care",
-    slug: "household",
-    description:
-      "Cleaning supplies, personal care, baby care, and kitchen essentials",
-    image:
-      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🧽",
-    isActive: true,
-    sortOrder: 7,
-    productCount: 93,
-    subcategories: subcategories.filter(
-      (sub) => sub.categoryId === "household",
-    ),
-  },
-  {
-    id: "frozen-foods",
-    name: "Frozen Foods",
-    slug: "frozen-foods",
-    description: "Frozen vegetables, fish, meat, and ready-to-cook meals",
-    image:
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80",
-    icon: "🧊",
-    isActive: true,
-    sortOrder: 8,
-    productCount: 42,
-    subcategories: [],
+    name: "Snacks",
+    href: "/shop/categories/snacks-beverages",
   },
 ];
 
-export const featuredCategories = categories.slice(0, 6);
+// Helper functions
+export const getCategoryBySlug = (slug: string): Category | undefined => {
+  return categories.find((cat) => cat.slug === slug);
+};
+
+export const getActiveCategories = (): Category[] => {
+  return categories.filter((cat) => cat.isActive);
+};

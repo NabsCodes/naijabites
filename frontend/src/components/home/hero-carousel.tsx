@@ -69,8 +69,6 @@ export default function HeroCarousel() {
                   <div
                     style={{
                       backgroundImage: "url('/images/hero-bg-first.webp')",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
                     }}
                     className="relative h-[400px] w-full bg-lemon-light bg-cover bg-center sm:h-[500px] lg:h-[640px]"
                   >

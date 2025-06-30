@@ -67,7 +67,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-green-dark/50 bg-green-deep text-white shadow-sm">
       {/* Desktop Header */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <div className="container-padding">
           <div className="section-container py-4 lg:py-6">
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-8">
@@ -216,20 +216,20 @@ export default function Header() {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          className="flex h-auto items-center gap-2 rounded-full border border-solid border-white bg-white/5 p-1.5 pr-3 transition-colors hover:bg-white/10 focus:bg-white/10 md:gap-3 md:pr-4"
+                          className="flex h-auto items-center gap-2 rounded-full border border-solid border-white bg-white/5 p-1.5 pr-3 transition-colors hover:bg-white/10 focus:bg-white/10 lg:gap-3 lg:pr-4"
                         >
-                          <Avatar className="h-8 w-8 md:h-10 md:w-10">
+                          <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
                             <AvatarImage src={mockUser.avatar} />
-                            <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark md:text-sm">
+                            <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark lg:text-sm">
                               {mockUser.initials}
                             </AvatarFallback>
                           </Avatar>
 
-                          <span className="hidden max-w-[80px] truncate text-xs font-semibold text-white sm:inline md:text-sm lg:max-w-none">
+                          <span className="hidden max-w-[80px] truncate text-xs font-semibold text-white sm:inline lg:max-w-none lg:text-sm">
                             {mockUser.name}
                           </span>
 
-                          <ChevronDown className="h-4 w-4 flex-shrink-0 text-lemon-light md:h-5 md:w-5" />
+                          <ChevronDown className="h-4 w-4 flex-shrink-0 text-lemon-light lg:h-5 lg:w-5" />
                         </Button>
                       </DropdownMenuTrigger>
 
@@ -282,14 +282,14 @@ export default function Header() {
                 ) : (
                   <div className="flex items-center gap-3">
                     {/* Register Button: Icon on small screens, text on md+ */}
-                    <Button className="flex h-11 items-center justify-center rounded-md bg-lemon-dark px-3 py-2 text-sm font-semibold text-green-dark shadow-md transition-all duration-200 hover:bg-lemon-dark/90 md:px-6">
+                    <Button className="flex h-11 items-center justify-center rounded-md bg-lemon-dark px-3 py-2 text-sm font-semibold text-green-dark shadow-md transition-all duration-200 hover:bg-lemon-dark/90 lg:px-6">
                       <span className="inline">Sign up</span>
                     </Button>
 
                     {/* Login Button: Icon on small screens, text on md+ */}
                     <Button
                       variant="outline"
-                      className="flex h-11 items-center justify-center rounded-md border-2 border-white bg-transparent px-3 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-green-deep md:px-6"
+                      className="flex h-11 items-center justify-center rounded-md border-2 border-white bg-transparent px-3 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-green-deep lg:px-6"
                     >
                       <span className="inline">Log in</span>
                     </Button>

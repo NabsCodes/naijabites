@@ -1,5 +1,5 @@
 import ProductCard from "@/components/product/product-card";
-import { getFeaturedProducts } from "@/lib/mock-data/simple-products";
+import { getFeaturedProducts } from "@/lib/mock-data/products";
 
 export function ProductListingSection() {
   return (

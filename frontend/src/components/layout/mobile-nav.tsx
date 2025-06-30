@@ -82,7 +82,7 @@ export default function MobileNav({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <div className="container-padding">
         {/* Clean Mobile Header: Menu | Logo (Left) ----- Auth | Cart (Right) */}
         <div className="flex items-center justify-between py-4">
@@ -98,7 +98,7 @@ export default function MobileNav({
                   <Menu className="h-6 w-6" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-80 border-0 bg-white p-0">
+              <SheetContent side="left" className="border-0 bg-white p-0">
                 <SheetHeader className="sr-only">
                   <SheetTitle>Navigation Menu</SheetTitle>
                 </SheetHeader>

@@ -12,9 +12,15 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "NaijaBites - Authentic Nigerian Groceries in Canada",
+  // title: "NaijaBites - Authentic Nigerian Groceries in Canada",
+  title: {
+    template: "%s | NaijaBites",
+    default: "NaijaBites - Authentic Nigerian Groceries in Canada",
+  },
   description:
     "Shop the finest selection of Nigerian rice, spices, vegetables, and traditional foods. Bringing the taste of home to your doorstep across Canada.",
+  // description:
+  //   "Shop the finest selection of Nigerian rice, spices, vegetables, and traditional foods. Bringing the taste of home to your doorstep across Canada.",
   keywords:
     "Nigerian groceries, African food, Nigerian rice, spices, Canada delivery, authentic ingredients",
   authors: [{ name: "NaijaBites" }],

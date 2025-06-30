@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SimpleProduct } from "@/lib/mock-data/simple-products";
+import { Product } from "@/types";
 import { Rating } from "@/components/ui/rating";
 import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
-  product: SimpleProduct;
+  product: Product;
   className?: string;
 }
 

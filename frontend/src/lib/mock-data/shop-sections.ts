@@ -1,0 +1,79 @@
+import { Product } from "@/types";
+import { products } from "./products";
+
+// Section type definitions
+export type SectionType =
+  | "hot-deals"
+  | "recommended"
+  | "deals-of-week"
+  | "top-picks"
+  | "similar";
+
+export interface ShopSection {
+  id: SectionType;
+  title: string;
+  description?: string;
+  viewAllLink: string;
+  getProducts: () => Product[];
+}
+
+// Smart filtering functions
+export const sectionFilters = {
+  // Products with discounts/sales
+  "hot-deals": () => products.filter((p) => p.isOnSale && p.discountPercentage),
+
+  // Products with high ratings (4.0+)
+  "top-picks": () =>
+    products.filter((p) => p.rating && p.rating.average >= 4.0),
+
+  // Featured sale products (subset of hot deals)
+  "deals-of-week": () => products.filter((p) => p.isOnSale).slice(0, 6),
+
+  // Mix of popular products (for now, random selection - would be algorithm-based in real app)
+  recommended: () => [...products].sort(() => 0.5 - Math.random()).slice(0, 4),
+
+  // Similar products (for product pages - random for now)
+  similar: () => [...products].sort(() => 0.5 - Math.random()).slice(0, 6),
+};
+
+// Shop sections configuration
+export const shopSections: ShopSection[] = [
+  {
+    id: "hot-deals",
+    title: "Hot deals you can't miss!",
+    description: "Limited time offers on your favorite products",
+    viewAllLink: "/shop/deals",
+    getProducts: sectionFilters["hot-deals"],
+  },
+  {
+    id: "recommended",
+    title: "Recommended for you",
+    description: "Handpicked just for you based on your preferences",
+    viewAllLink: "/shop/recommended",
+    getProducts: sectionFilters["recommended"],
+  },
+  {
+    id: "deals-of-week",
+    title: "Deals of the Week",
+    description: "This week's special offers you won't want to miss",
+    viewAllLink: "/shop/deals",
+    getProducts: sectionFilters["deals-of-week"],
+  },
+  {
+    id: "top-picks",
+    title: "Top Picks Nigerians Love",
+    description: "Most loved products by our customers",
+    viewAllLink: "/shop/products",
+    getProducts: sectionFilters["top-picks"],
+  },
+];
+
+// Helper to get products for specific section
+export const getProductsForSection = (sectionId: SectionType): Product[] => {
+  return sectionFilters[sectionId]();
+};
+
+// Helper to get all active shop sections
+export const getShopSections = (): ShopSection[] => {
+  return shopSections.filter((section) => section.getProducts().length > 0);
+};

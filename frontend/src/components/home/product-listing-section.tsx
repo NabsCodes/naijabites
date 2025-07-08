@@ -1,7 +1,18 @@
-import ProductCard from "@/components/product/product-card";
+import { ProductCard } from "@/components/shop";
 import { getFeaturedProducts } from "@/lib/mock-data/products";
 
-export function ProductListingSection() {
+export async function ProductListingSection() {
+  // Only in development - simulate slow API
+  if (process.env.NODE_ENV === "development") {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  // Fetch data server-side
+  const products = getFeaturedProducts();
+  // Shuffle products to make them random
+  const shuffledProducts = [...products].sort(() => Math.random() - 0.5);
+  const displayProducts = shuffledProducts.slice(0, 8);
+
   return (
     <section className="rounded-t-[20px] bg-[#f9f9f9] md:rounded-t-[40px]">
       <div className="container-padding relative py-10 md:py-16 lg:py-20">
@@ -18,7 +29,7 @@ export function ProductListingSection() {
 
           {/* Product Grid  */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-            {getFeaturedProducts().map((product) => (
+            {displayProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}

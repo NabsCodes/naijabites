@@ -128,17 +128,17 @@ export const WhatWeOfferSection = () => {
               role="region"
               aria-label="Our offerings carousel"
             >
-              <CarouselContent>
+              <CarouselContent className="rounded-2xl">
                 {offeringsCarousel.map((offering, _) => (
                   <CarouselItem key={offering.id}>
-                    <Card className="hover:shadow-3xl rounded-2xl border-0 bg-green-deep shadow-2xl transition-transform duration-300">
+                    <Card className="hover:shadow-3xl rounded-2xl border-0 bg-green-deep pb-6 shadow-2xl transition-transform duration-300 xl:pb-0">
                       <CardContent className="flex h-auto flex-col justify-between gap-6 p-6 md:p-8 xl:h-[458px] xl:gap-40 xl:p-10">
                         {/* Content Section */}
                         <div className="flex flex-col gap-4 md:gap-6">
                           <h3 className="text-2xl font-semibold leading-tight text-gray-50 md:text-3xl">
                             {offering.title}
                           </h3>
-                          <p className="text-base font-normal leading-[1.4] text-gray-100 md:text-lg lg:text-xl">
+                          <p className="text-sm font-normal leading-[1.4] text-gray-100 sm:text-base md:text-lg lg:text-xl">
                             {offering.description}
                           </p>
                         </div>
@@ -163,7 +163,34 @@ export const WhatWeOfferSection = () => {
               </CarouselContent>
             </Carousel>
 
-            {/* Fixed Navigation - Only shown on xl+ screens */}
+            {/* Mobile Dots Navigation */}
+            <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center justify-start gap-2 xl:hidden">
+              <div
+                className="flex items-center gap-1.5 sm:gap-2"
+                role="tablist"
+                aria-label="Offering indicators"
+              >
+                {offeringsCarousel.map((offering, index) => (
+                  <button
+                    key={index}
+                    role="tab"
+                    aria-selected={current === index}
+                    aria-label={`Go to ${offering.title}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 sm:h-2 ${
+                      current === index
+                        ? "w-6 bg-lemon-light sm:w-8"
+                        : "w-1.5 bg-gray-400 hover:bg-gray-300 sm:w-2"
+                    }`}
+                    onClick={() => {
+                      api?.scrollTo(index);
+                      autoplayRef.current.reset();
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Desktop Navigation - Only shown on xl+ screens */}
             <div className="absolute bottom-10 left-10 hidden items-center justify-start gap-2 xl:flex">
               {/* Left Arrow */}
               <button

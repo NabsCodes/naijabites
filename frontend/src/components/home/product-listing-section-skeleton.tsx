@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProductCardSkeleton } from "@/components/product";
+import { ProductCardSkeleton } from "@/components/shop";
 
 export function ProductListingSectionSkeleton() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ProductCard } from "@/components/product";
+import { ProductCard } from "@/components/shop";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
@@ -14,6 +14,7 @@ interface ProductSectionProps {
   products: Product[];
   viewAllLink: string;
   className?: string;
+  noContainer?: boolean;
 }
 
 export function ProductSection({
@@ -22,6 +23,7 @@ export function ProductSection({
   products,
   viewAllLink,
   className,
+  noContainer = false,
 }: ProductSectionProps) {
   // Show max 8 products in section preview
   const displayProducts = products.slice(0, 8);
@@ -30,7 +32,7 @@ export function ProductSection({
   if (products.length === 0) {
     return (
       <section className={className}>
-        <div className="container-padding">
+        <div className={noContainer ? "" : "container-padding"}>
           <div className="section-container">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
@@ -55,7 +57,7 @@ export function ProductSection({
       transition={{ duration: 0.5 }}
       viewport={{ once: true, margin: "-100px" }}
     >
-      <div className="container-padding">
+      <div className={noContainer ? "" : "container-padding"}>
         <div className="section-container">
           {/* Section Header */}
           <div className="mb-6 flex items-center justify-between">
@@ -78,7 +80,7 @@ export function ProductSection({
           {/* Products Grid/Scroll */}
           <div className="relative">
             {/* Desktop: Grid Layout */}
-            <div className="hidden grid-cols-2 gap-4 sm:grid md:grid-cols-3 lg:grid-cols-4">
+            <div className="hidden grid-cols-2 gap-3 sm:grid sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
               {displayProducts.map((product, i) => (
                 <motion.div
                   key={product.id}
@@ -121,7 +123,7 @@ export function ProductSection({
           >
             <Button
               asChild
-              className="w-full bg-green-deep transition-all duration-300 hover:bg-green-deep/90"
+              className="w-full bg-green-dark transition-all duration-300 hover:bg-green-dark/90"
             >
               <Link href={viewAllLink}>View All Items</Link>
             </Button>

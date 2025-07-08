@@ -11,7 +11,9 @@ export const JoinFamilySection = () => {
         <div className="grid grid-cols-1 gap-8 rounded-3xl bg-white p-6 sm:p-8 md:grid-cols-2 md:gap-12">
           {/* Image Section */}
           <div className="flex flex-col gap-4">
-            <div className="relative h-[450px] w-full md:h-[370px]">
+            <div className="relative h-[300px] w-full overflow-hidden rounded-3xl md:h-[370px]">
+              <div className="absolute inset-0 animate-pulse bg-gray-800/50" />{" "}
+              {/* Placeholder background */}
               <Image
                 src="/images/testimonial-image.webp"
                 alt="Happy customer shopping for groceries"
@@ -27,22 +29,22 @@ export const JoinFamilySection = () => {
           {/* Content Section */}
           <div className="flex max-w-lg flex-col justify-center space-y-8">
             <div className="flex flex-col space-y-4">
-              <h2 className="text-3xl font-semibold leading-tight text-green-deep md:text-4xl">
+              <h2 className="text-xl font-semibold leading-tight text-green-deep sm:text-2xl md:text-4xl">
                 Join the Naijabites Family !
               </h2>
-              <p className="text-base font-normal leading-relaxed text-gray-900 lg:text-lg">
+              <p className="text-sm font-normal leading-relaxed text-gray-900 sm:text-base lg:text-lg">
                 Discover how easy and affordable it is to get authentic Nigerian
                 food brands delivered to your home in Canada. Shop now and enjoy
                 a seamless shopping experience with fast delivery, trusted
                 products, and unbeatable prices.
               </p>
+              <Link
+                href="/categories"
+                className="flex w-fit items-center gap-2 rounded-lg bg-green-deep px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-deep/90"
+              >
+                Start Shopping Today !
+              </Link>
             </div>
-            <Link
-              href="/categories"
-              className="flex w-fit items-center gap-2 rounded-lg bg-green-deep px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-deep/90"
-            >
-              Start Shopping Today !
-            </Link>
           </div>
         </div>
       </div>

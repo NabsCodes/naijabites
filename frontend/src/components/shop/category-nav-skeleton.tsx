@@ -7,7 +7,7 @@ export function CategoryNavSkeleton() {
       <div className="hidden lg:block">
         <div className="container-padding">
           <div className="section-container">
-            <div className="flex items-center gap-8 pt-6">
+            <div className="flex items-center gap-8 pt-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <Skeleton key={i} className="h-5 w-20" />
               ))}
@@ -17,14 +17,13 @@ export function CategoryNavSkeleton() {
       </div>
 
       {/* Mobile Navigation Skeleton */}
-      <div className="block lg:hidden">
-        <div className="overflow-x-auto">
-          <div className="flex items-center gap-4 px-4 pt-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="h-8 w-24 flex-shrink-0 rounded-full"
-              />
+      <div className="block w-full overflow-hidden lg:hidden">
+        <div className="scrollbar-hide overflow-x-auto border-b border-gray-100">
+          <div className="flex w-max min-w-full">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex-shrink-0 px-4 py-3">
+                <Skeleton className="h-5 w-24" />
+              </div>
             ))}
           </div>
         </div>

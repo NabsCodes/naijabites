@@ -11,6 +11,7 @@ import {
   Lock,
   Truck,
   Heart,
+  ShoppingCartIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,70 +25,25 @@ import {
 } from "@/components/ui/select";
 import { products } from "@/lib/mock-data/products";
 import { locations } from "@/lib/mock-data/locations";
+import { useCartItemPricing } from "@/hooks/use-product-pricing";
+import { formatPrice } from "@/lib/utils";
+import { useCart } from "@/contexts/cart-context";
+import { QuantitySelector } from "@/components/ui/quantity-selector";
+import { ProductSection } from "@/components/shop";
+import { getFeaturedProducts } from "@/lib/mock-data/products";
 import Image from "next/image";
 
-// Mock cart data
-const initialCartItems = [
-  {
-    id: "1",
-    productId: "dangote-rice-50kg",
-    variantId: undefined,
-    quantity: 2,
-    price: 65.99,
-    salePrice: undefined,
-    product: products.find((p) => p.slug === "dangote-rice-50kg")!,
-    variant: undefined,
-  },
-  {
-    id: "2",
-    productId: "maggi-chicken-cubes-100-pieces",
-    variantId: undefined,
-    quantity: 1,
-    price: 12.99,
-    salePrice: 10.99,
-    product: products.find((p) => p.slug === "maggi-chicken-cubes-100-pieces")!,
-    variant: undefined,
-  },
-  {
-    id: "3",
-    productId: "pounded-yam-flour-2kg",
-    variantId: undefined,
-    quantity: 3,
-    price: 18.99,
-    salePrice: undefined,
-    product: products.find((p) => p.slug === "pounded-yam-flour-2kg")!,
-    variant: undefined,
-  },
-];
-
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const { items: cartItems, updateQuantity, removeItem, clearCart } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
-  const updateQuantity = (itemId: string, newQuantity: number) => {
-    if (newQuantity === 0) {
-      removeItem(itemId);
-      return;
-    }
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === itemId
-          ? { ...item, quantity: Math.max(1, newQuantity) }
-          : item,
-      ),
-    );
-  };
-
-  const removeItem = (itemId: string) => {
-    setCartItems((items) => items.filter((item) => item.id !== itemId));
-  };
-
-  const moveToWishlist = (itemId: string) => {
-    removeItem(itemId);
-    // In a real app, this would add to wishlist
-  };
+  // Wishlist/Save for Later - Removed for MVP
+  // const moveToWishlist = (itemId: string) => {
+  //   removeItem(itemId);
+  //   // TODO: Implement wishlist functionality later
+  // };
 
   const applyCoupon = async () => {
     setIsApplyingCoupon(true);
@@ -103,13 +59,13 @@ export default function CartPage() {
     return sum + price * item.quantity;
   }, 0);
 
-  const tax = subtotal * 0.13; // 13% tax (HST in Canada)
+  const tax = subtotal * 0.075; // 7.5% VAT (Nigeria)
   const selectedLocationData = locations.find(
     (loc) => loc.id === selectedLocation,
   );
   const shippingFee = selectedLocationData?.deliveryFee || 0;
   const freeShippingThreshold =
-    selectedLocationData?.freeDeliveryThreshold || 75;
+    selectedLocationData?.freeDeliveryThreshold || 25000; // ₦25,000 for free shipping
   const shipping = subtotal >= freeShippingThreshold ? 0 : shippingFee;
   const total = subtotal + tax + shipping;
 
@@ -120,7 +76,7 @@ export default function CartPage() {
       {/* Header */}
       <section className="border-b bg-white">
         <div className="container-padding py-6">
-          <div className="mx-auto max-w-7xl">
+          <div className="section-container">
             <div className="flex items-center gap-4">
               <ShoppingBag className="h-8 w-8 text-green-dark" />
               <div>
@@ -131,7 +87,7 @@ export default function CartPage() {
                   {cartItems.length} {cartItems.length === 1 ? "item" : "items"}{" "}
                   in your cart.
                 </p>
-                <p className="text-gray-600">Total: ${total.toFixed(2)}</p>
+                <p className="text-gray-600">Total: {formatPrice(total)}</p>
               </div>
             </div>
           </div>
@@ -143,7 +99,9 @@ export default function CartPage() {
         <section className="py-12">
           <div className="container-padding">
             <div className="mx-auto max-w-2xl text-center">
-              <div className="mb-6 text-6xl">🛒</div>
+              <div className="mb-6 text-6xl">
+                <ShoppingCartIcon className="mx-auto h-12 w-12 text-green-dark" />
+              </div>
               <h2 className="text-h2 mb-4 font-bold text-gray-900">
                 Your cart is empty
               </h2>
@@ -157,7 +115,7 @@ export default function CartPage() {
                   className="bg-green-dark hover:bg-green-deep"
                   asChild
                 >
-                  <Link href="/categories">
+                  <Link href="/shop">
                     <ShoppingBag className="mr-2 h-5 w-5" />
                     Start Shopping
                   </Link>
@@ -165,7 +123,7 @@ export default function CartPage() {
                 <div className="text-sm text-gray-500">
                   or{" "}
                   <Link
-                    href="/products"
+                    href="/shop/products"
                     className="text-green-dark hover:text-green-deep"
                   >
                     browse all products
@@ -178,7 +136,7 @@ export default function CartPage() {
       ) : (
         <section className="py-12">
           <div className="container-padding">
-            <div className="mx-auto max-w-7xl">
+            <div className="section-container">
               <div className="grid gap-8 lg:grid-cols-3">
                 {/* Cart Items */}
                 <div className="space-y-6 lg:col-span-2">
@@ -189,9 +147,11 @@ export default function CartPage() {
                         <div className="flex items-center gap-3">
                           <Truck className="h-5 w-5 text-green-dark" />
                           <div className="text-sm text-green-dark">
-                            <strong>Free shipping</strong> on orders over $
-                            {freeShippingThreshold}! Add{" "}
-                            <strong>${freeShippingRemaining.toFixed(2)}</strong>{" "}
+                            <strong>Free shipping</strong> on orders over{" "}
+                            {formatPrice(freeShippingThreshold)}! Add{" "}
+                            <strong>
+                              {formatPrice(freeShippingRemaining)}
+                            </strong>{" "}
                             more to qualify.
                           </div>
                         </div>
@@ -207,7 +167,7 @@ export default function CartPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setCartItems([])}
+                          onClick={() => clearCart()}
                         >
                           Clear Cart
                         </Button>
@@ -220,14 +180,15 @@ export default function CartPage() {
                           className="flex gap-4 border-b pb-6 last:border-b-0 last:pb-0"
                         >
                           <div className="relative h-24 w-24 flex-shrink-0">
-                            <Link href={`/products/${item.product.slug}`}>
+                            <Link href={`/shop/products/${item.product.slug}`}>
                               <Image
                                 src={
-                                  item.product.images[0]?.url ||
+                                  item.product.images?.[0] ||
+                                  item.product.image ||
                                   "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop&crop=entropy&auto=format&q=80"
                                 }
                                 alt={item.product.name}
-                                className="h-full w-full rounded-lg object-cover transition-transform hover:scale-105"
+                                className="h-full w-full rounded-lg object-contain p-1 transition-transform hover:scale-105"
                                 width={100}
                                 height={100}
                               />
@@ -242,7 +203,9 @@ export default function CartPage() {
                           <div className="min-w-0 flex-1">
                             <div className="mb-2 flex items-start justify-between">
                               <div className="min-w-0 flex-1">
-                                <Link href={`/products/${item.product.slug}`}>
+                                <Link
+                                  href={`/shop/products/${item.product.slug}`}
+                                >
                                   <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors hover:text-green-dark">
                                     {item.product.name}
                                   </h3>
@@ -272,32 +235,17 @@ export default function CartPage() {
 
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                <div className="flex items-center rounded-lg border">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() =>
-                                      updateQuantity(item.id, item.quantity - 1)
-                                    }
-                                    className="h-8 w-8 p-0 hover:bg-gray-100"
-                                  >
-                                    <Minus className="h-3 w-3" />
-                                  </Button>
-                                  <span className="w-12 text-center text-sm font-medium">
-                                    {item.quantity}
-                                  </span>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() =>
-                                      updateQuantity(item.id, item.quantity + 1)
-                                    }
-                                    className="h-8 w-8 p-0 hover:bg-gray-100"
-                                  >
-                                    <Plus className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                                <Button
+                                <QuantitySelector
+                                  quantity={item.quantity}
+                                  onQuantityChange={(newQuantity) =>
+                                    updateQuantity(item.id, newQuantity)
+                                  }
+                                  min={1}
+                                  max={99}
+                                  size="sm"
+                                />
+                                {/* Wishlist/Save for Later - Removed for MVP */}
+                                {/* <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => moveToWishlist(item.id)}
@@ -305,23 +253,22 @@ export default function CartPage() {
                                 >
                                   <Heart className="mr-1 h-4 w-4" />
                                   Save for Later
-                                </Button>
+                                </Button> */}
                               </div>
                               <div className="text-right">
                                 <div className="text-lg font-semibold text-gray-900">
-                                  $
-                                  {(
+                                  {formatPrice(
                                     (item.salePrice || item.price) *
-                                    item.quantity
-                                  ).toFixed(2)}
+                                      item.quantity,
+                                  )}
                                 </div>
                                 {item.salePrice && (
                                   <div className="text-sm text-gray-500 line-through">
-                                    ${(item.price * item.quantity).toFixed(2)}
+                                    {formatPrice(item.price * item.quantity)}
                                   </div>
                                 )}
                                 <div className="text-xs text-gray-500">
-                                  ${(item.salePrice || item.price).toFixed(2)}{" "}
+                                  {formatPrice(item.salePrice || item.price)}{" "}
                                   each
                                 </div>
                               </div>
@@ -335,7 +282,7 @@ export default function CartPage() {
                   {/* Continue Shopping */}
                   <div className="flex items-center justify-between">
                     <Button variant="outline" asChild>
-                      <Link href="/categories">← Continue Shopping</Link>
+                      <Link href="/shop">← Continue Shopping</Link>
                     </Button>
                   </div>
                 </div>
@@ -375,8 +322,10 @@ export default function CartPage() {
                           </p>
                           {selectedLocationData.freeDeliveryThreshold && (
                             <p>
-                              Free delivery on orders over $
-                              {selectedLocationData.freeDeliveryThreshold}
+                              Free delivery on orders over{" "}
+                              {formatPrice(
+                                selectedLocationData.freeDeliveryThreshold,
+                              )}
                             </p>
                           )}
                         </div>
@@ -418,7 +367,7 @@ export default function CartPage() {
                           Subtotal ({cartItems.length} items)
                         </span>
                         <span className="font-medium">
-                          ${subtotal.toFixed(2)}
+                          {formatPrice(subtotal)}
                         </span>
                       </div>
 
@@ -428,21 +377,21 @@ export default function CartPage() {
                           {shipping === 0 ? (
                             <span className="text-green-600">Free</span>
                           ) : (
-                            `$${shipping.toFixed(2)}`
+                            formatPrice(shipping)
                           )}
                         </span>
                       </div>
 
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Tax (HST)</span>
-                        <span className="font-medium">${tax.toFixed(2)}</span>
+                        <span className="text-gray-600">Tax (VAT 7.5%)</span>
+                        <span className="font-medium">{formatPrice(tax)}</span>
                       </div>
 
                       <div className="border-t pt-4">
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-semibold">Total</span>
                           <span className="text-xl font-bold text-green-dark">
-                            ${total.toFixed(2)}
+                            {formatPrice(total)}
                           </span>
                         </div>
                       </div>
@@ -473,6 +422,17 @@ export default function CartPage() {
                     <span className="text-xs">SSL Secured</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Recommended Products Section */}
+              <div className="mt-12 sm:mt-16 lg:mt-20">
+                <ProductSection
+                  title="You might also like"
+                  description="Complete your shopping with these popular Nigerian groceries"
+                  products={getFeaturedProducts().slice(0, 4)}
+                  viewAllLink="/shop"
+                  noContainer={true}
+                />
               </div>
             </div>
           </div>

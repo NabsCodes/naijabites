@@ -1,16 +1,18 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProductCardSkeleton } from "@/components/product";
+import { ProductCardSkeleton } from "@/components/shop";
 
 interface ProductSectionSkeletonProps {
   className?: string;
+  noContainer?: boolean;
 }
 
 export function ProductSectionSkeleton({
   className,
+  noContainer = false,
 }: ProductSectionSkeletonProps) {
   return (
     <section className={className}>
-      <div className="container-padding">
+      <div className={noContainer ? "" : "container-padding"}>
         <div className="section-container">
           {/* Section Header Skeleton */}
           <div className="mb-6 flex items-center justify-between">
@@ -24,15 +26,15 @@ export function ProductSectionSkeleton({
           {/* Products Grid/Scroll Skeleton */}
           <div className="relative">
             {/* Desktop: Grid Layout */}
-            <div className="hidden grid-cols-2 gap-4 sm:grid md:grid-cols-3 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
+            <div className="hidden grid-cols-2 gap-3 sm:grid sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
 
             {/* Mobile: Horizontal Scroll */}
             <div className="flex gap-4 overflow-x-auto pb-4 sm:hidden">
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="w-[280px] flex-shrink-0">
                   <ProductCardSkeleton />
                 </div>

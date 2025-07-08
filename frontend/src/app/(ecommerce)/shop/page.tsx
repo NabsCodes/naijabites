@@ -10,7 +10,7 @@ import { Metadata } from "next";
 // Metadata for SEO
 export const metadata: Metadata = {
   title: {
-    template: "%s | NaijaBites",
+    template: "%s",
     default: "Shop",
   },
 };

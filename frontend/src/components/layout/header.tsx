@@ -30,7 +30,8 @@ import {
   ContactIcon,
   LogoIcon,
 } from "@/components/icons";
-import { mockUser, mockAppState } from "@/lib/mock-data/user";
+import { mockUser } from "@/lib/mock-data/user";
+import { useCart } from "@/contexts/cart-context";
 import MobileNav from "./mobile-nav";
 
 // Navigation items data
@@ -54,8 +55,8 @@ export default function Header() {
   const [selectedLocation, setSelectedLocation] = useState<
     (typeof locations)[0] | null
   >(null);
-  const [searchQuery, setSearchQuery] = useState(mockAppState.searchQuery);
-  const [cartItemsCount] = useState(mockAppState.cartItemsCount);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { totalItems } = useCart();
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(mockUser.isLoggedIn);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -199,12 +200,12 @@ export default function Header() {
                         <div className="relative flex items-center gap-3">
                           <div className="relative flex h-6 w-6 items-center justify-center">
                             <CartIcon size={24} color="currentColor" />
-                            {cartItemsCount > 0 && (
+                            {totalItems > 0 && (
                               <Badge
                                 variant="destructive"
                                 className="absolute -right-2 -top-2 min-w-[1.25rem] bg-orange-dark px-1.5 py-0.5 text-xs font-bold leading-none hover:bg-orange-dark"
                               >
-                                {cartItemsCount > 99 ? "99+" : cartItemsCount}
+                                {totalItems > 99 ? "99+" : totalItems}
                               </Badge>
                             )}
                           </div>
@@ -303,7 +304,7 @@ export default function Header() {
 
       {/* Mobile Header */}
       <MobileNav
-        cartItemsCount={cartItemsCount}
+        cartItemsCount={totalItems}
         isUserLoggedIn={isUserLoggedIn}
         setIsUserLoggedIn={setIsUserLoggedIn}
         selectedLocation={selectedLocation}

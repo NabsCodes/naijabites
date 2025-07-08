@@ -42,7 +42,7 @@ export const OurStorySection = () => {
             <h2 className="text-2xl font-bold leading-tight text-green-dark md:text-4xl lg:text-5xl">
               Our Story
             </h2>
-            <p className="text-base text-gray-700 lg:text-lg">
+            <p className="text-sm text-gray-700 sm:text-base lg:text-lg">
               Naijabites was born from a deep understanding of how challenging
               it can be to find authentic Nigerian products abroad. As Nigerians
               living in Canada, we wanted a platform where we could easily shop
@@ -69,7 +69,9 @@ export const OurStorySection = () => {
           </div>
 
           {/* Image Column - Second on mobile, first on desktop */}
-          <div className="relative order-2 h-[450px] md:order-1 md:h-[500px] lg:h-[600px]">
+          <div className="relative order-2 h-[450px] overflow-hidden rounded-3xl md:order-1 md:h-[500px] lg:h-[600px]">
+            <div className="absolute inset-0 animate-pulse bg-gray-800/50" />{" "}
+            {/* Placeholder background */}
             <Image
               src="/images/our-story.webp"
               alt="Our story - Woman smiling in a Nigerian grocery store"

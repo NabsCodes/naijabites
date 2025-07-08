@@ -49,8 +49,7 @@ export const offeringsCarousel: Offering[] = [
     title: "Fast & Reliable Delivery",
     description:
       "Get your favorite Nigerian products delivered fresh to your door across Canada within 24-48 hours.",
-    image:
-      "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?q=80&w=1000&auto=format&fit=crop",
+    image: "/images/fast-delivery.webp",
     alt: "Professional delivery person with packages ensuring fast and reliable service",
   },
   {
@@ -58,8 +57,7 @@ export const offeringsCarousel: Offering[] = [
     title: "Competitive Pricing",
     description:
       "Enjoy the best prices on authentic Nigerian products with regular discounts and bulk purchase options.",
-    image:
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1000&auto=format&fit=crop",
+    image: "/images/competitive-pricing.webp",
     alt: "Shopping cart filled with fresh groceries showing affordable pricing and value",
   },
   {
@@ -67,8 +65,7 @@ export const offeringsCarousel: Offering[] = [
     title: "Community-Driven",
     description:
       "Built by Nigerians, for Nigerians. We understand your needs and bring the taste of home to Canada.",
-    image:
-      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1000&auto=format&fit=crop",
+    image: "/images/community-driven.webp",
     alt: "Diverse group of people celebrating together, representing Nigerian community in Canada",
   },
 ];

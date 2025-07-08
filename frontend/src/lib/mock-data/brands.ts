@@ -1,23 +1,11 @@
-export interface Brand {
-  id: string;
-  name: string;
-  slug: string;
-  productCount: number;
-  isActive: boolean;
-  isPopular?: boolean; // For featuring popular brands
-  logoUrl?: string;
-  description?: string;
-}
+import { Brand } from "@/types";
 
-// Brands matching your sidebar design
 export const brands: Brand[] = [
   {
     id: "indomie",
     name: "Indomie",
     slug: "indomie",
     productCount: 12,
-    isActive: true,
-    isPopular: true,
     description: "Nigeria's favorite instant noodles",
   },
   {
@@ -25,8 +13,6 @@ export const brands: Brand[] = [
     name: "Golden Penny",
     slug: "golden-penny",
     productCount: 8,
-    isActive: true,
-    isPopular: true,
     description: "Quality pasta and noodles",
   },
   {
@@ -34,8 +20,6 @@ export const brands: Brand[] = [
     name: "De Rica",
     slug: "de-rica",
     productCount: 6,
-    isActive: true,
-    isPopular: false,
     description: "Premium tomato products",
   },
   {
@@ -43,8 +27,6 @@ export const brands: Brand[] = [
     name: "Dangote",
     slug: "dangote",
     productCount: 5,
-    isActive: true,
-    isPopular: true,
     description: "Leading Nigerian conglomerate",
   },
   {
@@ -52,8 +34,6 @@ export const brands: Brand[] = [
     name: "Mamador",
     slug: "mamador",
     productCount: 4,
-    isActive: true,
-    isPopular: false,
     description: "Quality cooking oils",
   },
   {
@@ -61,8 +41,6 @@ export const brands: Brand[] = [
     name: "Honeywell",
     slug: "honeywell",
     productCount: 7,
-    isActive: true,
-    isPopular: false,
     description: "Flour and baking essentials",
   },
   {
@@ -70,9 +48,63 @@ export const brands: Brand[] = [
     name: "Three Crowns",
     slug: "three-crowns",
     productCount: 3,
-    isActive: true,
-    isPopular: false,
     description: "Dairy and milk products",
+  },
+  {
+    id: "maggi",
+    name: "Maggi",
+    slug: "maggi",
+    productCount: 9,
+    description: "Premium seasoning cubes and spices",
+  },
+  {
+    id: "peak",
+    name: "Peak",
+    slug: "peak",
+    productCount: 6,
+    description: "Quality milk and dairy products",
+  },
+  {
+    id: "gino",
+    name: "Gino",
+    slug: "gino",
+    productCount: 7,
+    description: "Premium tomato paste and sauces",
+  },
+  {
+    id: "cowbell",
+    name: "Cowbell",
+    slug: "cowbell",
+    productCount: 4,
+    description: "Powdered milk and dairy products",
+  },
+  {
+    id: "knorr",
+    name: "Knorr",
+    slug: "knorr",
+    productCount: 8,
+    description: "Seasoning cubes and cooking essentials",
+  },
+  {
+    id: "semovita",
+    name: "Semovita",
+    slug: "semovita",
+    productCount: 3,
+    description: "Quality semolina flour",
+  },
+  {
+    id: "vitafoam",
+    name: "Vitafoam",
+    slug: "vitafoam",
+    productCount: 2,
+    description: "Home and lifestyle products",
+  },
+  {
+    id: "dano",
+    name: "Dano",
+    slug: "dano",
+    productCount: 5,
+    description: "Instant full cream milk powder",
   },
 ];
 
@@ -81,16 +113,6 @@ export const getBrandBySlug = (slug: string): Brand | undefined => {
   return brands.find((brand) => brand.slug === slug);
 };
 
-export const getActiveBrands = (): Brand[] => {
-  return brands.filter((brand) => brand.isActive);
-};
-
-export const getPopularBrands = (): Brand[] => {
-  return brands.filter((brand) => brand.isActive && brand.isPopular);
-};
-
 export const getBrandsByProductCount = (minCount: number = 5): Brand[] => {
-  return brands.filter(
-    (brand) => brand.isActive && brand.productCount >= minCount,
-  );
+  return brands.filter((brand) => brand.productCount >= minCount);
 };

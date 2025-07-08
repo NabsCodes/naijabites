@@ -1,11 +1,25 @@
+export interface ProductVariant {
+  id: string;
+  title: string;
+  price: number;
+  salePrice?: number;
+  sku?: string;
+  inventory?: number;
+  weight?: string;
+  isAvailable: boolean;
+}
+
 export interface Product {
   id: string;
   name: string;
   shortDescription: string;
+  description?: string;
   image?: string;
-  price: number;
+  images?: string[];
+  price: number; // Base price (for single variant products)
   salePrice?: number;
   discountPercentage?: number;
+  variants?: ProductVariant[]; // Optional variants for products with options
   rating?: {
     average: number;
     count: number;
@@ -23,11 +37,6 @@ export interface Category {
   name: string;
   slug: string;
   description?: string;
-  image?: string;
-  icon?: string;
-  parentId?: string;
-  isActive: boolean;
-  sortOrder: number;
   productCount: number;
 }
 
@@ -36,12 +45,8 @@ export interface Brand {
   id: string;
   name: string;
   slug: string;
-  description?: string;
-  logo?: string;
-  website?: string;
-  countryOfOrigin?: string;
-  isActive: boolean;
   productCount: number;
+  description?: string;
 }
 
 // User Types

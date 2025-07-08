@@ -1,7 +1,18 @@
-import { Location } from "@/types";
+export interface Location {
+  id: string;
+  city: string;
+  province: string;
+  country: string;
+  postalCodes: string[];
+  isServiceable: boolean;
+  deliveryTimeMin: number;
+  deliveryTimeMax: number;
+  deliveryFee: number;
+  freeDeliveryThreshold: number;
+  coordinates: { latitude: number; longitude: number };
+}
 
 export const locations: Location[] = [
-  // Ontario
   {
     id: "toronto-on",
     city: "Toronto",

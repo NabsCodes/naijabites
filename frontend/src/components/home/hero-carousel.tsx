@@ -6,15 +6,16 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { Card } from "@/components/ui/card";
-import { ShoppingCartIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Autoplay from "embla-carousel-autoplay";
 import { useState, useEffect, useRef } from "react";
 import type { CarouselApi } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
+import { CartIcon } from "../icons";
 
-export default function HeroCarousel() {
+export function HeroCarousel() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [, setCount] = useState(0);
@@ -87,9 +88,9 @@ export default function HeroCarousel() {
 
                       <Link
                         href="/categories"
-                        className="flex items-center justify-center gap-2.5 rounded-lg bg-green-dark p-3 transition-all duration-300 hover:bg-green-dark/80 sm:p-4"
+                        className="flex items-center justify-center gap-2.5 rounded-lg bg-green-dark p-3 transition-all duration-300 hover:bg-green-dark/90 sm:p-4"
                       >
-                        <ShoppingCartIcon className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                        <CartIcon color="white" />
                         <span className="text-sm font-semibold leading-tight text-white sm:text-base">
                           Start Shopping
                         </span>
@@ -143,9 +144,9 @@ export default function HeroCarousel() {
 
                         <Link
                           href="/categories"
-                          className="inline-flex items-center gap-2 rounded-lg bg-green-dark px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-dark/80 md:w-fit"
+                          className="inline-flex items-center gap-2 rounded-lg bg-green-dark px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-dark/90 md:w-fit"
                         >
-                          <ShoppingCartIcon className="h-5 w-5" />
+                          <CartIcon color="white" />
                           Start Shopping
                         </Link>
                       </div>

@@ -29,7 +29,7 @@ export const TestimonialSection = () => {
               <div className="hidden h-full w-full overflow-hidden rounded-3xl md:block">
                 <Image
                   className="h-full w-full object-cover object-center"
-                  src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3"
+                  src="/images/testimonial-image.webp"
                   alt="Happy customer shopping for groceries"
                   width={610}
                   height={400}

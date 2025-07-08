@@ -23,7 +23,9 @@ export const AboutHeroSection = () => {
 
         {/* Responsive About Images */}
         <div className="mt-8 w-full lg:mt-10">
-          <div className="relative h-[450px] w-full md:h-[360px]">
+          <div className="relative h-[450px] w-full overflow-hidden rounded-3xl md:h-[360px]">
+            <div className="absolute inset-0 animate-pulse bg-gray-800/50" />{" "}
+            {/* Placeholder background */}
             <picture>
               <source
                 media="(max-width: 768px)"

@@ -5,9 +5,7 @@ interface ProductCardSkeletonProps {
   className?: string;
 }
 
-export default function ProductCardSkeleton({
-  className,
-}: ProductCardSkeletonProps) {
+export function ProductCardSkeleton({ className }: ProductCardSkeletonProps) {
   return (
     <div
       className={cn(
@@ -17,8 +15,9 @@ export default function ProductCardSkeleton({
     >
       <div className="flex flex-col justify-between gap-3">
         {/* Product Image Skeleton */}
-        <div className="relative aspect-square overflow-hidden rounded-t-[20px] bg-[#f9f9f9]">
+        <div className="relative aspect-square overflow-hidden rounded-xl bg-[#f9f9f9]">
           <Skeleton className="h-full w-full" />
+          <Skeleton className="absolute left-2 top-2 h-5 w-10 rounded-full" />
         </div>
 
         {/* Product Details Skeleton */}
@@ -36,12 +35,9 @@ export default function ProductCardSkeleton({
           </div>
 
           {/* Price Section Skeleton */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-6 w-20" />
-              <Skeleton className="h-4 w-16" />
-            </div>
-            <Skeleton className="h-6 w-12 rounded" />
+          <div className="flex items-baseline gap-2">
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-4 w-16" />
           </div>
         </div>
       </div>

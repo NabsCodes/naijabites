@@ -3,6 +3,8 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { Toaster } from "@/components/ui/toaster";
+import { CartProvider } from "@/contexts/cart-context";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -12,15 +14,12 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  // title: "NaijaBites - Authentic Nigerian Groceries in Canada",
   title: {
     template: "%s | NaijaBites",
     default: "NaijaBites - Authentic Nigerian Groceries in Canada",
   },
   description:
     "Shop the finest selection of Nigerian rice, spices, vegetables, and traditional foods. Bringing the taste of home to your doorstep across Canada.",
-  // description:
-  //   "Shop the finest selection of Nigerian rice, spices, vegetables, and traditional foods. Bringing the taste of home to your doorstep across Canada.",
   keywords:
     "Nigerian groceries, African food, Nigerian rice, spices, Canada delivery, authentic ingredients",
   authors: [{ name: "NaijaBites" }],
@@ -53,9 +52,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <body className="min-h-screen bg-gray-50 font-sans antialiased">
-        <Header />
-        {children}
-        <Footer />
+        <CartProvider>
+          <Header />
+          {children}
+          <Footer />
+          <Toaster />
+        </CartProvider>
       </body>
     </html>
   );

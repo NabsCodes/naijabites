@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { headerCategories } from "@/lib/mock-data/categories";
+import {
+  headerCategories,
+  getHeaderCategoryUrl,
+  isHeaderCategoryActive,
+} from "@/lib/mock-data/categories";
 
 export function CategoryNav() {
   const pathname = usePathname();
@@ -14,15 +18,14 @@ export function CategoryNav() {
       <div className="hidden lg:block">
         <div className="container-padding">
           <div className="section-container">
-            <div className="flex items-center gap-8 pt-6">
+            <div className="flex items-center gap-8 py-4">
               {headerCategories.map((category) => (
                 <Link
                   key={category.id}
-                  href={category.href}
+                  href={getHeaderCategoryUrl(category)}
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-green-dark",
-                    pathname === category.href ||
-                      pathname.startsWith(category.href)
+                    "relative pb-1 text-sm font-medium transition-colors hover:text-green-dark",
+                    isHeaderCategoryActive(category, pathname)
                       ? "text-green-dark"
                       : "text-gray-700",
                   )}
@@ -35,20 +38,19 @@ export function CategoryNav() {
         </div>
       </div>
 
-      {/* Mobile Navigation - Horizontal Scroll */}
-      <div className="block lg:hidden">
-        <div className="overflow-x-auto">
-          <div className="flex items-center gap-4 px-4 pt-3">
+      {/* Mobile Navigation - Clean horizontal scroll */}
+      <div className="block w-full overflow-hidden lg:hidden">
+        <div className="scrollbar-hide overflow-x-auto border-b border-gray-100">
+          <div className="flex w-max min-w-full">
             {headerCategories.map((category) => (
               <Link
                 key={category.id}
-                href={category.href}
+                href={getHeaderCategoryUrl(category)}
                 className={cn(
-                  "flex-shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                  pathname === category.href ||
-                    pathname.startsWith(category.href)
-                    ? "bg-green-dark text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100",
+                  "relative flex-shrink-0 whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors",
+                  isHeaderCategoryActive(category, pathname)
+                    ? "text-green-dark after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-green-dark after:content-['']"
+                    : "text-gray-600 hover:text-gray-900",
                 )}
               >
                 {category.name}

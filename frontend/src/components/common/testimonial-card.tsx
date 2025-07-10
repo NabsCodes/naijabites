@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Rating } from "@/components/ui/rating";
-import { Testimonial } from "@/lib/mock-data/testimonials";
+import { Testimonial } from "@/lib/data/testimonials";
 
 interface TestimonialCardProps {
   testimonial: Testimonial;

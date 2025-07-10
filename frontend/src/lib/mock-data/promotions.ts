@@ -9,7 +9,6 @@ export interface PromotionalBanner {
   expiryDate?: string;
   productImages: string;
   discountType: "percentage" | "buy-x-get-y";
-  discountValue?: string;
 }
 
 export const promotionalBanners: PromotionalBanner[] = [
@@ -25,7 +24,6 @@ export const promotionalBanners: PromotionalBanner[] = [
     expiryDate: "July 30, 2025",
     productImages: "/images/nigerian-groceries.webp",
     discountType: "percentage",
-    discountValue: "20",
   },
   {
     id: "indomie-noodles-10",
@@ -39,7 +37,6 @@ export const promotionalBanners: PromotionalBanner[] = [
     expiryDate: "July 30, 2025",
     productImages: "/images/indomie-noodles.webp",
     discountType: "percentage",
-    discountValue: "10",
   },
   {
     id: "tomato-paste-bogo",
@@ -52,7 +49,6 @@ export const promotionalBanners: PromotionalBanner[] = [
     expiryDate: "July 15, 2025",
     productImages: "/images/tomato-paste.webp",
     discountType: "buy-x-get-y",
-    discountValue: "Buy 2, Get 1 Free",
   },
 ];
 

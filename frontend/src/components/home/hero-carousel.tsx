@@ -87,7 +87,7 @@ export function HeroCarousel() {
                       </div>
 
                       <Link
-                        href="/categories"
+                        href="/shop"
                         className="flex items-center justify-center gap-2.5 rounded-lg bg-green-dark p-3 transition-all duration-300 hover:bg-green-dark/90 sm:p-4"
                       >
                         <CartIcon color="white" />
@@ -143,7 +143,7 @@ export function HeroCarousel() {
                         </div>
 
                         <Link
-                          href="/categories"
+                          href="/shop"
                           className="inline-flex items-center gap-2 rounded-lg bg-green-dark px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-dark/90 md:w-fit"
                         >
                           <CartIcon color="white" />

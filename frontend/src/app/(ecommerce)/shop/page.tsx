@@ -4,7 +4,7 @@ import {
   CategoryNav,
 } from "@/components/shop";
 import { getActivePromotions } from "@/lib/mock-data/promotions";
-import { getShopSections } from "@/lib/mock-data/shop-sections";
+import { getShopSections } from "@/lib/data/shop-sections";
 import { Metadata } from "next";
 
 // Metadata for SEO

@@ -1,4 +1,4 @@
-import { Feature } from "@/lib/mock-data/features";
+import { Feature } from "@/lib/data/features";
 
 interface FeatureCardProps {
   feature: Feature;

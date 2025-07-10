@@ -7,7 +7,7 @@ import {
   ProductImageGallery,
 } from "@/components/shop";
 import { products, getProductBySlug } from "@/lib/mock-data/products";
-import { getSimilarProductsSection } from "@/lib/mock-data/shop-sections";
+import { getSimilarProductsSection } from "@/lib/data/shop-sections";
 
 interface ProductPageProps {
   params: {

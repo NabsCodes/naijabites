@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import type { CarouselApi } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { offeringsCarousel } from "@/lib/mock-data/features";
+import { offeringsCarousel } from "@/lib/data/features";
 
 export const WhatWeOfferSection = () => {
   const [api, setApi] = useState<CarouselApi>();

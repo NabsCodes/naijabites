@@ -17,7 +17,6 @@ export function ProductCardSkeleton({ className }: ProductCardSkeletonProps) {
         {/* Product Image Skeleton */}
         <div className="relative aspect-square overflow-hidden rounded-xl bg-[#f9f9f9]">
           <Skeleton className="h-full w-full" />
-          <Skeleton className="absolute left-2 top-2 h-5 w-10 rounded-full" />
         </div>
 
         {/* Product Details Skeleton */}

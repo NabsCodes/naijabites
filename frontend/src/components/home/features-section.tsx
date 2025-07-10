@@ -9,7 +9,7 @@ const features = [
   {
     id: 0,
     icon: Truck,
-    title: "Quick Delivery",
+    title: "Quick Delivery Service",
     description: "Free shipping with discount",
   },
   {

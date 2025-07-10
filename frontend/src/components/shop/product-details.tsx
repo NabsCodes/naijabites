@@ -329,10 +329,10 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       {/* Action Buttons */}
       <div className="pt-4 sm:pt-6">
         <Button
-          variant="outline"
+          variant="ghost"
           size="lg"
           onClick={handleAddToCart}
-          className="h-12 w-full border border-green-dark text-base font-semibold text-green-dark transition-colors hover:border-green-dark/90 hover:bg-gray-50 hover:text-green-dark/90 sm:h-14"
+          className="h-12 w-full border border-green-dark bg-green-dark text-base font-semibold text-white transition-colors duration-300 hover:border-green-dark/90 hover:bg-green-dark/90 hover:text-white sm:h-14"
           disabled={!canPurchase || cartState === "adding"}
         >
           {cartState === "adding" ? (

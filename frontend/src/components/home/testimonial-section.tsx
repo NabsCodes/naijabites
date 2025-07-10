@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import { TestimonialCard } from "@/components/common/testimonial-card";
-import { testimonials } from "@/lib/mock-data/testimonials";
+import { testimonials } from "@/lib/data/testimonials";
 import { Marquee } from "@/components/ui/marquee";
 
 export const TestimonialSection = () => {

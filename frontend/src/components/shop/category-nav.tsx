@@ -13,12 +13,12 @@ export function CategoryNav() {
   const pathname = usePathname();
 
   return (
-    <div className="mx-auto">
+    <>
       {/* Desktop Navigation */}
       <div className="hidden lg:block">
         <div className="container-padding">
           <div className="section-container">
-            <div className="flex items-center gap-8 py-4">
+            <div className="flex items-center justify-center gap-8 py-4">
               {headerCategories.map((category) => (
                 <Link
                   key={category.id}
@@ -41,7 +41,7 @@ export function CategoryNav() {
       {/* Mobile Navigation - Clean horizontal scroll */}
       <div className="block w-full overflow-hidden lg:hidden">
         <div className="scrollbar-hide overflow-x-auto border-b border-gray-100">
-          <div className="flex w-max min-w-full">
+          <div className="flex w-max min-w-full whitespace-nowrap">
             {headerCategories.map((category) => (
               <Link
                 key={category.id}
@@ -59,6 +59,6 @@ export function CategoryNav() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

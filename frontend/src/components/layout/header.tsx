@@ -66,7 +66,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-green-dark/50 bg-green-deep text-white shadow-sm">
+    <header className="sticky top-0 z-50 bg-green-deep text-white">
       {/* Desktop Header */}
       <div className="hidden lg:block">
         <div className="container-padding">

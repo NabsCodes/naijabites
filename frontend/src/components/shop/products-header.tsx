@@ -7,35 +7,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ProductFilters, buildFilterUrl } from "@/lib/product-filters";
+import { useRouter, usePathname } from "next/navigation";
 
 interface ProductsHeaderProps {
   title: string;
   description?: string;
   totalProducts: number;
-  currentSort?: string;
-  onSortChange?: (sort: string) => void;
+  currentPage: number;
+  totalPages: number;
+  appliedFilters: ProductFilters;
   className?: string;
 }
 
 const sortOptions = [
-  { value: "relevance", label: "Relevance" },
-  { value: "price-low", label: "Price: Low to High" },
-  { value: "price-high", label: "Price: High to Low" },
+  { value: "name-asc", label: "Name: A to Z" },
+  { value: "name-desc", label: "Name: Z to A" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+  { value: "rating-desc", label: "Highest Rated" },
+  { value: "discount-desc", label: "Biggest Discount" },
   { value: "newest", label: "Newest First" },
-  { value: "rating", label: "Customer Rating" },
-  { value: "popular", label: "Most Popular" },
-  { value: "name-az", label: "Name: A to Z" },
-  { value: "name-za", label: "Name: Z to A" },
 ];
 
 export function ProductsHeader({
   title,
   description,
   totalProducts,
-  currentSort = "relevance",
-  onSortChange,
+  currentPage,
+  totalPages,
+  appliedFilters,
   className,
 }: ProductsHeaderProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const sortValue = appliedFilters.sort || "name-asc";
+
+  // Handle sort change
+  const handleSortChange = (newSort: string) => {
+    const newUrl = buildFilterUrl(pathname, {
+      ...appliedFilters,
+      sort: newSort,
+      page: 1, // Reset to first page when sorting
+    });
+    router.push(newUrl);
+  };
+
   return (
     <div className={className}>
       <div className="space-y-4 pt-3">
@@ -50,17 +68,23 @@ export function ProductsHeader({
         </div>
 
         {/* Results Count & Sorting */}
-        <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+        <div className="flex flex-col gap-3 border-b border-gray-200 pb-4 md:flex-row md:items-center md:justify-between md:gap-0">
           {/* Results Count */}
           <div className="text-sm text-gray-600">
             {totalProducts.toLocaleString()} product
-            {totalProducts !== 1 ? "s" : ""}
+            {totalProducts !== 1 ? "s " : ""}
+            {/* Show page info */}
+            {currentPage && totalPages && totalPages > 1 && (
+              <span className="ml-2 text-gray-400">
+                (Page {currentPage} of {totalPages})
+              </span>
+            )}
           </div>
 
           {/* Sort Controls */}
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-600">Sort by:</span>
-            <Select value={currentSort} onValueChange={onSortChange}>
+            <Select value={sortValue} onValueChange={handleSortChange}>
               <SelectTrigger className="h-9 w-[180px] border-gray-300 text-sm focus:border-green-dark focus:ring-green-dark">
                 <SelectValue placeholder="Select sorting" />
               </SelectTrigger>

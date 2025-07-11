@@ -2,7 +2,8 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { usePagination } from "@/hooks/use-pagination";
+import { FilteredProductsResult, buildFilterUrl } from "@/lib/product-filters";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -13,31 +14,52 @@ import {
 
 const PER_PAGE_OPTIONS = [8, 12, 16, 24, 32];
 
-type PaginationData = ReturnType<typeof usePagination>;
-
 interface ProductPaginationProps {
-  pagination: PaginationData;
+  result: FilteredProductsResult;
   className?: string;
   showItemsPerPage?: boolean;
 }
 
 export function ProductPagination({
-  pagination,
+  result,
   className,
   showItemsPerPage = true,
 }: ProductPaginationProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const {
     currentPage,
     totalPages,
-    totalItems,
-    itemsPerPage,
-    startItem,
-    endItem,
+    totalCount,
     hasNextPage,
     hasPreviousPage,
-    goToPage,
-    changeItemsPerPage,
-  } = pagination;
+    appliedFilters,
+  } = result;
+
+  // Get items per page from applied filters or default to 16
+  const itemsPerPage = appliedFilters.limit || 16;
+  const startItem = totalCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+  const endItem = Math.min(currentPage * itemsPerPage, totalCount);
+
+  // Navigate to a specific page
+  const goToPage = (page: number) => {
+    const newUrl = buildFilterUrl(pathname, {
+      ...appliedFilters,
+      page: page,
+    });
+    router.push(newUrl);
+  };
+
+  // Change items per page
+  const changeItemsPerPage = (newLimit: number) => {
+    const newUrl = buildFilterUrl(pathname, {
+      ...appliedFilters,
+      limit: newLimit,
+      page: 1, // Reset to first page
+    });
+    router.push(newUrl);
+  };
 
   // Don't render if there's only one page and no items per page selector
   if (totalPages <= 1 && !showItemsPerPage) {
@@ -83,17 +105,17 @@ export function ProductPagination({
         {/* Products Info */}
         <div className="text-sm text-gray-600">
           Showing {startItem.toLocaleString()}-{endItem.toLocaleString()} of{" "}
-          {totalItems.toLocaleString()} products
+          {totalCount.toLocaleString()} products
         </div>
 
         {showItemsPerPage && (
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-gray-600">Show:</span>
+            <span className="text-muted-foreground">Show:</span>
             <Select
               value={itemsPerPage.toString()}
               onValueChange={(value) => changeItemsPerPage(parseInt(value))}
             >
-              <SelectTrigger className="h-8 w-20">
+              <SelectTrigger className="h-9 w-20 border-input bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -104,7 +126,7 @@ export function ProductPagination({
                 ))}
               </SelectContent>
             </Select>
-            <span className="text-gray-600">per page</span>
+            <span className="text-muted-foreground">per page</span>
           </div>
         )}
       </div>

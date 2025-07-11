@@ -6,7 +6,7 @@ import {
   ProductDetails,
   ProductImageGallery,
 } from "@/components/shop";
-import { products, getProductBySlug } from "@/lib/mock-data/products";
+import { getProductBySlug } from "@/lib/mock-data/products";
 import { getSimilarProductsSection } from "@/lib/data/shop-sections";
 
 interface ProductPageProps {
@@ -98,11 +98,4 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
     </main>
   );
-}
-
-// Generate static params for all products
-export async function generateStaticParams() {
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
 }

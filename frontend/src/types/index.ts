@@ -25,8 +25,8 @@ export interface Product {
     count: number;
   };
   slug: string;
-  category: string;
-  brand: string;
+  category: string; // Category name (maps to categories.ts)
+  brand: string; // Brand name (maps to brands.ts)
   inStock: boolean;
   isOnSale: boolean;
 }
@@ -37,7 +37,7 @@ export interface Category {
   name: string;
   slug: string;
   description?: string;
-  productCount: number;
+  productCount?: number; // Optional, calculated dynamically when needed
 }
 
 // Brand Types
@@ -45,8 +45,8 @@ export interface Brand {
   id: string;
   name: string;
   slug: string;
-  productCount: number;
   description?: string;
+  productCount?: number; // Optional, calculated dynamically when needed
 }
 
 // User Types

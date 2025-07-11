@@ -22,71 +22,61 @@ import {
 } from "@/components/ui/accordion";
 import { Slider } from "@/components/ui/slider";
 import { Rating } from "@/components/ui/rating";
-import { categories } from "@/lib/mock-data/categories";
-import { brands } from "@/lib/mock-data/brands";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
+import { ProductFilters } from "@/lib/product-filters";
+import { useFilterState } from "@/hooks/use-filter-state";
 
-export function FilterMobile() {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 100000]);
-  const [selectedDiscount, setSelectedDiscount] = useState<string>("");
-  const [showInStockOnly, setShowInStockOnly] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<string>("");
+interface FilterOptions {
+  categories: string[];
+  brands: string[];
+  priceRange: { min: number; max: number };
+  ratings: number[];
+  sortOptions: { value: string; label: string }[];
+}
+
+interface FilterMobileProps {
+  filterOptions: FilterOptions;
+  appliedFilters: ProductFilters;
+}
+
+export function FilterMobile({
+  filterOptions,
+  appliedFilters,
+}: FilterMobileProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [brandSearch, setBrandSearch] = useState("");
 
-  const filteredBrands = brands.filter((brand) =>
-    brand.name.toLowerCase().includes(brandSearch.toLowerCase()),
-  );
+  const {
+    brandSearch,
+    setBrandSearch,
+    priceRange,
+    priceInputs,
+    filteredBrands,
+    hasActiveFilters,
+    activeFilterCount,
+    updateFilter,
+    clearAllFilters,
+    handlePriceSliderChange,
+    handlePriceInputChange,
+    applyPriceFilter,
+    getDisplayPrice,
+  } = useFilterState(filterOptions, appliedFilters);
 
-  const hasActiveFilters =
-    selectedCategories.length > 0 ||
-    selectedBrands.length > 0 ||
-    selectedDiscount ||
-    showInStockOnly ||
-    selectedRating ||
-    priceRange[0] > 0 ||
-    priceRange[1] < 100000;
-
-  const clearAllFilters = () => {
-    setSelectedCategories([]);
-    setSelectedBrands([]);
-    setPriceRange([0, 100000]);
-    setSelectedDiscount("");
-    setShowInStockOnly(false);
-    setSelectedRating("");
+  // Quick filter update that closes sheet immediately (for single-choice filters)
+  const updateAndClose = (newFilters: Partial<ProductFilters>) => {
+    updateFilter(newFilters);
+    setIsOpen(false);
   };
 
-  const handleCategoryChange = (categoryId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedCategories([...selectedCategories, categoryId]);
-    } else {
-      setSelectedCategories(
-        selectedCategories.filter((id) => id !== categoryId),
-      );
-    }
+  // Mobile-specific clear that closes sheet
+  const clearAllFiltersMobile = () => {
+    clearAllFilters();
+    setIsOpen(false);
   };
 
-  const handleBrandChange = (brandId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedBrands([...selectedBrands, brandId]);
-    } else {
-      setSelectedBrands(selectedBrands.filter((id) => id !== brandId));
-    }
-  };
-
-  const handleApply = () => {
-    // TODO: Apply filters logic here
-    console.log("Applied filters:", {
-      categories: selectedCategories,
-      brands: selectedBrands,
-      priceRange,
-      discount: selectedDiscount,
-      inStockOnly: showInStockOnly,
-      rating: selectedRating,
-    });
+  // Apply price and close sheet
+  const applyPriceAndClose = () => {
+    applyPriceFilter();
     setIsOpen(false);
   };
 
@@ -106,11 +96,7 @@ export function FilterMobile() {
               <Filter className="h-6 w-6 text-white" />
               {hasActiveFilters && (
                 <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                  {selectedCategories.length +
-                    selectedBrands.length +
-                    (selectedRating ? 1 : 0) +
-                    (selectedDiscount ? 1 : 0) +
-                    (priceRange[0] > 0 || priceRange[1] < 100000 ? 1 : 0)}
+                  {activeFilterCount}
                 </div>
               )}
             </Button>
@@ -119,16 +105,16 @@ export function FilterMobile() {
           <SheetContent side="left" className="w-full p-0 sm:max-w-md">
             <div className="flex h-full flex-col">
               {/* Header */}
-              <SheetHeader className="flex flex-row items-center justify-between border-b px-4 py-2">
+              <SheetHeader className="flex flex-row items-center justify-between border-b px-4 py-3">
                 <SheetTitle className="text-left text-lg font-semibold">
                   Filter Products
                 </SheetTitle>
                 <SheetClose asChild>
                   <button
-                    className="inline-flex items-center justify-center p-0"
+                    className="inline-flex items-center justify-center p-1"
                     aria-label="Close filter panel"
                   >
-                    <X className="text-gray-600" aria-hidden="true" />
+                    <X className="h-5 w-5 text-gray-600" />
                   </button>
                 </SheetClose>
               </SheetHeader>
@@ -137,55 +123,58 @@ export function FilterMobile() {
               <div className="flex-1 overflow-y-auto">
                 <Accordion
                   type="multiple"
-                  defaultValue={["categories", "brands", "price"]}
+                  defaultValue={[
+                    "categories",
+                    "brands",
+                    "price",
+                    "sale",
+                    "ratings",
+                  ]}
                   className="w-full"
                 >
-                  {/* Categories */}
-                  <AccordionItem value="categories" className="px-4">
-                    <AccordionTrigger className="py-6 text-lg font-semibold">
-                      Categories
-                    </AccordionTrigger>
-                    <AccordionContent className="overflow-visible">
-                      <div className="space-y-4">
-                        {categories
-                          .filter((cat) => cat.id !== "all-products")
-                          .map((category) => (
+                  {/* Categories - Hide on category pages */}
+                  {filterOptions.categories.length > 0 && (
+                    <AccordionItem value="categories" className="px-4">
+                      <AccordionTrigger className="py-4 text-base font-semibold">
+                        Categories
+                      </AccordionTrigger>
+                      <AccordionContent className="overflow-visible">
+                        <div className="max-h-48 space-y-3 overflow-y-auto py-2">
+                          {filterOptions.categories.map((category) => (
                             <div
-                              key={category.id}
+                              key={category}
                               className="flex items-center space-x-3"
                             >
                               <Checkbox
-                                id={`mobile-${category.id}`}
-                                checked={selectedCategories.includes(
-                                  category.id,
-                                )}
+                                id={`mobile-${category}`}
+                                checked={appliedFilters.category === category}
                                 onCheckedChange={(checked) =>
-                                  handleCategoryChange(
-                                    category.id,
-                                    checked as boolean,
-                                  )
+                                  updateAndClose({
+                                    category: checked ? category : undefined,
+                                  })
                                 }
                                 className="h-5 w-5 rounded-full data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
                               />
                               <Label
-                                htmlFor={`mobile-${category.id}`}
-                                className="flex-1 cursor-pointer py-2 text-base"
+                                htmlFor={`mobile-${category}`}
+                                className="flex-1 cursor-pointer py-1 text-sm"
                               >
-                                {category.name}
+                                {category}
                               </Label>
                             </div>
                           ))}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
 
                   {/* Brands */}
                   <AccordionItem value="brands" className="px-4">
-                    <AccordionTrigger className="py-6 text-lg font-semibold">
+                    <AccordionTrigger className="py-4 text-base font-semibold">
                       Brands
                     </AccordionTrigger>
-                    <AccordionContent className="overflow-visible p-1">
-                      <div className="space-y-4">
+                    <AccordionContent className="overflow-visible">
+                      <div className="space-y-3 py-2">
                         {/* Search */}
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -196,29 +185,29 @@ export function FilterMobile() {
                             className="pl-10"
                           />
                         </div>
+
                         {/* Brands List */}
-                        <div className="max-h-64 space-y-3 overflow-y-auto">
+                        <div className="max-h-48 space-y-3 overflow-y-auto">
                           {filteredBrands.map((brand) => (
                             <div
-                              key={brand.id}
+                              key={brand}
                               className="flex items-center space-x-3"
                             >
                               <Checkbox
-                                id={`mobile-${brand.id}`}
-                                checked={selectedBrands.includes(brand.id)}
+                                id={`mobile-${brand}`}
+                                checked={appliedFilters.brand === brand}
                                 onCheckedChange={(checked) =>
-                                  handleBrandChange(
-                                    brand.id,
-                                    checked as boolean,
-                                  )
+                                  updateAndClose({
+                                    brand: checked ? brand : undefined,
+                                  })
                                 }
                                 className="h-5 w-5 data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
                               />
                               <Label
-                                htmlFor={`mobile-${brand.id}`}
-                                className="cursor-pointer py-2 text-base"
+                                htmlFor={`mobile-${brand}`}
+                                className="cursor-pointer py-1 text-sm"
                               >
-                                {brand.name}
+                                {brand}
                               </Label>
                             </div>
                           ))}
@@ -229,103 +218,105 @@ export function FilterMobile() {
 
                   {/* Price */}
                   <AccordionItem value="price" className="px-4">
-                    <AccordionTrigger className="py-6 text-lg font-semibold">
-                      Price Range
+                    <AccordionTrigger className="py-4 text-base font-semibold">
+                      Price
                     </AccordionTrigger>
-                    <AccordionContent className="overflow-visible px-1 pt-2">
-                      <div className="space-y-6">
+                    <AccordionContent className="overflow-visible">
+                      <div className="space-y-4 py-2">
+                        {/* Price Range Slider */}
                         <Slider
                           value={priceRange}
-                          onValueChange={setPriceRange}
-                          max={100000}
-                          min={0}
-                          step={1000}
+                          onValueChange={handlePriceSliderChange}
+                          max={filterOptions.priceRange.max}
+                          min={filterOptions.priceRange.min}
+                          step={100}
                           className="w-full [&>span:first-child]:bg-green-dark"
                         />
-                        <div className="flex items-center justify-between text-base text-gray-600">
-                          <span>{formatPrice(priceRange[0])}</span>
-                          <span>{formatPrice(priceRange[1])}</span>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
 
-                  {/* Discounts */}
-                  <AccordionItem value="discounts" className="px-4">
-                    <AccordionTrigger className="py-6 text-lg font-semibold">
-                      Discounts
-                    </AccordionTrigger>
-                    <AccordionContent className="overflow-visible">
-                      <RadioGroup
-                        value={selectedDiscount}
-                        onValueChange={setSelectedDiscount}
-                      >
-                        <div className="space-y-4">
-                          {[
-                            { value: "10", label: "10% and above" },
-                            { value: "20", label: "20% and above" },
-                            { value: "30", label: "30% and above" },
-                            { value: "50", label: "50% and above" },
-                            { value: "bogo", label: "Buy 1 Get 1 Free" },
-                          ].map((discount) => (
-                            <div
-                              key={discount.value}
-                              className="flex items-center space-x-3"
-                            >
-                              <RadioGroupItem
-                                value={discount.value}
-                                id={`mobile-discount-${discount.value}`}
-                                className="h-5 w-5 border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
-                              />
-                              <Label
-                                htmlFor={`mobile-discount-${discount.value}`}
-                                className="cursor-pointer py-2 text-base"
-                              >
-                                {discount.label}
-                              </Label>
-                            </div>
-                          ))}
+                        {/* Price Input Fields */}
+                        <div className="flex items-center gap-3">
+                          <Input
+                            type="number"
+                            placeholder="Min"
+                            value={priceInputs.min}
+                            onChange={(e) =>
+                              handlePriceInputChange("min", e.target.value)
+                            }
+                            className="text-sm"
+                          />
+                          <Input
+                            type="number"
+                            placeholder="Max"
+                            value={priceInputs.max}
+                            onChange={(e) =>
+                              handlePriceInputChange("max", e.target.value)
+                            }
+                            className="text-sm"
+                          />
                         </div>
-                      </RadioGroup>
-                    </AccordionContent>
-                  </AccordionItem>
 
-                  {/* Stock */}
-                  <AccordionItem value="stock" className="px-4">
-                    <AccordionTrigger className="py-6 text-lg font-semibold">
-                      Availability
-                    </AccordionTrigger>
-                    <AccordionContent className="overflow-visible">
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          id="mobile-in-stock"
-                          checked={showInStockOnly}
-                          onCheckedChange={(checked) =>
-                            setShowInStockOnly(checked as boolean)
-                          }
-                          className="h-5 w-5 data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
-                        />
-                        <Label
-                          htmlFor="mobile-in-stock"
-                          className="cursor-pointer py-2 text-base"
+                        {/* Price Display */}
+                        <div className="flex items-center justify-between text-sm text-gray-600">
+                          <span>{getDisplayPrice(priceRange[0], "min")}</span>
+                          <span>{getDisplayPrice(priceRange[1], "max")}</span>
+                        </div>
+
+                        {/* Apply Button */}
+                        <Button
+                          onClick={applyPriceAndClose}
+                          className="w-full bg-green-dark hover:bg-green-dark/90"
                         >
-                          Show in-stock items only
-                        </Label>
+                          Apply
+                        </Button>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
 
-                  {/* Ratings */}
+                  {/* Special Offers */}
+                  <AccordionItem value="sale" className="px-4">
+                    <AccordionTrigger className="py-4 text-base font-semibold">
+                      Special Offers
+                    </AccordionTrigger>
+                    <AccordionContent className="overflow-visible">
+                      <div className="py-2">
+                        <div className="flex items-center space-x-3">
+                          <Checkbox
+                            id="mobile-on-sale"
+                            checked={appliedFilters.onSale === true}
+                            onCheckedChange={(checked) =>
+                              updateAndClose({
+                                onSale: checked ? true : undefined,
+                              })
+                            }
+                            className="h-5 w-5 data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
+                          />
+                          <Label
+                            htmlFor="mobile-on-sale"
+                            className="cursor-pointer text-sm"
+                          >
+                            Show items on sale only
+                          </Label>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  {/* Ratings - Single choice, close immediately */}
                   <AccordionItem value="ratings" className="border-b-0 px-4">
-                    <AccordionTrigger className="py-6 text-lg font-semibold">
-                      Customer Ratings
+                    <AccordionTrigger className="py-4 text-base font-semibold">
+                      Ratings
                     </AccordionTrigger>
                     <AccordionContent className="overflow-visible">
                       <RadioGroup
-                        value={selectedRating}
-                        onValueChange={setSelectedRating}
+                        value={appliedFilters.rating?.toString() || ""}
+                        onValueChange={(value) =>
+                          updateAndClose({
+                            rating: value ? Number(value) : undefined,
+                          })
+                        }
+                        className="py-2"
                       >
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           {[5, 4, 3, 2, 1].map((rating) => (
                             <div
                               key={rating}
@@ -334,16 +325,16 @@ export function FilterMobile() {
                               <RadioGroupItem
                                 value={rating.toString()}
                                 id={`mobile-rating-${rating}`}
-                                className="h-5 w-5 border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
+                                className="border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
                               />
                               <Label
                                 htmlFor={`mobile-rating-${rating}`}
-                                className="flex cursor-pointer items-center gap-2 py-2 text-base"
+                                className="flex cursor-pointer items-center gap-2 text-sm"
                               >
                                 <Rating
                                   rating={rating}
                                   variant="compact"
-                                  size={16}
+                                  size={14}
                                 />
                                 <span>and above</span>
                               </Label>
@@ -356,25 +347,18 @@ export function FilterMobile() {
                 </Accordion>
               </div>
 
-              {/* Footer */}
-              <div className="border-t bg-white p-4">
-                <div className="flex gap-3">
+              {/* Bottom Action Bar */}
+              {hasActiveFilters && (
+                <div className="border-t bg-white p-4">
                   <Button
+                    onClick={clearAllFiltersMobile}
                     variant="outline"
-                    onClick={clearAllFilters}
-                    className="h-10 flex-1 text-base transition-all duration-300 hover:bg-gray-100"
-                    disabled={!hasActiveFilters}
+                    className="w-full border-green-dark text-green-dark hover:bg-green-dark hover:text-white"
                   >
-                    Reset
-                  </Button>
-                  <Button
-                    onClick={handleApply}
-                    className="h-10 flex-1 bg-green-dark text-base transition-all duration-300 hover:bg-green-dark/90"
-                  >
-                    Show Results
+                    Reset All Filters
                   </Button>
                 </div>
-              </div>
+              )}
             </div>
           </SheetContent>
         </Sheet>

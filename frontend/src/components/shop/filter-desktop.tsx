@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,65 +14,43 @@ import {
 } from "@/components/ui/accordion";
 import { Slider } from "@/components/ui/slider";
 import { Rating } from "@/components/ui/rating";
-import { categories } from "@/lib/mock-data/categories";
-import { brands } from "@/lib/mock-data/brands";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { ProductFilters } from "@/lib/product-filters";
+import { useFilterState } from "@/hooks/use-filter-state";
+
+interface FilterOptions {
+  categories: string[];
+  brands: string[];
+  priceRange: { min: number; max: number };
+  ratings: number[];
+}
 
 interface FilterDesktopProps {
   className?: string;
+  filterOptions: FilterOptions;
+  appliedFilters: ProductFilters;
 }
 
-export function FilterDesktop({ className }: FilterDesktopProps) {
-  // Filter states
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [brandSearch, setBrandSearch] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 100000]);
-  const [selectedDiscount, setSelectedDiscount] = useState<string>("");
-  const [showInStockOnly, setShowInStockOnly] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<string>("");
-
-  const filteredBrands = brands.filter((brand) =>
-    brand.name.toLowerCase().includes(brandSearch.toLowerCase()),
-  );
-
-  const hasActiveFilters =
-    selectedCategories.length > 0 ||
-    selectedBrands.length > 0 ||
-    selectedDiscount ||
-    showInStockOnly ||
-    selectedRating ||
-    priceRange[0] > 0 ||
-    priceRange[1] < 100000;
-
-  const clearAllFilters = () => {
-    setSelectedCategories([]);
-    setSelectedBrands([]);
-    setBrandSearch("");
-    setPriceRange([0, 100000]);
-    setSelectedDiscount("");
-    setShowInStockOnly(false);
-    setSelectedRating("");
-  };
-
-  const handleCategoryChange = (categoryId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedCategories([...selectedCategories, categoryId]);
-    } else {
-      setSelectedCategories(
-        selectedCategories.filter((id) => id !== categoryId),
-      );
-    }
-  };
-
-  const handleBrandChange = (brandId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedBrands([...selectedBrands, brandId]);
-    } else {
-      setSelectedBrands(selectedBrands.filter((id) => id !== brandId));
-    }
-  };
+export function FilterDesktop({
+  className,
+  filterOptions,
+  appliedFilters,
+}: FilterDesktopProps) {
+  const {
+    brandSearch,
+    setBrandSearch,
+    priceRange,
+    priceInputs,
+    filteredBrands,
+    hasActiveFilters,
+    updateFilter,
+    clearAllFilters,
+    handlePriceSliderChange,
+    handlePriceInputChange,
+    applyPriceFilter,
+    getDisplayPrice,
+  } = useFilterState(filterOptions, appliedFilters);
 
   return (
     <div className={cn("w-full rounded-xl border bg-white", className)}>
@@ -92,50 +69,43 @@ export function FilterDesktop({ className }: FilterDesktopProps) {
 
       <Accordion
         type="multiple"
-        defaultValue={[
-          "categories",
-          "brands",
-          "price",
-          "discounts",
-          "stock",
-          "ratings",
-        ]}
+        defaultValue={["categories", "brands", "price", "sale", "ratings"]}
         className="w-full"
       >
         <Separator className="w-full" />
-        {/* Categories */}
-        <AccordionItem value="categories" className="px-4">
-          <AccordionTrigger className="text-lg font-semibold">
-            Categories
-          </AccordionTrigger>
-          <AccordionContent className="overflow-visible px-1 pt-1">
-            <div className="space-y-3">
-              {categories
-                .filter((cat) => cat.id !== "all-products")
-                .map((category) => (
-                  <div
-                    key={category.id}
-                    className="flex items-center space-x-3"
-                  >
+
+        {/* Categories - Hide on category pages */}
+        {filterOptions.categories.length > 0 && (
+          <AccordionItem value="categories" className="px-4">
+            <AccordionTrigger className="text-lg font-semibold">
+              Categories
+            </AccordionTrigger>
+            <AccordionContent className="overflow-visible px-1 pt-1">
+              <div className="max-h-64 space-y-3 overflow-y-auto">
+                {filterOptions.categories.map((category) => (
+                  <div key={category} className="flex items-center space-x-3">
                     <Checkbox
-                      id={category.id}
-                      checked={selectedCategories.includes(category.id)}
+                      id={category}
+                      checked={appliedFilters.category === category}
                       onCheckedChange={(checked) =>
-                        handleCategoryChange(category.id, checked as boolean)
+                        updateFilter({
+                          category: checked ? category : undefined,
+                        })
                       }
                       className="rounded-full data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
                     />
                     <Label
-                      htmlFor={category.id}
+                      htmlFor={category}
                       className="flex-1 cursor-pointer text-sm"
                     >
-                      {category.name}
+                      {category}
                     </Label>
                   </div>
                 ))}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        )}
 
         {/* Brands */}
         <AccordionItem value="brands" className="px-4">
@@ -158,20 +128,17 @@ export function FilterDesktop({ className }: FilterDesktopProps) {
               {/* Brands List */}
               <div className="max-h-64 space-y-3 overflow-y-auto">
                 {filteredBrands.map((brand) => (
-                  <div key={brand.id} className="flex items-center space-x-3">
+                  <div key={brand} className="flex items-center space-x-3 pb-2">
                     <Checkbox
-                      id={brand.id}
-                      checked={selectedBrands.includes(brand.id)}
+                      id={brand}
+                      checked={appliedFilters.brand === brand}
                       onCheckedChange={(checked) =>
-                        handleBrandChange(brand.id, checked as boolean)
+                        updateFilter({ brand: checked ? brand : undefined })
                       }
                       className="data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
                     />
-                    <Label
-                      htmlFor={brand.id}
-                      className="cursor-pointer text-sm"
-                    >
-                      {brand.name}
+                    <Label htmlFor={brand} className="cursor-pointer text-sm">
+                      {brand}
                     </Label>
                   </div>
                 ))}
@@ -187,151 +154,72 @@ export function FilterDesktop({ className }: FilterDesktopProps) {
           </AccordionTrigger>
           <AccordionContent className="overflow-visible px-1 pt-4">
             <div className="space-y-4">
+              {/* Price Range Slider */}
               <Slider
                 value={priceRange}
-                onValueChange={setPriceRange}
-                max={100000}
-                min={0}
-                step={1000}
-                className="w-full [&>span:first-child]:bg-green-dark"
+                onValueChange={handlePriceSliderChange}
+                max={filterOptions.priceRange.max}
+                min={filterOptions.priceRange.min}
+                step={100}
+                className="w-full [&>span:first-child]:bg-green-dark/90"
               />
+
+              {/* Price Input Fields */}
               <div className="flex items-center gap-3">
                 <Input
                   type="number"
                   placeholder="Min"
-                  value={priceRange[0] === 0 ? "" : priceRange[0]}
+                  value={priceInputs.min}
                   onChange={(e) =>
-                    setPriceRange([
-                      parseInt(e.target.value) || 0,
-                      priceRange[1],
-                    ])
+                    handlePriceInputChange("min", e.target.value)
                   }
                   className="text-sm"
                 />
                 <Input
                   type="number"
                   placeholder="Max"
-                  value={priceRange[1] === 100000 ? "" : priceRange[1]}
+                  value={priceInputs.max}
                   onChange={(e) =>
-                    setPriceRange([
-                      priceRange[0],
-                      parseInt(e.target.value) || 100000,
-                    ])
+                    handlePriceInputChange("max", e.target.value)
                   }
                   className="text-sm"
                 />
               </div>
 
+              {/* Price Display */}
               <div className="flex items-center justify-between text-sm text-gray-600">
-                <span>{formatPrice(priceRange[0])}</span>
-                <span>{formatPrice(priceRange[1])}</span>
+                <span>{getDisplayPrice(priceRange[0], "min")}</span>
+                <span>{getDisplayPrice(priceRange[1], "max")}</span>
               </div>
 
-              <Button className="w-full bg-green-dark transition-all duration-300 hover:bg-green-dark/90">
+              {/* Apply Button */}
+              <Button
+                onClick={applyPriceFilter}
+                className="w-full bg-green-dark transition-all duration-300 hover:bg-green-dark/90"
+              >
                 Apply
               </Button>
             </div>
           </AccordionContent>
         </AccordionItem>
 
-        {/* Discounts */}
-        <AccordionItem value="discounts" className="px-4">
+        {/* On Sale */}
+        <AccordionItem value="sale" className="px-4">
           <AccordionTrigger className="text-lg font-semibold">
-            Discounts
-          </AccordionTrigger>
-          <AccordionContent className="overflow-visible px-1 pt-1">
-            <RadioGroup
-              value={selectedDiscount}
-              onValueChange={setSelectedDiscount}
-            >
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem
-                    value="10"
-                    id="discount-10"
-                    className="border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
-                  />
-                  <Label
-                    htmlFor="discount-10"
-                    className="cursor-pointer text-sm"
-                  >
-                    10% and above
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem
-                    value="20"
-                    id="discount-20"
-                    className="border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
-                  />
-                  <Label
-                    htmlFor="discount-20"
-                    className="cursor-pointer text-sm"
-                  >
-                    20% and above
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem
-                    value="30"
-                    id="discount-30"
-                    className="border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
-                  />
-                  <Label
-                    htmlFor="discount-30"
-                    className="cursor-pointer text-sm"
-                  >
-                    30% and above
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem
-                    value="50"
-                    id="discount-50"
-                    className="border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
-                  />
-                  <Label
-                    htmlFor="discount-50"
-                    className="cursor-pointer text-sm"
-                  >
-                    50% and above
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem
-                    value="bogo"
-                    id="discount-bogo"
-                    className="border-gray-300 focus:ring-green-dark data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
-                  />
-                  <Label
-                    htmlFor="discount-bogo"
-                    className="cursor-pointer text-sm"
-                  >
-                    Buy 1 Get 1 Free
-                  </Label>
-                </div>
-              </div>
-            </RadioGroup>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Stock Availability */}
-        <AccordionItem value="stock" className="px-4">
-          <AccordionTrigger className="text-lg font-semibold">
-            Stock Availability
+            Special Offers
           </AccordionTrigger>
           <AccordionContent className="overflow-visible px-1 pt-1">
             <div className="flex items-center space-x-3">
               <Checkbox
-                id="in-stock"
-                checked={showInStockOnly}
+                id="on-sale"
+                checked={appliedFilters.onSale === true}
                 onCheckedChange={(checked) =>
-                  setShowInStockOnly(checked as boolean)
+                  updateFilter({ onSale: checked ? true : undefined })
                 }
                 className="data-[state=checked]:bg-green-dark data-[state=checked]:text-white"
               />
-              <Label htmlFor="in-stock" className="cursor-pointer text-sm">
-                Show in-stock items only
+              <Label htmlFor="on-sale" className="cursor-pointer text-sm">
+                Show items on sale only
               </Label>
             </div>
           </AccordionContent>
@@ -344,8 +232,10 @@ export function FilterDesktop({ className }: FilterDesktopProps) {
           </AccordionTrigger>
           <AccordionContent className="overflow-visible px-1 pt-1">
             <RadioGroup
-              value={selectedRating}
-              onValueChange={setSelectedRating}
+              value={appliedFilters.rating?.toString() || ""}
+              onValueChange={(value) =>
+                updateFilter({ rating: value ? Number(value) : undefined })
+              }
             >
               <div className="space-y-3">
                 {[5, 4, 3, 2, 1].map((rating) => (

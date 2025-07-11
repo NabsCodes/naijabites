@@ -52,25 +52,18 @@ export const shopSections: ShopSection[] = [
     getProducts: sectionFilters["hot-deals"],
   },
   {
+    id: "top-picks",
+    title: "Top Picks Nigerians Love",
+    description: "Most loved by the Nigerian community in Canada",
+    viewAllLink: "/shop/products?sort=rating-desc",
+    getProducts: sectionFilters["top-picks"],
+  },
+  {
     id: "recommended",
     title: "Recommended for you",
     description: "Handpicked just for you based on your preferences",
     viewAllLink: "/shop/recommended",
     getProducts: sectionFilters["recommended"],
-  },
-  {
-    id: "deals-of-week",
-    title: "Deals of the Week",
-    description: "This week's special offers you won't want to miss",
-    viewAllLink: "/shop/deals",
-    getProducts: sectionFilters["deals-of-week"],
-  },
-  {
-    id: "top-picks",
-    title: "Top Picks Nigerians Love",
-    description: "Most loved products by our customers",
-    viewAllLink: "/shop/products",
-    getProducts: sectionFilters["top-picks"],
   },
 ];
 

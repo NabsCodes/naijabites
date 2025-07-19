@@ -1,65 +1,36 @@
-# NaijaBites 🇳🇬
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**Authentic Nigerian Groceries Delivered Fresh to Canada**
+## Getting Started
 
-NaijaBites connects the Nigerian diaspora with the taste of home by offering fresh, quality Nigerian food products delivered right to your doorstep across Canada.
+First, run the development server:
 
-## 🌟 Features
-
-- 🛍️ Wide selection of authentic Nigerian products
-- 🚚 Fast delivery across Canada
-- 📱 Mobile-friendly shopping experience
-- 🔍 Easy product search and categories
-- 💳 Secure checkout process
-
-## 🏗️ Project Structure
-
-```
-naijabites/
-├── frontend/          # Next.js web application
-├── backend/           # API
-└── README.md         # This file
+```bash
+pnpm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## 🚀 Getting Started
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### For Users
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Visit our website at [NaijaBites.com](https://naijabites.com) to start shopping!
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-### For Developers
+## Learn More
 
-1. **Clone the repository**
+To learn more about Next.js, take a look at the following resources:
 
-   ```bash
-   git clone <repository-url>
-   cd naijabites
-   ```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-2. **Run the frontend**
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-   ```bash
-   cd frontend
-   pnpm install
-   pnpm run dev
-   ```
+## Deploy on Vercel
 
-3. **Open your browser**
-   Go to http://localhost:3000
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## 🛠️ Built With
-
-- **Frontend**: Next.js, TypeScript, Tailwind CSS
-- **Backend**: Coming soon
-
-## 🤝 Contributing
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📞 Contact
-
-Have questions? [Contact us](mailto:contact@naijabites.com) or create an issue.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

@@ -188,3 +188,8 @@ dist/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml 
+
+# Cursor AI development files (local only)
+.cursorrules
+.cursor
+docs/

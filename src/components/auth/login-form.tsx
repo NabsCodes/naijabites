@@ -7,16 +7,24 @@ import Link from "next/link";
 import { FaGoogle } from "react-icons/fa6";
 import { Card } from "../ui/card";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 
 export function LoginForm({ className, ...props }: { className?: string }) {
-  const { handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
 
     // Simulate login process
@@ -54,9 +62,16 @@ export function LoginForm({ className, ...props }: { className?: string }) {
               id="email"
               type="email"
               placeholder="name@example.com"
-              required
-              className="h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20"
+              {...register("email")}
+              className={cn(
+                "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                errors.email &&
+                  "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+              )}
             />
+            {errors.email && (
+              <p className="text-xs text-red-500">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="grid gap-2">
@@ -79,8 +94,12 @@ export function LoginForm({ className, ...props }: { className?: string }) {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                required
-                className="h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20"
+                {...register("password")}
+                className={cn(
+                  "h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  errors.password &&
+                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                )}
               />
               <button
                 type="button"
@@ -88,12 +107,15 @@ export function LoginForm({ className, ...props }: { className?: string }) {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-green-dark"
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
+                  <EyeSlashIcon className="h-5 w-5" />
                 ) : (
-                  <Eye className="h-5 w-5" />
+                  <EyeIcon className="h-5 w-5" />
                 )}
               </button>
             </div>
+            {errors.password && (
+              <p className="text-xs text-red-500">{errors.password.message}</p>
+            )}
           </div>
 
           <Button

@@ -7,36 +7,50 @@ import Link from "next/link";
 import { FaGoogle } from "react-icons/fa6";
 import { Card } from "../ui/card";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
-
-interface SignUpFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  password: string;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema, type SignUpFormData } from "@/lib/validations/auth";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
 export function SignUpForm({ className, ...props }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit } = useForm<SignUpFormData>({
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      password: "",
-    },
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
   });
+
+  const password = watch("password");
+
+  // Password requirements for checklist
+  const passwordRequirements = [
+    {
+      label: "At least 8 characters",
+      test: (pwd: string) => pwd && pwd.length >= 8,
+    },
+    {
+      label: "One uppercase letter",
+      test: (pwd: string) => /[A-Z]/.test(pwd || ""),
+    },
+    {
+      label: "One lowercase letter",
+      test: (pwd: string) => /[a-z]/.test(pwd || ""),
+    },
+    {
+      label: "One number",
+      test: (pwd: string) => /\d/.test(pwd || ""),
+    },
+  ];
 
   const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true);
-
-    // Simulate registration process
     setTimeout(() => {
       setIsLoading(false);
       console.log("Register form submitted:", data);
@@ -75,9 +89,18 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 id="firstName"
                 type="text"
                 placeholder="John"
-                {...register("firstName", { required: true })}
-                className="h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20"
+                {...register("firstName")}
+                className={cn(
+                  "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  errors.firstName &&
+                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                )}
               />
+              {errors.firstName && (
+                <p className="text-xs text-red-500">
+                  {errors.firstName.message}
+                </p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label
@@ -90,9 +113,18 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 id="lastName"
                 type="text"
                 placeholder="Doe"
-                {...register("lastName", { required: true })}
-                className="h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20"
+                {...register("lastName")}
+                className={cn(
+                  "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  errors.lastName &&
+                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                )}
               />
+              {errors.lastName && (
+                <p className="text-xs text-red-500">
+                  {errors.lastName.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -108,29 +140,19 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
               id="email"
               type="email"
               placeholder="name@example.com"
-              {...register("email", { required: true })}
-              className="h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20"
+              {...register("email")}
+              className={cn(
+                "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                errors.email &&
+                  "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+              )}
             />
+            {errors.email && (
+              <p className="text-xs text-red-500">{errors.email.message}</p>
+            )}
           </div>
 
-          {/* Phone Field */}
-          {/* <div className="grid gap-2">
-            <Label
-              htmlFor="phone"
-              className="text-sm font-medium text-green-dark"
-            >
-              Phone number
-            </Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+1 (555) 123-4567"
-              {...register("phone", { required: true })}
-              className="h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20"
-            />
-          </div> */}
-
-          {/* Password Fields */}
+          {/* Password Field */}
           <div className="grid gap-2">
             <Label
               htmlFor="password"
@@ -143,8 +165,12 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a strong password"
-                {...register("password", { required: true })}
-                className="h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20"
+                {...register("password")}
+                className={cn(
+                  "h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  errors.password &&
+                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                )}
               />
               <button
                 type="button"
@@ -152,12 +178,45 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-green-dark"
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
+                  <EyeSlashIcon className="h-5 w-5" />
                 ) : (
-                  <Eye className="h-5 w-5" />
+                  <EyeIcon className="h-5 w-5" />
                 )}
               </button>
             </div>
+            {errors.password && (
+              <p className="text-xs text-red-500">{errors.password.message}</p>
+            )}
+            {/* Password requirements checklist */}
+            {password && (
+              <div className="mt-2 space-y-2">
+                <p className="text-xs font-medium text-green-dark">
+                  Password requirements:
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {passwordRequirements.map((requirement, idx) => {
+                    const isMet = requirement.test(password);
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 text-xs"
+                      >
+                        {isMet ? (
+                          <CheckCircleIcon className="h-3 w-3 text-green-600" />
+                        ) : (
+                          <XCircleIcon className="h-3 w-3 text-gray-400" />
+                        )}
+                        <span
+                          className={isMet ? "text-green-600" : "text-gray-500"}
+                        >
+                          {requirement.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <Button

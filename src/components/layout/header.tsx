@@ -346,17 +346,21 @@ export default function Header() {
                 ) : (
                   <div className="flex items-center gap-3">
                     {/* Register Button: Icon on small screens, text on md+ */}
-                    <Button className="flex h-11 items-center justify-center rounded-md bg-lemon-dark px-3 py-2 text-sm font-semibold text-green-dark shadow-md transition-all duration-200 hover:bg-lemon-dark/90 lg:px-6">
-                      <span className="inline">Sign up</span>
-                    </Button>
+                    <Link href="/signup">
+                      <Button className="flex h-11 items-center justify-center rounded-md bg-lemon-dark px-3 py-2 text-sm font-semibold text-green-dark shadow-md transition-all duration-200 hover:bg-lemon-dark/90 lg:px-6">
+                        <span className="inline">Sign up</span>
+                      </Button>
+                    </Link>
 
                     {/* Login Button: Icon on small screens, text on md+ */}
-                    <Button
-                      variant="outline"
-                      className="flex h-11 items-center justify-center rounded-md border-2 border-white bg-transparent px-3 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-green-deep lg:px-6"
-                    >
-                      <span className="inline">Log in</span>
-                    </Button>
+                    <Link href="/login">
+                      <Button
+                        variant="outline"
+                        className="flex h-11 items-center justify-center rounded-md border-2 border-white bg-transparent px-3 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-green-deep lg:px-6"
+                      >
+                        <span className="inline">Log in</span>
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </div>

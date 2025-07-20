@@ -257,19 +257,23 @@ export default function MobileNav({
                               Welcome to NaijaBites
                             </h3>
                             <div className="flex gap-3">
-                              <Button
-                                className="flex-1 bg-green-dark text-white hover:bg-green-dark/90"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                Sign up
-                              </Button>
-                              <Button
-                                variant="outline"
-                                className="flex-1 border-green-dark text-green-dark hover:bg-green-dark/5"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                Log in
-                              </Button>
+                              <Link href="/signup">
+                                <Button
+                                  className="flex-1 bg-green-dark text-white hover:bg-green-dark/90"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  Sign up
+                                </Button>
+                              </Link>
+                              <Link href="/login">
+                                <Button
+                                  variant="outline"
+                                  className="flex-1 border-green-dark text-green-dark hover:bg-green-dark/5"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  Log in
+                                </Button>
+                              </Link>
                             </div>
                           </div>
                         </div>

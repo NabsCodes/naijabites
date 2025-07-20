@@ -2,8 +2,8 @@
 
 import React, { memo } from "react";
 import { cn } from "@/lib/utils";
-import { SearchSuggestion } from "@/types/search";
 import { SearchSuggestions } from "./search-suggestions";
+import { SearchSuggestion } from "@/types/search";
 import { SearchNoResults } from "./search-no-results";
 
 interface SearchAutocompleteProps {
@@ -11,7 +11,6 @@ interface SearchAutocompleteProps {
   onSuggestionSelect: (suggestion: SearchSuggestion) => void;
   onRemoveSuggestion?: (suggestionId: string) => void;
   query: string;
-  isLoading?: boolean;
   className?: string;
   onClearHistory?: () => void;
 }
@@ -22,7 +21,6 @@ const SearchAutocompleteComponent = ({
   onSuggestionSelect,
   onRemoveSuggestion,
   query,
-  isLoading = false,
   className,
   onClearHistory,
 }: SearchAutocompleteProps) => {
@@ -32,7 +30,7 @@ const SearchAutocompleteComponent = ({
   }
 
   const hasResults = suggestions.length > 0;
-  const showNoResults = !isLoading && query.trim() && !hasResults;
+  const showNoResults = query.trim() && !hasResults;
 
   return (
     <div
@@ -44,21 +42,11 @@ const SearchAutocompleteComponent = ({
         className,
       )}
     >
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="flex items-center space-x-2 text-gray-500">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-primary" />
-            <span className="text-sm">Searching...</span>
-          </div>
-        </div>
-      )}
-
       {/* No Results */}
       {showNoResults && <SearchNoResults query={query} />}
 
       {/* Suggestions */}
-      {hasResults && !isLoading && (
+      {hasResults && (
         <SearchSuggestions
           suggestions={suggestions}
           onSuggestionSelect={onSuggestionSelect}
@@ -78,7 +66,6 @@ export const SearchAutocomplete = memo(
     // Return true if props are equal (no re-render needed)
     return (
       prevProps.query === nextProps.query &&
-      prevProps.isLoading === nextProps.isLoading &&
       prevProps.className === nextProps.className &&
       prevProps.suggestions.length === nextProps.suggestions.length &&
       prevProps.suggestions.every(

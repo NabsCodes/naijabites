@@ -109,6 +109,7 @@ const SearchSuggestionsComponent = ({
             key={suggestion.id}
             type="button"
             onClick={() => onSuggestionSelect(suggestion)}
+            onTouchEnd={() => onSuggestionSelect(suggestion)}
             className={cn(
               "flex w-full items-center space-x-3 px-4 py-3",
               "text-left transition-colors duration-150 hover:bg-gray-50",
@@ -183,7 +184,7 @@ const SearchSuggestionsComponent = ({
                     e.stopPropagation();
                     onRemoveSuggestion(suggestion.id);
                   }}
-                  className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
+                  className="inline-flex items-center justify-center rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
                   title="Remove from history"
                 >
                   <X className="h-4 w-4" />

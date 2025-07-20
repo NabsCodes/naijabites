@@ -1,13 +1,26 @@
-import { SearchSuggestion, SearchFilters } from "@/types/search";
+import { SearchSuggestion } from "@/types/search";
 import { products } from "@/lib/mock-data/products";
 import { categories } from "@/lib/mock-data/categories";
 import { brands } from "@/lib/mock-data/brands";
 
-// Simple text matching - case insensitive
+// Constants
+export const SEARCH_VALIDATION = {
+  DEBOUNCE_MIN_LENGTH: 2,
+} as const;
+
+// Validation functions
+export function shouldTriggerSearch(query: string): boolean {
+  return query.trim().length >= SEARCH_VALIDATION.DEBOUNCE_MIN_LENGTH;
+}
+
+export function prepareQueryForUrl(query: string): string {
+  return query.trim().replace(/\s+/g, " ");
+}
+
+// Search utility functions
 const textMatches = (text: string, searchQuery: string): boolean =>
   text.toLowerCase().includes(searchQuery.toLowerCase());
 
-// Search products - simplified scoring
 export function searchProducts(
   query: string,
   limit: number = 5,
@@ -16,8 +29,7 @@ export function searchProducts(
 
   const searchQuery = query.trim().toLowerCase();
 
-  // Simple filtering: check if query matches name, brand, or category
-  const matchingProducts = products
+  return products
     .filter((product) => {
       return (
         textMatches(product.name, searchQuery) ||
@@ -25,9 +37,9 @@ export function searchProducts(
         textMatches(product.category, searchQuery)
       );
     })
-    .slice(0, limit) // Take first X matches
-    .map((product): SearchSuggestion => {
-      return {
+    .slice(0, limit)
+    .map(
+      (product): SearchSuggestion => ({
         id: product.id,
         type: "product",
         title: product.name,
@@ -35,13 +47,10 @@ export function searchProducts(
         image: product.image || undefined,
         slug: product.slug,
         category: product.category,
-      };
-    });
-
-  return matchingProducts;
+      }),
+    );
 }
 
-// Search categories - simple text matching
 export function searchCategories(
   query: string,
   limit: number = 3,
@@ -64,7 +73,6 @@ export function searchCategories(
     );
 }
 
-// Search brands - simple text matching
 export function searchBrands(
   query: string,
   limit: number = 3,
@@ -87,7 +95,6 @@ export function searchBrands(
     );
 }
 
-// Get all search suggestions - simplified
 export function getSearchSuggestions(
   query: string,
   options: {
@@ -96,38 +103,32 @@ export function getSearchSuggestions(
     maxBrands?: number;
   } = {},
 ): SearchSuggestion[] {
-  // Default limits
-  const maxProducts = options.maxProducts;
-  const maxCategories = options.maxCategories;
-  const maxBrands = options.maxBrands;
-
   if (!query.trim()) return [];
 
-  // Get results from each type
-  const productResults = searchProducts(query, maxProducts);
-  const categoryResults = searchCategories(query, maxCategories);
-  const brandResults = searchBrands(query, maxBrands);
+  const productResults = searchProducts(query, options.maxProducts);
+  const categoryResults = searchCategories(query, options.maxCategories);
+  const brandResults = searchBrands(query, options.maxBrands);
 
-  // Combine all results: products first, then categories, then brands
-  const allResults = [...productResults, ...categoryResults, ...brandResults];
-
-  return allResults;
+  return [...productResults, ...categoryResults, ...brandResults];
 }
 
-// Create search URL for navigation
 export function getSearchUrl(
   query: string,
-  filters?: Partial<SearchFilters>,
+  filters?: {
+    search?: string;
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    sortBy?: string;
+  },
 ): string {
   const params = new URLSearchParams();
 
-  // Add search query
   const searchQuery = filters?.search || query.trim();
   if (searchQuery) {
     params.set("search", searchQuery);
   }
 
-  // Add other filters if provided
   if (filters?.category) {
     params.set("category", filters.category);
   }

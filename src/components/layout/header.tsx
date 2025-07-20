@@ -66,7 +66,6 @@ export default function Header() {
   const {
     query: searchQuery,
     isOpen: isSearchOpen,
-    isLoading: isSearchLoading,
     suggestions,
     setQuery: setSearchQuery,
     setIsOpen: setIsSearchOpen,
@@ -87,9 +86,8 @@ export default function Header() {
 
   // Handle input focus
   const handleSearchFocus = () => {
-    if (searchQuery.trim() || suggestions.length > 0) {
-      setIsSearchOpen(true);
-    }
+    // Always open dropdown to show recent searches
+    setIsSearchOpen(true);
   };
 
   // Handle clicks outside to close autocomplete
@@ -223,7 +221,6 @@ export default function Header() {
                       onSuggestionSelect={handleSuggestionSelect}
                       onRemoveSuggestion={removeSuggestion}
                       query={searchQuery}
-                      isLoading={isSearchLoading}
                       className="absolute left-0 right-0 top-full z-50 mt-1"
                       onClearHistory={clearSearchHistory}
                     />
@@ -380,7 +377,6 @@ export default function Header() {
         setSearchQuery={setSearchQuery}
         handleSearch={handleSearch}
         isSearchOpen={isSearchOpen}
-        isSearchLoading={isSearchLoading}
         suggestions={suggestions}
         handleSearchFocus={handleSearchFocus}
         handleSuggestionSelect={handleSuggestionSelect}

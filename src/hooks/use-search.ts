@@ -1,99 +1,165 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useDebounce } from "./use-debounce";
-import { useSearchHistory } from "./use-search-history";
-import { getSearchSuggestions, getSearchUrl } from "@/lib/search/search-utils";
+import {
+  SearchSuggestion,
+  SearchHistory,
+  UseSearchOptions,
+} from "@/types/search";
 import {
   shouldTriggerSearch,
   prepareQueryForUrl,
-} from "@/lib/search/search-validation";
-import {
-  SearchState,
-  SearchSuggestion,
-  UseSearchOptions,
-} from "@/types/search";
+  getSearchSuggestions,
+  getSearchUrl,
+} from "@/utils/search";
+
+// Constants
+const STORAGE_KEY = "naijabites-search-history";
+const MAX_HISTORY_ITEMS = 15;
 
 // Default settings for search
 const DEFAULT_SEARCH_CONFIG = {
-  debounceMs: 300, // Wait 300ms after user stops typing
-  maxSuggestions: 8, // Show max 8 suggestions
-  maxHistory: 5, // Keep 5 recent searches
-  enableHistory: true, // Save search history
+  debounceMs: 300,
+  maxHistory: 5,
+  enableHistory: true,
 };
 
-/**
- * Main search hook - handles all search functionality
- * This is what components use to add search features
- */
+// Search history hook
+function useSearchHistory() {
+  const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
+
+  // Load saved searches when component first loads
+  useEffect(() => {
+    try {
+      const savedSearches = localStorage.getItem(STORAGE_KEY);
+      if (savedSearches) {
+        const parsedSearches = JSON.parse(savedSearches) as SearchHistory[];
+
+        // Only keep valid search entries
+        const validSearches = parsedSearches.filter((search) => {
+          return (
+            search &&
+            typeof search.id === "string" &&
+            typeof search.query === "string" &&
+            typeof search.timestamp === "number" &&
+            search.query.trim().length > 0
+          );
+        });
+
+        setSearchHistory(validSearches);
+      }
+    } catch (error) {
+      console.error("Could not load search history:", error);
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
+
+  // Save searches to browser storage whenever history changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(searchHistory));
+    } catch (error) {
+      console.error("Could not save search history:", error);
+    }
+  }, [searchHistory]);
+
+  // Add a new search to the history
+  const addToHistory = useCallback((searchQuery: string) => {
+    const cleanQuery = searchQuery.trim();
+    if (!cleanQuery) return;
+
+    setSearchHistory((previousHistory) => {
+      const historyWithoutDuplicate = previousHistory.filter(
+        (search) => search.query.toLowerCase() !== cleanQuery.toLowerCase(),
+      );
+
+      const newSearch: SearchHistory = {
+        id: `search-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        query: cleanQuery,
+        timestamp: Date.now(),
+      };
+
+      return [newSearch, ...historyWithoutDuplicate].slice(
+        0,
+        MAX_HISTORY_ITEMS,
+      );
+    });
+  }, []);
+
+  // Remove one specific search from history
+  const removeFromHistory = useCallback((searchId: string) => {
+    setSearchHistory((previousHistory) =>
+      previousHistory.filter((search) => search.id !== searchId),
+    );
+  }, []);
+
+  // Clear all search history
+  const clearHistory = useCallback(() => {
+    setSearchHistory([]);
+  }, []);
+
+  // Get the most recent searches
+  const getRecentSearches = useCallback(
+    (maxNumber: number = 10): SearchHistory[] => {
+      return searchHistory.slice(0, maxNumber);
+    },
+    [searchHistory],
+  );
+
+  return {
+    addToHistory,
+    removeFromHistory,
+    clearHistory,
+    getRecentSearches,
+  };
+}
+
+// Main search hook - handles all search functionality
 export function useSearch(options: UseSearchOptions = {}) {
   const router = useRouter();
   const config = { ...DEFAULT_SEARCH_CONFIG, ...options };
 
   // Get search history functions
-  const {
-    addToHistory,
-    removeFromHistory,
-    clearHistory,
-    getRecentSearches,
-    hasInHistory,
-  } = useSearchHistory();
+  const { addToHistory, removeFromHistory, clearHistory, getRecentSearches } =
+    useSearchHistory();
 
-  // Main search state - stores everything about current search
-  const [searchState, setSearchState] = useState<SearchState>({
-    query: "", // What user typed
-    isOpen: false, // Is dropdown open?
-    isLoading: false, // Are we loading suggestions?
-    suggestions: [], // Current suggestions to show
-    recentSearches: [], // Recent searches (not used directly)
-    error: undefined, // Any error message
+  // Main search state
+  const [searchState, setSearchState] = useState<{
+    query: string;
+    isOpen: boolean;
+  }>({
+    query: "",
+    isOpen: false,
   });
 
-  // Debounced query - only updates after user stops typing for 300ms
+  // Debounced query
   const debouncedQuery = useDebounce(searchState.query, config.debounceMs);
 
-  // Get suggestions based on what user typed (after debounce)
+  // Get suggestions based on what user typed
   const currentSuggestions = useMemo(() => {
-    // If query is too short, show recent searches instead
     if (!shouldTriggerSearch(debouncedQuery)) {
-      return getRecentSearches(config.maxHistory).map(
-        (history): SearchSuggestion => ({
-          id: history.id,
-          type: "history",
-          title: history.query,
-          slug: history.query,
-        }),
-      );
+      return getRecentSearches(config.maxHistory).map((history) => ({
+        id: history.id,
+        type: "history" as const,
+        title: history.query,
+        slug: history.query,
+      }));
     }
 
-    // Get actual search suggestions
     return getSearchSuggestions(debouncedQuery, {
-      maxProducts: 5, // Show 5 products
-      maxCategories: 2, // Show 2 categories
-      maxBrands: 2, // Show 2 brands
+      maxProducts: 5,
+      maxCategories: 2,
+      maxBrands: 2,
     });
   }, [debouncedQuery, config.maxHistory, getRecentSearches]);
 
-  // Update suggestions when they change
-  useEffect(() => {
-    setSearchState((prev) => ({
-      ...prev,
-      suggestions: currentSuggestions,
-      isLoading: false,
-    }));
-  }, [currentSuggestions]);
-
-  // Show loading when user is typing (before debounce kicks in)
-  useEffect(() => {
-    const isUserTyping = searchState.query !== debouncedQuery;
-    const hasQuery = searchState.query.trim();
-
-    if (isUserTyping && hasQuery) {
-      setSearchState((prev) => ({
-        ...prev,
-        isLoading: true,
-      }));
-    }
-  }, [searchState.query, debouncedQuery]);
+  // Helper function to clear search state
+  const clearSearchState = useCallback(() => {
+    setSearchState({
+      query: "",
+      isOpen: false,
+    });
+  }, []);
 
   // Update what user typed
   const updateQuery = useCallback((newQuery: string) => {
@@ -101,65 +167,48 @@ export function useSearch(options: UseSearchOptions = {}) {
       ...prev,
       query: newQuery,
       isOpen: shouldTriggerSearch(newQuery),
-      error: undefined,
     }));
   }, []);
 
   // Open/close the dropdown
   const setDropdownOpen = useCallback((isOpen: boolean) => {
-    setSearchState((prev) => ({
-      ...prev,
-      isOpen,
-    }));
+    setSearchState((prev) => ({ ...prev, isOpen }));
   }, []);
 
-  // Perform actual search (go to results page)
+  // Perform actual search
   const doSearch = useCallback(
     (searchQuery?: string) => {
       const queryToSearch = searchQuery || searchState.query;
-
-      // Clean up the query for URL
       const cleanQuery = prepareQueryForUrl(queryToSearch);
+
       if (!cleanQuery) return;
 
-      // Save to history
       if (config.enableHistory) {
         addToHistory(cleanQuery);
       }
 
-      // Go to search results page
-      const searchUrl = getSearchUrl(cleanQuery);
-      router.push(searchUrl);
-
-      // Close dropdown
-      setDropdownOpen(false);
+      router.push(getSearchUrl(cleanQuery));
+      clearSearchState();
     },
     [
       searchState.query,
       config.enableHistory,
       addToHistory,
       router,
-      setDropdownOpen,
+      clearSearchState,
     ],
   );
 
-  // Handle when user clicks a suggestion
+  // Handle suggestion clicks
   const handleSuggestionClick = useCallback(
     (suggestion: SearchSuggestion) => {
-      const currentQuery = searchState.query.trim();
-
-      // Check if this is a recent search from history
-      const isRecentSearch = suggestion.type === "history";
-
-      if (isRecentSearch) {
-        // Search again with the historical query
+      if (suggestion.type === "history") {
         doSearch(suggestion.title);
         return;
       }
 
-      // Save current query to history
-      if (config.enableHistory && currentQuery) {
-        addToHistory(currentQuery);
+      if (config.enableHistory && searchState.query.trim()) {
+        addToHistory(searchState.query.trim());
       }
 
       // Navigate based on suggestion type
@@ -173,8 +222,7 @@ export function useSearch(options: UseSearchOptions = {}) {
         );
       }
 
-      // Close dropdown
-      setDropdownOpen(false);
+      clearSearchState();
     },
     [
       searchState.query,
@@ -182,46 +230,23 @@ export function useSearch(options: UseSearchOptions = {}) {
       addToHistory,
       router,
       doSearch,
-      setDropdownOpen,
+      clearSearchState,
     ],
   );
 
-  // Clear the search input
-  const clearSearch = useCallback(() => {
-    setSearchState((prev) => ({
-      ...prev,
-      query: "",
-      isOpen: false,
-    }));
-  }, []);
-
-  // Remove a suggestion from history
-  const removeSuggestion = useCallback(
-    (suggestionId: string) => {
-      removeFromHistory(suggestionId);
-    },
-    [removeFromHistory],
-  );
-
-  // Return everything components need
   return {
-    // Current state
+    // State
     query: searchState.query,
     isOpen: searchState.isOpen,
-    isLoading: searchState.isLoading,
-    suggestions: searchState.suggestions,
-    error: searchState.error,
+    suggestions: currentSuggestions,
 
     // Actions
     setQuery: updateQuery,
     setIsOpen: setDropdownOpen,
     performSearch: doSearch,
-    clearSearch,
+    clearSearch: clearSearchState,
     handleSuggestionSelect: handleSuggestionClick,
-    removeSuggestion,
-
-    // History actions
+    removeSuggestion: removeFromHistory,
     clearSearchHistory: clearHistory,
-    hasInHistory,
   };
 }

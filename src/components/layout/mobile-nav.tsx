@@ -55,7 +55,6 @@ interface MobileNavProps {
   setSearchQuery: (query: string) => void;
   handleSearch: (e: React.FormEvent<HTMLFormElement>) => void;
   isSearchOpen: boolean;
-  isSearchLoading: boolean;
   suggestions: SearchSuggestion[];
   handleSearchFocus: () => void;
   handleSuggestionSelect: (suggestion: SearchSuggestion) => void;
@@ -90,7 +89,6 @@ export default function MobileNav({
   setSearchQuery,
   handleSearch,
   isSearchOpen,
-  isSearchLoading,
   suggestions,
   handleSearchFocus,
   handleSuggestionSelect,
@@ -542,7 +540,6 @@ export default function MobileNav({
                       onSuggestionSelect={handleSuggestionSelect}
                       onRemoveSuggestion={onRemoveSuggestion}
                       query={searchQuery}
-                      isLoading={isSearchLoading}
                       className="absolute left-0 right-0 top-full z-50 mt-1"
                       onClearHistory={clearSearchHistory}
                     />

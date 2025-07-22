@@ -31,16 +31,37 @@ export function ForgotPasswordForm({
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const onSubmit = async (data: ForgotPasswordFormData) => {
-    setIsLoading(true);
+  const [error, setError] = useState('');
 
-    // Simulate password reset process
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSubmitted(true);
-      console.log("Forgot password form submitted", data);
-    }, 2000);
-  };
+const onSubmit = async (data: ForgotPasswordFormData) => {
+  setIsLoading(true);
+  setError('');
+
+  try {
+    const res = await fetch('/api/forgot-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: data.email }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      setError(result.error || 'Something went wrong');
+      return;
+    }
+
+    setIsSubmitted(true);
+  } catch (err) {
+    console.error('❌ Forgot password error:', err);
+    setError('Something went wrong. Please try again.');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   if (isSubmitted) {
     return (
@@ -128,6 +149,9 @@ export function ForgotPasswordForm({
               <p className="text-xs text-red-500">{errors.email.message}</p>
             )}
           </div>
+          {error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
 
           <Button
             type="submit"

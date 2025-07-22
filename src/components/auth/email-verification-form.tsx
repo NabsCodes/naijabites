@@ -13,11 +13,8 @@ import {
   emailVerificationSchema,
   type EmailVerificationFormData,
 } from "@/lib/validations/auth";
-import {
-  CheckCircleIcon,
-  XCircleIcon,
-  ArrowPathIcon,
-} from "@heroicons/react/24/outline";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { Loader2 } from "lucide-react";
 
 type VerificationStatus = "pending" | "success" | "error" | "expired";
 
@@ -118,7 +115,7 @@ export function EmailVerificationForm({
               >
                 {isResending ? (
                   <div className="flex items-center gap-2">
-                    <ArrowPathIcon className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Sending...
                   </div>
                 ) : (
@@ -161,7 +158,7 @@ export function EmailVerificationForm({
             >
               {isResending ? (
                 <div className="flex items-center gap-2">
-                  <ArrowPathIcon className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Sending...
                 </div>
               ) : (
@@ -217,7 +214,7 @@ export function EmailVerificationForm({
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Verifying...
                   </div>
                 ) : (
@@ -239,7 +236,7 @@ export function EmailVerificationForm({
               >
                 {isResending ? (
                   <div className="flex items-center gap-2">
-                    <ArrowPathIcon className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-3 w-3 animate-spin" />
                     Sending...
                   </div>
                 ) : (

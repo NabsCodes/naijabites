@@ -27,6 +27,7 @@ export function ClearCartDialog({
     toast({
       title: "Cart cleared",
       description: "All items have been removed from your cart.",
+      variant: "error",
     });
   };
 

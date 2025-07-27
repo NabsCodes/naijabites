@@ -1,6 +1,15 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCart } from "@/contexts/cart-context";
 
 export function CartLoadingSkeleton() {
+  const { items: cartItems } = useCart();
+
+  // Show empty cart skeleton if no items
+  if (cartItems.length === 0) {
+    return <EmptyCartSkeleton />;
+  }
+
+  // Show loading skeleton if we have items or are loading
   return (
     <main className="flex min-h-screen flex-col">
       <div className="container-padding flex-1 py-6 sm:py-8">
@@ -120,5 +129,40 @@ function OrderSummarySkeleton() {
         </div>
       </div>
     </div>
+  );
+}
+
+function EmptyCartSkeleton() {
+  return (
+    <main className="flex min-h-screen flex-col">
+      <div className="container-padding flex-1 py-6 sm:py-8">
+        <div className="section-container">
+          <section className="py-12">
+            <div className="mx-auto max-w-2xl text-center">
+              {/* Empty cart icon skeleton */}
+              <div className="mb-6 flex justify-center">
+                <Skeleton className="h-16 w-16 rounded-full" />
+              </div>
+
+              {/* Title skeleton */}
+              <Skeleton className="mx-auto mb-4 h-8 w-48" />
+
+              {/* Description skeleton */}
+              <div className="mb-8 space-y-2">
+                <Skeleton className="mx-auto h-4 w-80" />
+                <Skeleton className="mx-auto h-4 w-72" />
+                <Skeleton className="mx-auto h-4 w-64" />
+              </div>
+
+              {/* Buttons skeleton */}
+              <div className="space-y-4">
+                <Skeleton className="mx-auto h-12 w-48" />
+                <Skeleton className="mx-auto h-4 w-32" />
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
   );
 }

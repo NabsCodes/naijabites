@@ -7,7 +7,7 @@ interface QuantitySelectorProps {
   min?: number;
   max?: number;
   disabled?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "card";
   className?: string;
 }
 
@@ -51,6 +51,12 @@ export function QuantitySelector({
       icon: "h-4 w-4",
       container: "gap-2 p-1.5",
     },
+    card: {
+      button: "h-7 w-7",
+      input: "min-w-[2.5rem] px-3 text-sm",
+      icon: "h-4 w-4",
+      container: "gap-1.5 p-0.5",
+    },
   };
 
   const classes = sizeClasses[size];
@@ -58,7 +64,7 @@ export function QuantitySelector({
   return (
     <div
       className={cn(
-        "flex items-center rounded-full border border-gray-300 bg-gray-50 shadow-sm",
+        "flex items-center justify-between rounded-full border border-gray-300 bg-gray-50 shadow-sm",
         classes.container,
         className,
       )}
@@ -67,7 +73,7 @@ export function QuantitySelector({
         onClick={handleDecrease}
         disabled={disabled || quantity <= min}
         className={cn(
-          "flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:shadow-sm",
+          "flex items-center justify-center rounded-full border border-gray-300 bg-white text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:shadow-sm",
           classes.button,
         )}
       >
@@ -85,7 +91,7 @@ export function QuantitySelector({
         onClick={handleIncrease}
         disabled={disabled || quantity >= max}
         className={cn(
-          "flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:shadow-sm",
+          "flex items-center justify-center rounded-full border border-gray-300 bg-white text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:shadow-sm",
           classes.button,
         )}
       >

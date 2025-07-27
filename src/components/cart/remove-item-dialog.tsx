@@ -11,6 +11,7 @@ import { HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
 import { useCart, type CartItem } from "@/contexts/cart-context";
+import { useToast } from "@/hooks/use-toast";
 
 interface RemoveItemDialogProps {
   removeItemDialog: {
@@ -27,11 +28,17 @@ export function RemoveItemDialog({
   setRemoveItemDialog,
 }: RemoveItemDialogProps) {
   const { removeItem } = useCart();
+  const { toast } = useToast();
 
   const handleRemoveItem = () => {
     if (removeItemDialog?.item) {
       removeItem(removeItemDialog.item.id);
       setRemoveItemDialog({ isOpen: false, item: null });
+      toast({
+        title: "Item removed from cart",
+        description: `${removeItemDialog.item.product.name} has been removed from your cart.`,
+        variant: "error",
+      });
     }
   };
 
@@ -41,6 +48,11 @@ export function RemoveItemDialog({
       removeItem(removeItemDialog.item.id);
       setRemoveItemDialog({ isOpen: false, item: null });
       // Show toast notification that item was saved for later
+      // toast({
+      //   title: "Item saved for later",
+      //   description: "The item has been saved for later.",
+      //   variant: "success",
+      // });
     }
   };
 

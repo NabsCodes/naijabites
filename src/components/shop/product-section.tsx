@@ -50,13 +50,7 @@ export function ProductSection({
   }
 
   return (
-    <motion.section
-      className={className}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true, margin: "-100px" }}
-    >
+    <section className={className}>
       <div className={noContainer ? "" : "container-padding"}>
         <div className="section-container">
           {/* Section Header */}
@@ -130,6 +124,6 @@ export function ProductSection({
           </motion.div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

@@ -17,6 +17,7 @@ import { useCart } from "@/contexts/cart-context";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { VariantSelectorModal } from "@/components/shop/variant-selector-modal";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ProductCardProps {
   product: Product;
@@ -79,6 +80,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       toast({
         title: "Removed from cart",
         description: `${product.name} removed from your cart.`,
+        variant: "error",
       });
       return;
     }
@@ -96,6 +98,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         toast({
           title: "Added to cart",
           description: `${product.name} added to your cart.`,
+          variant: "success",
         });
       }
     }
@@ -125,6 +128,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       toast({
         title: "Added to cart",
         description: `${product.name} added to your cart.`,
+        variant: "success",
       });
     }
   };
@@ -218,49 +222,67 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </div>
 
         {/* Show Add to Cart button or quantity selector */}
-        {!isSelectingQuantity || hasVariants ? (
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleAddToCartClick}
-            // disabled={!inStock}
-            aria-disabled={!inStock}
-            aria-label={
-              !inStock
-                ? "Out of Stock"
-                : hasVariants
-                  ? "See Details"
-                  : "Add to Cart"
-            }
-            className={cn(
-              "w-full transition-all duration-300",
-              hasVariants
-                ? "border border-green-dark bg-gray-50 text-green-dark hover:bg-green-dark/10" // Border for details
-                : "border-green-dark bg-green-dark text-white hover:bg-green-dark/90", // Green for add to cart
-              !inStock &&
-                "cursor-not-allowed border border-gray-300 bg-gray-50 text-gray-500 opacity-60 hover:bg-gray-50/90",
-            )}
-          >
-            <CartIcon className={cn("mr-2 h-4 w-4", hasVariants && "hidden")} />
-            {!inStock
-              ? "Out of Stock"
-              : hasVariants
-                ? "See Details"
-                : "Add to Cart"}
-          </Button>
-        ) : (
-          <div className="flex w-full items-center gap-2">
-            <QuantitySelector
-              quantity={quantity}
-              onQuantityChange={handleQuantityChange}
-              min={0}
-              max={maxQuantity}
-              size="sm"
-              className="w-fit"
-              disabled={!inStock}
-            />
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {!isSelectingQuantity || hasVariants ? (
+            <motion.div
+              key="button"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleAddToCartClick}
+                // disabled={!inStock}
+                aria-disabled={!inStock}
+                aria-label={
+                  !inStock
+                    ? "Out of Stock"
+                    : hasVariants
+                      ? "See Details"
+                      : "Add to Cart"
+                }
+                className={cn(
+                  "w-full transition-all duration-300",
+                  hasVariants
+                    ? "border border-green-dark bg-gray-50 text-green-dark hover:bg-green-dark/10" // Border for details
+                    : "border-green-dark bg-green-dark text-white hover:bg-green-dark/90", // Green for add to cart
+                  !inStock &&
+                    "cursor-not-allowed border border-gray-300 bg-gray-50 text-gray-500 opacity-60 hover:bg-gray-50/90",
+                )}
+              >
+                <CartIcon
+                  className={cn("mr-2 h-4 w-4", hasVariants && "hidden")}
+                />
+                {!inStock
+                  ? "Out of Stock"
+                  : hasVariants
+                    ? "See Details"
+                    : "Add to Cart"}
+              </Button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="selector"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <QuantitySelector
+                quantity={quantity}
+                onQuantityChange={handleQuantityChange}
+                min={0}
+                max={maxQuantity}
+                size="card"
+                className="w-full"
+                disabled={!inStock}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Variant Selector Modal */}
         {hasVariants && (

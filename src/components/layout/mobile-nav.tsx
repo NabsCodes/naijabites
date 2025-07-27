@@ -4,17 +4,17 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Search,
-  ShoppingCart,
-  User,
-  Menu,
-  MapPin,
-  ChevronDown,
-  Settings,
-  LogOut,
-  X,
-  ArrowLeft,
-} from "lucide-react";
+  MagnifyingGlassIcon,
+  ShoppingBagIcon,
+  UserIcon,
+  MapPinIcon,
+  ChevronDownIcon,
+  XMarkIcon,
+  HeartIcon,
+  ArrowRightOnRectangleIcon,
+  Bars3Icon,
+  ArrowLeftIcon,
+} from "@heroicons/react/24/outline";
 import { HomeIcon, ShopIcon, AboutIcon, ContactIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,10 +73,10 @@ const navigationItems = [
 
 // Account menu items data
 const accountMenuItems = [
-  { icon: User, label: "My Profile", href: "/profile" },
-  { icon: ShoppingCart, label: "My Orders", href: "/orders" },
-  { icon: MapPin, label: "My Addresses", href: "/addresses" },
-  { icon: Settings, label: "Settings", href: "/settings" },
+  { icon: UserIcon, label: "My Profile", href: "/account/profile" },
+  { icon: ShoppingBagIcon, label: "My Orders", href: "/account/orders" },
+  { icon: MapPinIcon, label: "My Addresses", href: "/account/addresses" },
+  { icon: HeartIcon, label: "Wishlist", href: "/account/wishlist" },
 ];
 
 export default function MobileNav({
@@ -148,7 +148,7 @@ export default function MobileNav({
                     className="mt-2 flex items-center justify-center rounded-lg p-2 text-white transition-colors hover:bg-white/10"
                     aria-label="Open menu"
                   >
-                    <Menu className="h-6 w-6" />
+                    <Bars3Icon className="h-6 w-6" />
                   </button>
                 </SheetTrigger>
                 <SheetContent side="left" className="border-0 bg-white p-0">
@@ -168,7 +168,7 @@ export default function MobileNav({
                           onClick={() => setIsMenuOpen(false)}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-900 transition-colors hover:bg-gray-200"
                         >
-                          <X className="h-5 w-5" />
+                          <XMarkIcon className="h-5 w-5" />
                         </button>
                       </div>
 
@@ -185,14 +185,14 @@ export default function MobileNav({
                                 className="flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                               >
                                 <div className="flex items-center gap-2">
-                                  <MapPin className="h-4 w-4 text-green-600" />
+                                  <MapPinIcon className="h-4 w-4 text-green-600" />
                                   <span className="truncate">
                                     {selectedLocation
                                       ? `${selectedLocation.city}, ${selectedLocation.province}`
                                       : "Select delivery location"}
                                   </span>
                                 </div>
-                                <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                                <ChevronDownIcon className="h-4 w-4 flex-shrink-0" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
@@ -335,7 +335,7 @@ export default function MobileNav({
                               setIsMenuOpen(false);
                             }}
                           >
-                            <LogOut className="h-5 w-5" />
+                            <ArrowRightOnRectangleIcon className="h-5 w-5" />
                             Sign Out
                           </button>
                         </div>
@@ -359,7 +359,7 @@ export default function MobileNav({
                 className="flex items-center justify-center rounded-lg p-2 text-white transition-colors hover:bg-white/10"
                 aria-label="Open search"
               >
-                <Search className="h-5 w-5" />
+                <MagnifyingGlassIcon className="h-5 w-5" />
               </button>
 
               {/* Cart */}
@@ -450,7 +450,7 @@ export default function MobileNav({
                         className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
                         onClick={() => setIsMenuOpen(true)}
                       >
-                        <Menu className="h-4 w-4" />
+                        <Bars3Icon className="h-4 w-4" />
                         <span>Browse Menu</span>
                       </button>
                     </div>
@@ -461,7 +461,7 @@ export default function MobileNav({
                         className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition-colors hover:bg-gray-50"
                         onClick={() => setIsUserLoggedIn(false)}
                       >
-                        <LogOut className="h-4 w-4" />
+                        <ArrowRightOnRectangleIcon className="h-4 w-4" />
                         <span>Sign Out</span>
                       </button>
                     </div>
@@ -474,7 +474,7 @@ export default function MobileNav({
                   onClick={() => setIsMenuOpen(true)}
                   aria-label="Open login menu"
                 >
-                  <User className="h-5 w-5" />
+                  <UserIcon className="h-5 w-5" />
                 </button>
               )}
             </div>
@@ -497,7 +497,7 @@ export default function MobileNav({
                   className="flex items-center justify-center rounded-lg p-2 text-white transition-colors hover:bg-white/10"
                   aria-label="Close search"
                 >
-                  <ArrowLeft className="h-5 w-5" />
+                  <ArrowLeftIcon className="h-5 w-5" />
                 </button>
 
                 {/* Search Input */}
@@ -521,7 +521,7 @@ export default function MobileNav({
                         className="absolute right-16 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-lemon-light text-green-dark transition-colors hover:bg-lemon-dark hover:text-green-deep"
                         aria-label="Clear search"
                       >
-                        <X className="h-3 w-3" />
+                        <XMarkIcon className="h-3 w-3" />
                       </button>
                     )}
 
@@ -529,7 +529,7 @@ export default function MobileNav({
                       type="submit"
                       className="rounded-none border-0 bg-lemon-dark px-4 text-sm font-semibold text-white shadow-none hover:bg-lemon-dark/90"
                     >
-                      <Search className="h-4 w-4" />
+                      <MagnifyingGlassIcon className="h-4 w-4" />
                     </Button>
                   </div>
 

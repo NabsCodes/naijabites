@@ -1,4 +1,4 @@
-import { Minus, Plus } from "lucide-react";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 
 interface QuantitySelectorProps {
@@ -34,39 +34,48 @@ export function QuantitySelector({
 
   const sizeClasses = {
     sm: {
-      button: "h-8 w-8",
-      input: "h-8 w-12 text-sm",
+      button: "h-7 w-7",
+      input: "min-w-[2rem] px-2 text-xs",
       icon: "h-3 w-3",
+      container: "gap-1 p-0.5",
     },
     md: {
-      button: "h-10 w-10 sm:h-12 sm:w-12",
-      input: "h-10 w-14 sm:h-12 sm:w-16 text-sm sm:text-base",
-      icon: "h-4 w-4",
+      button: "h-8 w-8 sm:h-9 sm:w-9",
+      input: "min-w-[2.5rem] px-3 text-sm sm:min-w-[3rem]",
+      icon: "h-3.5 w-3.5 sm:h-4 sm:w-4",
+      container: "gap-1 p-1 sm:gap-1.5 sm:p-1.5",
     },
     lg: {
-      button: "h-12 w-12",
-      input: "h-12 w-16 text-base",
-      icon: "h-5 w-5",
+      button: "h-10 w-10",
+      input: "min-w-[3.5rem] px-4 text-base",
+      icon: "h-4 w-4",
+      container: "gap-2 p-1.5",
     },
   };
 
   const classes = sizeClasses[size];
 
   return (
-    <div className={cn("flex w-fit items-center", className)}>
+    <div
+      className={cn(
+        "flex items-center rounded-full border border-gray-300 bg-gray-50 shadow-sm",
+        classes.container,
+        className,
+      )}
+    >
       <button
         onClick={handleDecrease}
         disabled={disabled || quantity <= min}
         className={cn(
-          "flex items-center justify-center rounded-l-xl border-2 border-r-0 border-gray-300 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:shadow-sm",
           classes.button,
         )}
       >
-        <Minus className={classes.icon} />
+        <MinusIcon className={classes.icon} strokeWidth={2} />
       </button>
       <div
         className={cn(
-          "flex items-center justify-center border-2 border-x-0 border-gray-300 bg-white font-semibold",
+          "flex items-center justify-center font-semibold tabular-nums text-gray-900",
           classes.input,
         )}
       >
@@ -76,11 +85,11 @@ export function QuantitySelector({
         onClick={handleIncrease}
         disabled={disabled || quantity >= max}
         className={cn(
-          "flex items-center justify-center rounded-r-xl border-2 border-l-0 border-gray-300 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:shadow-sm",
           classes.button,
         )}
       >
-        <Plus className={classes.icon} />
+        <PlusIcon className={classes.icon} strokeWidth={2} />
       </button>
     </div>
   );

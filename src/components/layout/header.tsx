@@ -4,14 +4,15 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Search,
-  ShoppingCart,
-  User,
-  MapPin,
-  ChevronDown,
-  ChevronUp,
-  X,
-} from "lucide-react";
+  MagnifyingGlassIcon,
+  ShoppingBagIcon,
+  UserIcon,
+  MapPinIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  XMarkIcon,
+  HeartIcon,
+} from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -47,9 +48,10 @@ const navigationItems = [
 
 // Account menu items data
 const accountMenuItems = [
-  { icon: User, label: "My Profile", href: "/profile" },
-  { icon: ShoppingCart, label: "My Orders", href: "/orders" },
-  { icon: MapPin, label: "Addresses", href: "/addresses" },
+  { icon: UserIcon, label: "My Profile", href: "/account/profile" },
+  { icon: ShoppingBagIcon, label: "My Orders", href: "/account/orders" },
+  { icon: MapPinIcon, label: "Addresses", href: "/account/addresses" },
+  { icon: HeartIcon, label: "Wishlist", href: "/account/wishlist" },
 ];
 
 export default function Header() {
@@ -136,7 +138,7 @@ export default function Header() {
                           variant="outline"
                           className="flex min-w-[120px] items-center gap-2 rounded-none border-0 border-r border-gray-200 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50"
                         >
-                          <MapPin className="h-4 w-4 text-green-600" />
+                          <MapPinIcon className="h-4 w-4 text-green-600" />
                           <span className="truncate text-sm">
                             {selectedLocation ? (
                               `${selectedLocation.city}, ${selectedLocation.province}`
@@ -150,9 +152,9 @@ export default function Header() {
                             )}
                           </span>
                           {isMenuOpen ? (
-                            <ChevronUp className="ml-auto h-4 w-4" />
+                            <ChevronUpIcon className="ml-auto h-4 w-4" />
                           ) : (
-                            <ChevronDown className="ml-auto h-4 w-4" />
+                            <ChevronDownIcon className="ml-auto h-4 w-4" />
                           )}
                         </Button>
                       </DropdownMenuTrigger>
@@ -200,7 +202,7 @@ export default function Header() {
                           className="absolute right-[120px] top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-lemon-light text-green-dark transition-colors hover:bg-lemon-dark hover:text-green-deep"
                           aria-label="Clear search"
                         >
-                          <X className="h-3 w-3" />
+                          <XMarkIcon className="h-3 w-3" />
                         </button>
                       )}
 
@@ -208,7 +210,7 @@ export default function Header() {
                         type="submit"
                         className="rounded-none border-0 bg-lemon-dark px-4 text-sm font-semibold text-white shadow-none transition-all duration-300 hover:bg-lemon-dark/80"
                       >
-                        <Search className="h-4 w-4" />
+                        <MagnifyingGlassIcon className="h-4 w-4" />
                         <span className="hidden lg:inline">Search</span>
                       </Button>
                     </div>
@@ -290,7 +292,7 @@ export default function Header() {
                             {mockUser.name}
                           </span>
 
-                          <ChevronDown className="h-4 w-4 flex-shrink-0 text-lemon-light lg:h-5 lg:w-5" />
+                          <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-lemon-light lg:h-5 lg:w-5" />
                         </Button>
                       </DropdownMenuTrigger>
 

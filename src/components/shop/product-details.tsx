@@ -93,7 +93,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     };
   }, [product.variants, product.inStock]);
 
-  // Can purchase
+  // Can purchase - if main product is in stock, check variant availability
   const canPurchase = useMemo(() => {
     // If main product is out of stock, can't purchase regardless of variants
     if (!product.inStock) {
@@ -119,7 +119,6 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
   // Quantity change
   const handleQuantityChange = (newQuantity: number) => {
-    const maxQuantity = Math.max(selectedVariant?.inventory || 99, 1);
     if (newQuantity >= 1 && newQuantity <= maxQuantity) {
       setQuantity(newQuantity);
     }
@@ -196,12 +195,12 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       <div className="space-y-2 sm:space-y-3">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Main Price - Always Prominent */}
-          <span className="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
+          <span className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">
             {formatPrice(currentPrice)}
           </span>
           {/* Original Price - When on Sale */}
           {originalPrice && (
-            <span className="text-lg text-gray-500 line-through sm:text-xl lg:text-2xl">
+            <span className="text-sm text-gray-500 line-through sm:text-base">
               {formatPrice(originalPrice)}
             </span>
           )}
@@ -209,7 +208,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           {originalPrice && product.discountPercentage && (
             <Badge
               variant="destructive"
-              className="text-sm font-semibold sm:text-base"
+              className="text-xs font-semibold sm:text-sm"
             >
               -{product.discountPercentage}% OFF
             </Badge>
@@ -227,7 +226,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       {/* Variant Selector */}
       {product.variants && product.variants.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-base font-semibold text-gray-900 sm:text-lg">
+          <h3 className="text-sm font-semibold text-gray-900 sm:text-base">
             {product.variants.length === 1 ? "Available Size" : "Size/Pack"}
           </h3>
           <div
@@ -318,15 +317,16 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             quantity={quantity}
             onQuantityChange={handleQuantityChange}
             min={1}
-            max={Math.max(maxQuantity, 1)}
+            max={maxQuantity}
             disabled={!canPurchase}
             size="md"
+            className="w-fit"
           />
         </div>
       )}
 
       {/* Action Buttons */}
-      <div className="pt-4 sm:pt-6">
+      <div className="flex flex-col gap-2">
         <Button
           variant="ghost"
           size="lg"

@@ -14,6 +14,7 @@ import { useProductPricing } from "@/hooks/use-product-pricing";
 import { useInventory } from "@/hooks/use-inventory";
 import { useCart } from "@/contexts/cart-context";
 import { Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductDetailsProps {
   product: Product;
@@ -33,7 +34,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
   // Cart context
   const { addItem } = useCart();
-
+  const { toast } = useToast();
   // Reset selected variant if it becomes unavailable or doesn't exist
   useMemo(() => {
     if (selectedVariant && product.variants) {
@@ -148,7 +149,11 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           product,
           variant: selectedVariant || undefined,
         });
-
+        toast({
+          title: "Added to cart",
+          description: `${product.name} added to your cart.`,
+          variant: "success",
+        });
         console.log("Added to cart:", {
           product: product.name,
           variant: selectedVariant?.title,

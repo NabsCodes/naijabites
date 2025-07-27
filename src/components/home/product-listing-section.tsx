@@ -1,17 +1,20 @@
 import { ProductCard } from "@/components/shop";
-import { getFeaturedProducts } from "@/lib/mock-data/products";
+import { getShopifyHomePageProducts } from "@/lib/shopify-products";
 
 export async function ProductListingSection() {
-  // Only in development - simulate slow API
-  if (process.env.NODE_ENV === "development") {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-  }
 
-  // Fetch data server-side
-  const products = getFeaturedProducts();
-  // Shuffle products to make them random
-  const shuffledProducts = [...products].sort(() => Math.random() - 0.5);
-  const displayProducts = shuffledProducts.slice(0, 8);
+
+  let products;
+  try {
+    products = await getShopifyHomePageProducts(8);
+    
+    // If no Shopify products, fallback to mock data
+    if (products.length === 0) {
+      console.log('No Shopify products found, using mock data');
+    }
+  } catch (error) {
+    console.error('Error fetching Shopify products, using mock data:', error);
+  }
 
   return (
     <section className="rounded-t-[20px] bg-[#f9f9f9] md:rounded-t-[40px]">
@@ -27,9 +30,9 @@ export async function ProductListingSection() {
             </p>
           </div>
 
-          {/* Product Grid  */}
+          {/* Product Grid  TODO: investigate error on*/}
           <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-            {displayProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

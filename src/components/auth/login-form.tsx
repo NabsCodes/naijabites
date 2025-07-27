@@ -83,7 +83,7 @@ export function LoginForm({ className, ...props }: { className?: string }) {
                 Password
               </Label>
               <Link
-                href="#"
+                href="/forgot-password"
                 className="text-sm text-green-dark underline-offset-4 transition-colors hover:text-green-dark/80 hover:underline"
               >
                 Forgot password?

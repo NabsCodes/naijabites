@@ -1,7 +1,5 @@
 // Server-side filtering and pagination utilities for products
 import { Product } from "@/types";
-import { categories } from "@/lib/mock-data/categories";
-import { brands } from "@/lib/mock-data/brands";
 
 // Interface definitions for filtering
 export interface ProductFilters {
@@ -113,79 +111,10 @@ function getGlobalPriceRange(products: Product[]) {
 }
 
 // Category-specific filtering utilities
-export function prepareCategoryFilters(
-  allProducts: Product[],
-  filters: ProductFilters,
-  categoryName: string,
-) {
-  // Force category filter for this page
-  const categoryFilters = { ...filters, category: categoryName };
-
-  // Apply filtering and pagination
-  const result = filterAndPaginateProducts(allProducts, categoryFilters);
-
-  // Get filter options for category products but with global price range
-  const categoryProducts = allProducts.filter(
-    (p) => p.category === categoryName,
-  );
-  const filterOptions = getFilterOptions(categoryProducts, {
-    hideCategoryFilter: true,
-    currentCategory: categoryName,
-  });
-
-  // Override with global price range for consistent slider behavior
-  const globalPriceRange = getGlobalPriceRange(allProducts);
-  const finalFilterOptions = {
-    ...filterOptions,
-    priceRange: globalPriceRange,
-  };
-
-  return { result, filterOptions: finalFilterOptions };
-}
 
 // Deals-specific filtering utilities
-export function prepareDealsFilters(
-  allProducts: Product[],
-  filters: ProductFilters,
-) {
-  // Force onSale filter for deals page
-  const dealFilters = { ...filters, onSale: true };
-
-  // Apply filtering and pagination
-  const result = filterAndPaginateProducts(allProducts, dealFilters);
-
-  // Only show filter options for products that are actually on sale
-  const saleProducts = allProducts.filter((p) => p.isOnSale);
-  const filterOptions = getFilterOptions(saleProducts, {
-    hideCategoryFilter: false, // Show categories but only those with deals
-    limitToAvailableOnly: true, // Only show categories/brands that have deals
-  });
-
-  return { result, filterOptions };
-}
 
 // Recommended-specific filtering utilities
-export function prepareRecommendedFilters(
-  allProducts: Product[],
-  filters: ProductFilters,
-) {
-  // Force rating filter for recommended page (4+ stars)
-  const recommendedFilters = { ...filters, rating: 4 };
-
-  // Apply filtering and pagination
-  const result = filterAndPaginateProducts(allProducts, recommendedFilters);
-
-  // Only show filter options for products that are highly rated (4+ stars)
-  const highRatedProducts = allProducts.filter(
-    (p) => p.rating && typeof p.rating === "object" && p.rating.average >= 4.0,
-  );
-  const filterOptions = getFilterOptions(highRatedProducts, {
-    hideCategoryFilter: false, // Show categories but only those with highly rated products
-    limitToAvailableOnly: true, // Only show categories/brands that have highly rated products
-  });
-
-  return { result, filterOptions };
-}
 
 // Individual filter functions
 function applySearchFilter(products: Product[], search: string): Product[] {
@@ -344,62 +273,3 @@ export function filterAndPaginateProducts(
   };
 }
 
-// Get available filter options from products
-export function getFilterOptions(
-  products: Product[],
-  context?: {
-    hideCategoryFilter?: boolean;
-    currentCategory?: string;
-    limitToAvailableOnly?: boolean;
-  },
-) {
-  const { hideCategoryFilter = false, limitToAvailableOnly = false } =
-    context || {};
-
-  // Get all categories and brands from metadata for comprehensive options
-  let availableCategories = categories.map((cat) => cat.name);
-  let availableBrands = brands.map((brand) => brand.name);
-
-  // If limitToAvailableOnly is true (for specialized pages), only show options with products
-  if (limitToAvailableOnly) {
-    const productCategories = [...new Set(products.map((p) => p.category))];
-    const productBrands = [...new Set(products.map((p) => p.brand))];
-
-    availableCategories = availableCategories.filter((cat) =>
-      productCategories.includes(cat),
-    );
-    availableBrands = availableBrands.filter((brand) =>
-      productBrands.includes(brand),
-    );
-  }
-
-  // Hide categories on category pages
-  if (hideCategoryFilter) {
-    availableCategories = [];
-  }
-
-  // Calculate price range from provided products
-  const prices = products.map(
-    (p) => p.variants?.[0]?.salePrice || p.variants?.[0]?.price || p.price,
-  );
-  const priceRange = {
-    min: prices.length > 0 ? Math.min(...prices) : 0,
-    max: prices.length > 0 ? Math.max(...prices) : 1000,
-  };
-
-  return {
-    categories: availableCategories,
-    brands: availableBrands,
-    priceRange,
-    ratings: [5, 4, 3, 2, 1],
-    sortOptions: [
-      { value: "name-asc", label: "Name: A to Z" },
-      { value: "name-desc", label: "Name: Z to A" },
-      { value: "price-asc", label: "Price: Low to High" },
-      { value: "price-desc", label: "Price: High to Low" },
-      { value: "rating-desc", label: "Highest Rated" },
-      { value: "discount-desc", label: "Biggest Discount" },
-      { value: "newest", label: "Newest First" },
-    ],
-  };
-}

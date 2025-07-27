@@ -1,0 +1,8 @@
+{
+  "git": {
+    "deploymentEnabled": {
+      "naj-dev": false,
+      "nabs-dev": false
+    }
+  }
+}

@@ -14,6 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, type SignUpFormData } from "@/lib/validations/auth";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import config from '../../../config.json';
+import { saveLogin, fetchCustomerData } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export function SignUpForm({ className, ...props }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +24,7 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const otpCodeLength = config.otp.code_length;
   const otpCooldown = config.otp.cooldown_expiry;
@@ -97,7 +100,19 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
         return;
       }
       console.log('🟢 Signup success: Access Token:', result.accessToken);
+      
+      // Save token in cookies using auth.ts
+      saveLogin(result.accessToken);
+      
+      // Fetch and save customer data
+      await fetchCustomerData();
+      
       setSuccess(true);
+      
+      // Redirect to home page after successful signup
+      setTimeout(() => {
+        router.push('/');
+      }, 1000);
     } catch (err) {
       console.error('❌ Signup error:', err);
       setError('Something went wrong');

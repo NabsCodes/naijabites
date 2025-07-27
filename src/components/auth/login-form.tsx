@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { saveLogin, fetchCustomerData } from '@/lib/auth';
 
 export function LoginForm({ className }: { className?: string }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
@@ -17,7 +17,6 @@ export function LoginForm({ className }: { className?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null); // Clear old error
-
 
     try {
       const res = await fetch('/api/login', {
@@ -36,11 +35,11 @@ export function LoginForm({ className }: { className?: string }) {
 
       console.log('🟢 Login successful:', result);
 
-      // Save token in memory
-      setAccessToken(result.accessToken);
+      // Save token in cookies using auth.ts
+      saveLogin(result.accessToken);
 
-      // You can also store in localStorage if needed
-      // localStorage.setItem('customerAccessToken', result.accessToken);
+      // Fetch and save customer data
+      await fetchCustomerData();
 
       router.push('/'); // Or wherever you want to go
     } catch (err) {

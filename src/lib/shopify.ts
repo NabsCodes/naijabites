@@ -19,6 +19,27 @@ export async function shopifyFetch<T = any>(
   return json.data;
 }
 
+// Function for authenticated customer requests
+export async function shopifyCustomerFetch<T = any>(
+  query: string,
+  customerAccessToken: string,
+  variables?: Record<string, any>
+): Promise<T> {
+  const res = await fetch(`https://${SHOPIFY_DOMAIN}/api/2024-07/graphql.json`, {
+    method: 'POST',
+    headers: {
+      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN,
+      'X-Shopify-Customer-Access-Token': customerAccessToken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  const json = await res.json();
+  if (json.errors) throw new Error(JSON.stringify(json.errors));
+  return json.data;
+}
+
 // Shopify Product Queries
 const PRODUCT_FRAGMENT = `
   fragment ProductFragment on Product {

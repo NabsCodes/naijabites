@@ -5,21 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   MagnifyingGlassIcon,
-  ShoppingBagIcon,
   UserIcon,
   MapPinIcon,
   ChevronDownIcon,
   XMarkIcon,
-  HeartIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
-import { HomeIcon, ShopIcon, AboutIcon, ContactIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +40,7 @@ import { CartIcon, LogoIcon, Logo2Icon } from "@/components/icons";
 import { mockUser } from "@/lib/mock-data/user";
 import { SearchSuggestion } from "@/types/search";
 import { SearchAutocomplete } from "@/components/search";
+import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
 
 interface MobileNavProps {
   cartItemsCount: number;
@@ -62,22 +60,6 @@ interface MobileNavProps {
   clearSearchHistory: () => void;
   clearSearch: () => void;
 }
-
-// Navigation items data
-const navigationItems = [
-  { href: "/", label: "Home", icon: HomeIcon },
-  { href: "/shop", label: "Shop", icon: ShopIcon },
-  { href: "/about", label: "About Us", icon: AboutIcon },
-  { href: "/contact", label: "Contact Us", icon: ContactIcon },
-];
-
-// Account menu items data
-const accountMenuItems = [
-  { icon: UserIcon, label: "My Profile", href: "/account/profile" },
-  { icon: ShoppingBagIcon, label: "My Orders", href: "/account/orders" },
-  { icon: MapPinIcon, label: "My Addresses", href: "/account/addresses" },
-  { icon: HeartIcon, label: "Wishlist", href: "/account/wishlist" },
-];
 
 export default function MobileNav({
   cartItemsCount,
@@ -225,44 +207,46 @@ export default function MobileNav({
 
                       {/* User Profile Section */}
                       {isUserLoggedIn ? (
-                        <div className="border-b border-gray-200 p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="h-12 w-12 flex-shrink-0">
-                              <Avatar className="h-12 w-12 ring-2 ring-green-200">
-                                <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
-                                  {mockUser.name.charAt(0).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="text-base font-semibold text-gray-900">
-                                {mockUser.name}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {mockUser.email}
-                              </span>
+                        <Link href="/account/profile" className="group">
+                          <div className="border-b border-gray-200 p-4 transition-all duration-300 group-hover:bg-green-dark/5">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 flex-shrink-0">
+                                <Avatar className="h-10 w-10 ring-2 ring-lemon-dark">
+                                  <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
+                                    {mockUser.name.charAt(0).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-base font-semibold text-gray-900">
+                                  {mockUser.name}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {mockUser.email}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       ) : (
                         <div className="border-b border-gray-200 p-4">
-                          <div className="space-y-4">
+                          <div className="w-full space-y-4">
                             <h3 className="text-lg font-semibold text-gray-900">
                               Welcome to NaijaBites
                             </h3>
-                            <div className="flex gap-3">
-                              <Link href="/signup">
+                            <div className="flex items-center gap-3">
+                              <Link href="/signup" className="flex-1">
                                 <Button
-                                  className="flex-1 bg-green-dark text-white hover:bg-green-dark/90"
+                                  className="w-full bg-lemon-dark text-green-dark hover:bg-lemon-dark/90"
                                   onClick={() => setIsMenuOpen(false)}
                                 >
                                   Sign up
                                 </Button>
                               </Link>
-                              <Link href="/login">
+                              <Link href="/login" className="flex-1">
                                 <Button
                                   variant="outline"
-                                  className="flex-1 border-green-dark text-green-dark hover:bg-green-dark/5"
+                                  className="w-full border-green-dark text-green-dark hover:bg-green-dark/5"
                                   onClick={() => setIsMenuOpen(false)}
                                 >
                                   Log in
@@ -406,9 +390,8 @@ export default function MobileNav({
                     <div className="border-b border-gray-100 px-4 py-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={mockUser.avatar} />
-                          <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
-                            {mockUser.initials}
+                          <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
+                            {mockUser.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">

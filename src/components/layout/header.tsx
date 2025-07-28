@@ -5,13 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   MagnifyingGlassIcon,
-  ShoppingBagIcon,
-  UserIcon,
   MapPinIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   XMarkIcon,
-  HeartIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,35 +21,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { locations } from "@/lib/mock-data/locations";
-import {
-  HomeIcon,
-  ShopIcon,
-  CartIcon,
-  AboutIcon,
-  ContactIcon,
-  LogoIcon,
-} from "@/components/icons";
+import { CartIcon, LogoIcon } from "@/components/icons";
 import { mockUser } from "@/lib/mock-data/user";
 import { useCart } from "@/contexts/cart-context";
 import { useSearch } from "@/hooks/use-search";
 import { SearchAutocomplete } from "@/components/search";
 import MobileNav from "./mobile-nav";
-
-// Navigation items data
-const navigationItems = [
-  { href: "/", label: "Home", icon: HomeIcon },
-  { href: "/shop", label: "Shop", icon: ShopIcon },
-  { href: "/about", label: "About Us", icon: AboutIcon },
-  { href: "/contact", label: "Contact Us", icon: ContactIcon },
-];
-
-// Account menu items data
-const accountMenuItems = [
-  { icon: UserIcon, label: "My Profile", href: "/account/profile" },
-  { icon: ShoppingBagIcon, label: "My Orders", href: "/account/orders" },
-  { icon: MapPinIcon, label: "Addresses", href: "/account/addresses" },
-  { icon: HeartIcon, label: "Wishlist", href: "/account/wishlist" },
-];
+import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
 
 export default function Header() {
   const pathname = usePathname();
@@ -297,7 +272,7 @@ export default function Header() {
 
                       <DropdownMenuContent
                         align="end"
-                        className="w-56 border-0 bg-white shadow-xl"
+                        className="border-0 bg-white shadow-xl"
                       >
                         <div className="border-b border-gray-100 px-4 py-3">
                           <div className="flex items-center gap-3">

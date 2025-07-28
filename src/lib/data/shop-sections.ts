@@ -1,5 +1,5 @@
 import { Product } from "@/types";
-import { products } from "../mock-data/products";
+import { products } from "@/lib/mock-data/products";
 
 // Section type definitions
 export type SectionType =

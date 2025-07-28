@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { Card } from "../ui/card";
+import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";

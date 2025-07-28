@@ -229,12 +229,8 @@ export default function MobileNav({
                           <div className="flex items-center gap-3">
                             <div className="h-12 w-12 flex-shrink-0">
                               <Avatar className="h-12 w-12 ring-2 ring-green-200">
-                                <AvatarImage
-                                  src={mockUser.avatar}
-                                  className="h-full w-full object-cover"
-                                />
                                 <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
-                                  {mockUser.initials}
+                                  {mockUser.name.charAt(0).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
                             </div>
@@ -394,12 +390,8 @@ export default function MobileNav({
                     >
                       <div className="h-7 w-7 flex-shrink-0">
                         <Avatar className="h-7 w-7 border border-white/30">
-                          <AvatarImage
-                            src={mockUser.avatar}
-                            className="h-full w-full object-cover"
-                          />
                           <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark">
-                            {mockUser.initials}
+                            {mockUser.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                       </div>

@@ -246,6 +246,7 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
           <Button
             type="button"
             variant="outline"
+            disabled
             className="h-12 w-full border-green-dark/20 bg-white text-green-dark transition-all duration-300 hover:border-green-dark/40 hover:bg-green-dark/5"
           >
             <FaGoogle className="mr-2" size={18} />

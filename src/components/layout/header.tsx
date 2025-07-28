@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -282,9 +282,8 @@ export default function Header() {
                           className="flex h-auto items-center gap-2 rounded-full border border-solid border-white bg-white/5 p-1.5 pr-3 transition-colors hover:bg-white/10 focus:bg-white/10 lg:gap-3 lg:pr-4"
                         >
                           <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
-                            <AvatarImage src={mockUser.avatar} />
                             <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark lg:text-sm">
-                              {mockUser.initials}
+                              {mockUser.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
 
@@ -303,9 +302,8 @@ export default function Header() {
                         <div className="border-b border-gray-100 px-4 py-3">
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10">
-                              <AvatarImage src={mockUser.avatar} />
                               <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                                {mockUser.initials}
+                                {mockUser.name.charAt(0).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">

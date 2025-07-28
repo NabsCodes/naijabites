@@ -10,7 +10,7 @@ export interface Testimonial {
 export const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "John Doe",
+    name: "Adebayo Olanrewaju",
     location: "Lagos",
     avatar:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
@@ -20,7 +20,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: 2,
-    name: "Fatima",
+    name: "Fatima Ibrahim",
     location: "Kano",
     avatar:
       "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
@@ -30,7 +30,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: 3,
-    name: "Aisha",
+    name: "Aisha Tanko",
     location: "Lagos",
     avatar:
       "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=100&h=100&fit=crop&crop=face&auto=format&q=80",

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -15,6 +14,7 @@ import {
 } from "@/lib/validations/auth";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { Loader2 } from "lucide-react";
+import { AuthContainer } from "./auth-container";
 
 type VerificationStatus = "pending" | "success" | "error" | "expired";
 
@@ -197,9 +197,9 @@ export function EmailVerificationForm({
                   placeholder="name@example.com"
                   {...register("email")}
                   className={cn(
-                    "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                    "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                     errors.email &&
-                      "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                      "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                   )}
                 />
                 {errors.email && (
@@ -250,14 +250,8 @@ export function EmailVerificationForm({
   };
 
   return (
-    <Card
-      className={cn(
-        "rounded-3xl bg-white/80 p-6 shadow-none md:p-8",
-        className,
-      )}
-      {...props}
-    >
+    <AuthContainer className={className} {...props}>
       {renderContent()}
-    </Card>
+    </AuthContainer>
   );
 }

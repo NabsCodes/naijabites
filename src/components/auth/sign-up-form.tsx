@@ -5,24 +5,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa6";
-import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, type SignUpFormData } from "@/lib/validations/auth";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  EnvelopeIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
+import { AuthContainer } from "@/components/auth/auth-container";
+import { cn } from "@/lib/utils";
 
 export function SignUpForm({ className, ...props }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState<"email" | "complete">("email");
+  const [email, setEmail] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    setValue,
+    trigger, // TODO: Remove trigger when using real APIs - this is just for demo loading state
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
   });
@@ -49,6 +57,23 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
     },
   ];
 
+  const handleEmailSubmit = async (emailData: { email: string }) => {
+    setIsLoading(true);
+
+    // Simulate email validation
+    setTimeout(() => {
+      setIsLoading(false);
+      setEmail(emailData.email);
+      setValue("email", emailData.email);
+      setStep("complete");
+    }, 1000);
+  };
+
+  const handleBackToEmail = () => {
+    setStep("email");
+    // Keep the email value so user doesn't lose it
+  };
+
   const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true);
     setTimeout(() => {
@@ -57,27 +82,116 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
     }, 2000);
   };
 
+  // Step 1: Email only
+  if (step === "email") {
+    return (
+      <AuthContainer className={className} {...props}>
+        <form
+          className="flex flex-col gap-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            const emailValue = formData.get("email") as string;
+
+            // TODO: Remove this manual validation when using real APIs
+            // This is just for demo to show loading state even with validation errors
+            trigger("email").then((isValid) => {
+              if (isValid) {
+                handleEmailSubmit({ email: emailValue });
+              }
+            });
+
+            // Use the following when using real APIs
+            // handleEmailSubmit({ email: emailValue });
+          }}
+        >
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1 className="text-2xl font-bold text-green-dark">
+              Create your account
+            </h1>
+            <p className="text-balance text-sm text-muted-foreground">
+              Enter your email to get started with Naijabites
+            </p>
+          </div>
+
+          <div className="grid gap-5">
+            <div className="grid gap-2">
+              <Label
+                htmlFor="signup-email"
+                className="text-sm font-medium text-green-dark"
+              >
+                Email address
+              </Label>
+              <Input
+                id="signup-email"
+                type="email"
+                autoComplete="email"
+                defaultValue={email}
+                placeholder="Enter your email"
+                className={cn(
+                  "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
+                  errors.email &&
+                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
+                )}
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-xs text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="h-12 w-full bg-green-dark font-medium text-white transition-all duration-300 hover:bg-green-dark/90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  Checking email...
+                </div>
+              ) : (
+                "Continue"
+              )}
+            </Button>
+          </div>
+
+          <div className="text-center text-xs">
+            <span className="text-muted-foreground">
+              Already have an account?{" "}
+            </span>
+            <Link
+              href="/login"
+              className="font-medium text-green-dark underline underline-offset-4 transition-colors hover:text-green-dark/80"
+            >
+              Sign in
+            </Link>
+          </div>
+        </form>
+      </AuthContainer>
+    );
+  }
+
+  // Step 2: Complete profile
   return (
-    <Card
-      className={cn(
-        "rounded-3xl bg-white/80 p-6 shadow-none md:p-8",
-        className,
-      )}
-      {...props}
-    >
+    <AuthContainer className={className} {...props}>
       <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col items-center gap-2 text-center">
+        <div className="flex flex-col items-center gap-3 text-center">
           <h1 className="text-2xl font-bold text-green-dark">
-            Sign up for Naijabites
+            Complete your profile
           </h1>
           <p className="text-balance text-sm text-muted-foreground">
-            Create your account to start shopping authentic Nigerian groceries
+            Almost done! Just a few more details to create your account
           </p>
+          <div className="flex items-center gap-2 rounded-2xl bg-green-dark/5 px-3 py-2 text-xs font-medium text-green-dark">
+            <EnvelopeIcon className="h-4 w-4" />
+            <span>{email}</span>
+          </div>
         </div>
 
         <div className="grid gap-5">
           {/* Name Fields */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="grid gap-2">
               <Label
                 htmlFor="firstName"
@@ -89,11 +203,12 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 id="firstName"
                 type="text"
                 placeholder="John"
+                autoComplete="given-name"
                 {...register("firstName")}
                 className={cn(
-                  "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                   errors.firstName &&
-                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
               />
               {errors.firstName && (
@@ -113,11 +228,12 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 id="lastName"
                 type="text"
                 placeholder="Doe"
+                autoComplete="family-name"
                 {...register("lastName")}
                 className={cn(
-                  "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                   errors.lastName &&
-                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
               />
               {errors.lastName && (
@@ -128,48 +244,25 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
             </div>
           </div>
 
-          {/* Email Field */}
-          <div className="grid gap-2">
-            <Label
-              htmlFor="email"
-              className="text-sm font-medium text-green-dark"
-            >
-              Email address
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              {...register("email")}
-              className={cn(
-                "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
-                errors.email &&
-                  "border-red-500 focus:border-red-500 focus:ring-red-500/20",
-              )}
-            />
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email.message}</p>
-            )}
-          </div>
-
           {/* Password Field */}
           <div className="grid gap-2">
             <Label
-              htmlFor="password"
+              htmlFor="signup-password"
               className="text-sm font-medium text-green-dark"
             >
               Password
             </Label>
             <div className="relative">
               <Input
-                id="password"
+                id="signup-password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Create a strong password"
+                autoComplete="new-password"
+                placeholder="Enter your password"
                 {...register("password")}
                 className={cn(
-                  "h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  "h-12 border-green-dark/20 pr-12 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                   errors.password &&
-                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
               />
               <button
@@ -187,37 +280,34 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
             {errors.password && (
               <p className="text-xs text-red-500">{errors.password.message}</p>
             )}
-            {/* Password requirements checklist */}
-            {password && (
-              <div className="mt-2 space-y-2">
-                <p className="text-xs font-medium text-green-dark">
-                  Password requirements:
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {passwordRequirements.map((requirement, idx) => {
-                    const isMet = requirement.test(password);
-                    return (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2 text-xs"
-                      >
-                        {isMet ? (
-                          <CheckCircleIcon className="h-3 w-3 text-green-600" />
-                        ) : (
-                          <XCircleIcon className="h-3 w-3 text-gray-400" />
-                        )}
-                        <span
-                          className={isMet ? "text-green-600" : "text-gray-500"}
-                        >
-                          {requirement.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
+          {/* Password requirements checklist */}
+          {password && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-green-dark">
+                Password requirements:
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {passwordRequirements.map((requirement, idx) => {
+                  const isMet = requirement.test(password);
+                  return (
+                    <div key={idx} className="flex items-center gap-2 text-xs">
+                      {isMet ? (
+                        <CheckCircleIcon className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <XCircleIcon className="h-3 w-3 text-gray-400" />
+                      )}
+                      <span
+                        className={isMet ? "text-green-600" : "text-gray-500"}
+                      >
+                        {requirement.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <Button
             type="submit"
@@ -230,7 +320,7 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 Creating account...
               </div>
             ) : (
-              "Sign up"
+              "Create account"
             )}
           </Button>
 
@@ -265,7 +355,20 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
             Sign in
           </Link>
         </div>
+
+        {/* Back to email button */}
+        {email && (
+          <div className="text-center text-xs">
+            <button
+              type="button"
+              onClick={handleBackToEmail}
+              className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-green-dark"
+            >
+              ← Back to email
+            </button>
+          </div>
+        )}
       </form>
-    </Card>
+    </AuthContainer>
   );
 }

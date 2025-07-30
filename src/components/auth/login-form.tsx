@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa6";
-import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
+import { AuthContainer } from "./auth-container";
 
 export function LoginForm({ className, ...props }: { className?: string }) {
   const {
@@ -35,13 +35,7 @@ export function LoginForm({ className, ...props }: { className?: string }) {
   };
 
   return (
-    <Card
-      className={cn(
-        "rounded-3xl bg-white/80 p-6 shadow-none md:p-8",
-        className,
-      )}
-      {...props}
-    >
+    <AuthContainer className={className} {...props}>
       <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold text-green-dark">Welcome back!</h1>
@@ -53,20 +47,20 @@ export function LoginForm({ className, ...props }: { className?: string }) {
         <div className="grid gap-5">
           <div className="grid gap-2">
             <Label
-              htmlFor="email"
+              htmlFor="login-email"
               className="text-sm font-medium text-green-dark"
             >
               Email address
             </Label>
             <Input
-              id="email"
+              id="login-email"
               type="email"
               placeholder="name@example.com"
               {...register("email")}
               className={cn(
-                "h-12 border-green-dark/20 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                 errors.email &&
-                  "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                  "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
               )}
             />
             {errors.email && (
@@ -77,7 +71,7 @@ export function LoginForm({ className, ...props }: { className?: string }) {
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
               <Label
-                htmlFor="password"
+                htmlFor="login-password"
                 className="text-sm font-medium text-green-dark"
               >
                 Password
@@ -91,14 +85,14 @@ export function LoginForm({ className, ...props }: { className?: string }) {
             </div>
             <div className="relative">
               <Input
-                id="password"
+                id="login-password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 {...register("password")}
                 className={cn(
-                  "h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  "h-12 border-green-dark/20 pr-12 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                   errors.password &&
-                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
               />
               <button
@@ -163,6 +157,6 @@ export function LoginForm({ className, ...props }: { className?: string }) {
           </Link>
         </div>
       </form>
-    </Card>
+    </AuthContainer>
   );
 }

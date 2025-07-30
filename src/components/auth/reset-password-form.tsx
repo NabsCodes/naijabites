@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -19,6 +18,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
+import { AuthContainer } from "./auth-container";
 
 interface PasswordRequirement {
   label: string;
@@ -66,13 +66,7 @@ export function ResetPasswordForm({
 
   if (isSubmitted) {
     return (
-      <Card
-        className={cn(
-          "rounded-3xl bg-white/80 p-6 shadow-none md:p-8",
-          className,
-        )}
-        {...props}
-      >
+      <AuthContainer className={className} {...props}>
         <div className="flex flex-col items-center gap-6 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-dark/10">
             <CheckCircleIcon className="h-8 w-8 text-green-dark" />
@@ -95,18 +89,12 @@ export function ResetPasswordForm({
             <Link href="/login">Sign in to your account</Link>
           </Button>
         </div>
-      </Card>
+      </AuthContainer>
     );
   }
 
   return (
-    <Card
-      className={cn(
-        "rounded-3xl bg-white/80 p-6 shadow-none md:p-8",
-        className,
-      )}
-      {...props}
-    >
+    <AuthContainer className={className} {...props}>
       <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold text-green-dark">
@@ -132,9 +120,9 @@ export function ResetPasswordForm({
                 placeholder="Enter your new password"
                 {...register("password")}
                 className={cn(
-                  "h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  "h-12 border-green-dark/20 pr-12 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                   errors.password &&
-                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
               />
               {errors.password && (
@@ -170,9 +158,9 @@ export function ResetPasswordForm({
                 placeholder="Confirm your new password"
                 {...register("confirmPassword")}
                 className={cn(
-                  "h-12 border-green-dark/20 pr-12 transition-colors focus:border-green-dark focus:ring-green-dark/20",
+                  "h-12 border-green-dark/20 pr-12 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
                   errors.confirmPassword &&
-                    "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
               />
               {errors.confirmPassword && (
@@ -250,6 +238,6 @@ export function ResetPasswordForm({
           </Link>
         </div>
       </form>
-    </Card>
+    </AuthContainer>
   );
 }

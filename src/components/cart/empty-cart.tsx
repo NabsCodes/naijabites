@@ -20,7 +20,7 @@ export function EmptyCart() {
           <div className="space-y-4">
             <Button
               size="lg"
-              className="bg-green-dark hover:bg-green-deep"
+              className="bg-green-dark transition-all duration-300 hover:bg-green-dark/90"
               asChild
             >
               <Link href="/shop">
@@ -32,7 +32,7 @@ export function EmptyCart() {
               or{" "}
               <Link
                 href="/shop/products"
-                className="text-green-dark hover:text-green-deep"
+                className="text-green-dark transition-all duration-300 hover:text-green-dark/90"
               >
                 browse all products
               </Link>

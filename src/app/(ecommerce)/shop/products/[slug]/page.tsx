@@ -65,29 +65,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
       : [product.image || "/images/product-placeholder.svg"];
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <div className="min-h-screen bg-white">
       {/* Breadcrumbs */}
       <ShopBreadcrumbs />
 
-      <div className="container-padding flex-1 py-10">
+      {/* Main Product Section */}
+      <div className="container-padding pb-12 pt-4">
         <div className="section-container">
-          {/* Product Details Section */}
-          <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
-            {/* Product Images - Left Side */}
-            <div className="order-1 lg:order-1">
+          {/* Product Layout */}
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10">
+            {/* Sticky Image Gallery */}
+            <div className="lg:sticky lg:top-[120px] lg:self-start">
               <ProductImageGallery
                 images={productImages}
                 productName={product.name}
               />
             </div>
 
-            {/* Product Details - Right Side */}
-            <ProductDetails product={product} />
+            {/* Product Details */}
+            <div className="lg:min-h-screen">
+              <ProductDetails product={product} />
+            </div>
           </div>
+        </div>
+      </div>
 
-          {/* Similar Products Section */}
-          {similarProductsSection.products.length > 0 && (
-            <div className="mt-12 sm:mt-16 lg:mt-20 xl:mt-24">
+      {/* Similar Products Section */}
+      {similarProductsSection.products.length > 0 && (
+        <div className="border-t border-gray-200 bg-gray-50">
+          <div className="container-padding py-12">
+            <div className="section-container">
               <ProductSection
                 title="You might also like"
                 description="Similar products from our store"
@@ -98,9 +105,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 noContainer={true}
               />
             </div>
-          )}
+          </div>
         </div>
-      </div>
-    </main>
+      )}
+    </div>
   );
 }

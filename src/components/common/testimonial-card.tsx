@@ -32,7 +32,7 @@ export function TestimonialCard({
 
       {/* User Info */}
       <div className="flex items-center gap-2">
-        <Avatar className="h-6 w-6">
+        <Avatar className="h-7 w-7">
           <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
           <AvatarFallback className="bg-[#ff7733] text-xs text-white">
             {testimonial.name.charAt(0)}

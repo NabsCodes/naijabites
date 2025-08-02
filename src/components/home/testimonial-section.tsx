@@ -5,6 +5,7 @@ import React from "react";
 import { TestimonialCard } from "@/components/common/testimonial-card";
 import { testimonials } from "@/lib/data/testimonials";
 import { Marquee } from "@/components/ui/marquee";
+import { AnimatedSection } from "@/components/common";
 
 export const TestimonialSection = () => {
   return (
@@ -17,16 +18,26 @@ export const TestimonialSection = () => {
           <div className="grid grid-cols-1 gap-4 rounded-3xl bg-white p-6 sm:p-8 md:grid-cols-2 md:gap-8">
             {/* Left Side - Content */}
             <div className="flex flex-col gap-6 lg:gap-8">
-              <div className="flex flex-col gap-2 md:gap-4">
+              <AnimatedSection
+                className="flex flex-col gap-2 md:gap-4"
+                delay={0.2}
+              >
                 <h2 className="text-2xl font-semibold leading-tight text-gray-900 lg:text-3xl">
                   See How Naijabites Makes Shopping Easier for Nigerians
                 </h2>
-              </div>
-              <p className="text-sm text-gray-500 md:hidden">
-                "Real stories from our satisfied customers"
-              </p>
+              </AnimatedSection>
 
-              <div className="hidden h-full w-full overflow-hidden rounded-3xl md:block">
+              <AnimatedSection
+                className="text-sm text-gray-500 md:hidden"
+                delay={0.4}
+              >
+                "Real stories from our satisfied customers"
+              </AnimatedSection>
+
+              <AnimatedSection
+                className="hidden h-full w-full overflow-hidden rounded-3xl md:block"
+                delay={0.6}
+              >
                 <Image
                   className="h-full w-full object-cover object-center"
                   src="/images/testimonial-image.webp"
@@ -35,11 +46,14 @@ export const TestimonialSection = () => {
                   height={400}
                   priority
                 />
-              </div>
+              </AnimatedSection>
             </div>
 
             {/* Right Side - Testimonials Marquee */}
-            <div className="flex flex-col gap-4 lg:gap-6">
+            <AnimatedSection
+              className="flex flex-col gap-4 lg:gap-6"
+              delay={0.8}
+            >
               {/* Mobile Horizontal Marquee */}
               <div className="block md:hidden">
                 <div className="relative w-full overflow-hidden rounded-2xl">
@@ -83,7 +97,7 @@ export const TestimonialSection = () => {
                   </Marquee>
                 </div>
               </div>
-            </div>
+            </AnimatedSection>
           </div>
         </div>
       </div>

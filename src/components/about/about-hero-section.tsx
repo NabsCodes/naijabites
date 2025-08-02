@@ -1,4 +1,9 @@
+"use client";
+
 import Image from "next/image";
+import { AnimatedSection } from "@/components/common";
+import { motion } from "framer-motion";
+import { slideInRight, slideInLeft } from "@/lib/animations";
 
 export const AboutHeroSection = () => {
   return (
@@ -6,11 +11,26 @@ export const AboutHeroSection = () => {
       <div className="section-container">
         {/* About Section */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl md:text-left md:text-5xl lg:text-6xl">
-            Bringing <span className="text-lemon-light">Nigerian Flavors</span>{" "}
-            to your doorstep
-          </h1>
-          <div className="flex md:items-end">
+          <motion.div
+            variants={slideInLeft}
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl md:text-left md:text-5xl lg:text-6xl">
+              Bringing{" "}
+              <span className="text-lemon-light">Nigerian Flavors</span> to your
+              doorstep
+            </h1>
+          </motion.div>
+
+          <motion.div
+            className="flex md:items-end"
+            variants={slideInRight}
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
             <p className="text-sm text-white/90 sm:text-base md:text-left lg:text-lg">
               At Naijabites, we are passionate about connecting Nigerians in
               Canada with the tastes and comforts of home. Our mission is to
@@ -18,11 +38,11 @@ export const AboutHeroSection = () => {
               affordable, and delivered with care. From your pantry staples to
               your favorite snacks, we're here to keep the spirit of home alive.
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Responsive About Images */}
-        <div className="mt-8 w-full lg:mt-10">
+        <AnimatedSection className="mt-8 w-full lg:mt-10" delay={0.6}>
           <div className="relative h-[450px] w-full overflow-hidden rounded-3xl md:h-[360px]">
             <div className="absolute inset-0 animate-pulse bg-gray-800/50" />{" "}
             {/* Placeholder background */}
@@ -45,7 +65,7 @@ export const AboutHeroSection = () => {
               />
             </picture>
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );

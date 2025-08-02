@@ -21,7 +21,7 @@ export const products: Product[] = [
     brand: "Maggi",
     inStock: true,
     isOnSale: false,
-    inventory: 5, // 5 in stock
+    inventory: 17, // 5 in stock
   },
 
   // 2. Discount Card - Golden Morn
@@ -45,7 +45,7 @@ export const products: Product[] = [
     brand: "Nestle",
     inStock: true,
     isOnSale: true,
-    inventory: 5, // 5 in stock
+    inventory: 17, // 5 in stock
   },
 
   // 3. Product with Variants - Premium Nigerian Yam (Weekend Sale!)
@@ -70,7 +70,7 @@ export const products: Product[] = [
         price: 19020,
         salePrice: 17118, // 10% off
         isAvailable: true,
-        inventory: 5,
+        inventory: 15,
       },
       {
         id: "yam-medium-3tubes",
@@ -78,7 +78,7 @@ export const products: Product[] = [
         price: 39000,
         salePrice: 35100, // 10% off
         isAvailable: true,
-        inventory: 10,
+        inventory: 43,
       },
       {
         id: "yam-large-dozen",
@@ -86,7 +86,7 @@ export const products: Product[] = [
         price: 109020,
         salePrice: 98118, // 10% off
         isAvailable: true,
-        inventory: 20,
+        inventory: 10,
       },
     ],
     salePrice: 17118, // Sale price for base variant
@@ -171,7 +171,7 @@ export const products: Product[] = [
         price: 75000,
         salePrice: 67500, // 10% off
         isAvailable: true,
-        inventory: 5,
+        inventory: 23,
       },
       {
         id: "dangote-rice-100kg",
@@ -179,7 +179,7 @@ export const products: Product[] = [
         price: 145000,
         salePrice: 130500, // 10% off
         isAvailable: true,
-        inventory: 10,
+        inventory: 18,
       },
     ],
     salePrice: 67500,

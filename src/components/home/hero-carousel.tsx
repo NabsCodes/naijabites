@@ -13,12 +13,14 @@ import Autoplay from "embla-carousel-autoplay";
 import { useState, useEffect, useRef } from "react";
 import type { CarouselApi } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { CartIcon } from "../icons";
+import { CartIcon } from "@/components/icons";
+import { motion } from "framer-motion";
+import { fadeInUp, slideInLeft, slideInRight } from "@/lib/animations";
 
 export function HeroCarousel() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [, setCount] = useState(0);
+  const [_count, setCount] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
 
@@ -75,26 +77,53 @@ export function HeroCarousel() {
                   >
                     {/* Content - Centered */}
                     <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-4 sm:gap-8 sm:px-6 lg:gap-12 lg:px-8">
-                      <div className="flex flex-col items-center gap-4">
-                        <h1 className="max-w-2xl text-center text-3xl font-bold leading-tight text-gray-900 md:text-4xl lg:max-w-4xl lg:text-5xl xl:text-6xl">
+                      <motion.div
+                        className="flex flex-col items-center gap-4"
+                        variants={fadeInUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                      >
+                        <motion.h1
+                          className="max-w-2xl text-center text-3xl font-bold leading-tight text-gray-900 md:text-4xl lg:max-w-4xl lg:text-5xl xl:text-6xl"
+                          variants={fadeInUp}
+                          initial="hidden"
+                          animate="visible"
+                          transition={{ duration: 0.6, delay: 0.4 }}
+                        >
                           Groceries You Love, Delivered to Your{" "}
                           <span className="text-green-dark">Door</span>.
-                        </h1>
-                        <p className="max-w-2xl text-center text-sm leading-relaxed text-gray-900 sm:text-base md:text-lg lg:text-xl">
+                        </motion.h1>
+                        <motion.p
+                          className="max-w-2xl text-center text-sm leading-relaxed text-gray-900 sm:text-base md:text-lg lg:text-xl"
+                          variants={fadeInUp}
+                          initial="hidden"
+                          animate="visible"
+                          transition={{ duration: 0.6, delay: 0.6 }}
+                        >
                           Shop your favourite Nigerian food items at unbeatable
                           prices. Skip the stress, enjoy the convenience.
-                        </p>
-                      </div>
+                        </motion.p>
+                      </motion.div>
 
-                      <Link
-                        href="/shop"
-                        className="flex items-center justify-center gap-2.5 rounded-lg bg-green-dark p-3 transition-all duration-300 hover:bg-green-dark/90 sm:p-4"
+                      <motion.div
+                        variants={fadeInUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 0.6, delay: 0.8 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <CartIcon color="white" />
-                        <span className="text-sm font-semibold leading-tight text-white sm:text-base">
-                          Start Shopping
-                        </span>
-                      </Link>
+                        <Link
+                          href="/shop"
+                          className="flex items-center justify-center gap-2.5 rounded-lg bg-green-dark p-3 transition-all duration-300 hover:bg-green-dark/90 sm:p-4"
+                        >
+                          <CartIcon color="white" />
+                          <span className="text-sm font-semibold leading-tight text-white sm:text-base">
+                            Start Shopping
+                          </span>
+                        </Link>
+                      </motion.div>
                     </div>
                   </div>
                 </Card>
@@ -114,7 +143,13 @@ export function HeroCarousel() {
                     {/* Unified Responsive Layout */}
                     <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-4 md:grid md:grid-cols-[1.2fr_1fr] md:items-center md:gap-4 md:px-8 lg:gap-8 lg:px-12">
                       {/* Left Side - Grocery Image (Hidden on Mobile) */}
-                      <div className="hidden items-center justify-center md:flex">
+                      <motion.div
+                        className="hidden items-center justify-center md:flex"
+                        variants={slideInLeft}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                      >
                         <div className="relative w-full">
                           <Image
                             src="/images/grocery.webp"
@@ -125,31 +160,64 @@ export function HeroCarousel() {
                             priority
                           />
                         </div>
-                      </div>
+                      </motion.div>
 
                       {/* Content - Responsive */}
-                      <div className="flex flex-col items-center justify-center gap-6 text-center md:items-start md:gap-8 md:text-left">
-                        <div className="space-y-4">
-                          <h1 className="text-3xl font-bold leading-tight text-gray-900 sm:text-4xl md:text-4xl md:leading-relaxed xl:text-5xl">
+                      <motion.div
+                        className="flex flex-col items-center justify-center gap-6 text-center md:items-start md:gap-8 md:text-left"
+                        variants={slideInRight}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                      >
+                        <motion.div
+                          className="space-y-4"
+                          variants={fadeInUp}
+                          initial="hidden"
+                          animate="visible"
+                          transition={{ duration: 0.6, delay: 0.7 }}
+                        >
+                          <motion.h1
+                            className="text-3xl font-bold leading-tight text-gray-900 sm:text-4xl md:text-4xl md:leading-relaxed xl:text-5xl"
+                            variants={fadeInUp}
+                            initial="hidden"
+                            animate="visible"
+                            transition={{ duration: 0.6, delay: 0.9 }}
+                          >
                             Fresh & Healthy{" "}
                             <span className="block text-green-dark md:inline">
                               Organic Food
                             </span>
-                          </h1>
-                          <p className="text-sm text-gray-700 sm:text-base md:text-lg">
+                          </motion.h1>
+                          <motion.p
+                            className="text-sm text-gray-700 sm:text-base md:text-lg"
+                            variants={fadeInUp}
+                            initial="hidden"
+                            animate="visible"
+                            transition={{ duration: 0.6, delay: 1.1 }}
+                          >
                             Affordable pricing, Quick delivery, Convenient
                             shopping.
-                          </p>
-                        </div>
+                          </motion.p>
+                        </motion.div>
 
-                        <Link
-                          href="/shop"
-                          className="inline-flex items-center gap-2 rounded-lg bg-green-dark px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-dark/90 md:w-fit"
+                        <motion.div
+                          variants={fadeInUp}
+                          initial="hidden"
+                          animate="visible"
+                          transition={{ duration: 0.6, delay: 1.3 }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                         >
-                          <CartIcon color="white" />
-                          Start Shopping
-                        </Link>
-                      </div>
+                          <Link
+                            href="/shop"
+                            className="inline-flex items-center gap-2 rounded-lg bg-green-dark px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-dark/90 md:w-fit"
+                          >
+                            <CartIcon color="white" />
+                            Start Shopping
+                          </Link>
+                        </motion.div>
+                      </motion.div>
                     </div>
                   </div>
                 </Card>

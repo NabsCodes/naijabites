@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -12,7 +11,7 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordFormData,
 } from "@/lib/validations/auth";
-import { EnvelopeIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { AuthContainer } from "./auth-container";
 
 export function ForgotPasswordForm({
@@ -130,16 +129,6 @@ export function ForgotPasswordForm({
               "Send reset link"
             )}
           </Button>
-        </div>
-
-        <div className="text-center text-xs">
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1 font-medium text-green-dark underline underline-offset-4 transition-colors hover:text-green-dark/80"
-          >
-            <ArrowLeftIcon className="h-3 w-3" />
-            Back to sign in
-          </Link>
         </div>
       </form>
     </AuthContainer>

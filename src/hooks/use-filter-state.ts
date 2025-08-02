@@ -80,13 +80,13 @@ export function useFilterState(
 
   // Smart reset: clear additional filters but stay on current page context
   const clearAllFilters = () => {
-    if (pathname.includes("/deals") || pathname.includes("/recommended")) {
-      // For specialized pages, go back to all products
-      router.push("/shop/products");
-    } else {
-      // For regular pages, just clear filters
-      router.push(pathname);
-    }
+    // if (pathname.includes("/deals") || pathname.includes("/recommended")) {
+    //   // For specialized pages, go back to all products
+    //   router.push("/shop/products");
+    // } else {
+    //   // For regular pages, just clear filters
+    // }
+    router.push(pathname);
   };
 
   // Price handlers

@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { LogoSingleIcon } from "@/components/icons/logo-single-icon";
 import { Logo2Icon } from "@/components/icons/logo-2-icon";
-import {
-  FaXTwitter,
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-} from "react-icons/fa6";
+import { footerSections, socialLinks } from "@/lib/data/footer";
 
 export default function Footer() {
   return (
@@ -34,34 +29,19 @@ export default function Footer() {
 
                 {/* Social Media Icons */}
                 <div className="flex items-center gap-4">
-                  <Link
-                    href="#"
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
-                    aria-label="Facebook"
-                  >
-                    <FaFacebook className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="#"
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
-                    aria-label="Twitter"
-                  >
-                    <FaXTwitter className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="#"
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
-                    aria-label="Instagram"
-                  >
-                    <FaInstagram className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="#"
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
-                    aria-label="LinkedIn"
-                  >
-                    <FaLinkedin className="h-5 w-5" />
-                  </Link>
+                  {socialLinks.map((social) => {
+                    const IconComponent = social.icon;
+                    return (
+                      <Link
+                        key={social.label}
+                        href={social.href}
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-green-deep text-white transition-all duration-300 hover:bg-green-deep/80"
+                        aria-label={social.label}
+                      >
+                        <IconComponent className="h-5 w-5" />
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -76,104 +56,27 @@ export default function Footer() {
                     <Logo2Icon width={115} height={54} />
                   </Link>
                 </div>
-                {/* Explore Column */}
-                <div>
-                  <h4 className="mb-4 text-sm font-medium text-gray-500">
-                    Explore
-                  </h4>
-                  <ul className="space-y-3">
-                    <li>
-                      <Link
-                        href="/products"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        Shop Products
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/about"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        About Us
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/faq"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        FAQs
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
 
-                {/* My Account Column */}
-                <div>
-                  <h4 className="mb-4 text-sm font-medium text-gray-500">
-                    Account
-                  </h4>
-                  <ul className="space-y-3">
-                    <li>
-                      <Link
-                        href="/auth"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        Profile
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/orders"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        Order History
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/cart"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        Shopping Cart
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Support Column */}
-                <div>
-                  <h4 className="mb-4 text-sm font-medium text-gray-500">
-                    Support
-                  </h4>
-                  <ul className="space-y-3">
-                    <li>
-                      <Link
-                        href="/contact"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        Contact Us
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/returns"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        Return policy
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/terms"
-                        className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                      >
-                        Terms & Condition
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
+                {/* Navigation Sections */}
+                {footerSections.map((section) => (
+                  <div key={section.title}>
+                    <h4 className="mb-4 text-sm font-medium text-gray-500">
+                      {section.title}
+                    </h4>
+                    <ul className="space-y-3">
+                      {section.links.map((link) => (
+                        <li key={`${section.title}-${link.label}`}>
+                          <Link
+                            href={link.href}
+                            className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
 
                 {/* Logo Column */}
                 <div className="hidden justify-end sm:flex">

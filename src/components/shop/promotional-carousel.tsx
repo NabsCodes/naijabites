@@ -75,7 +75,7 @@ export function PromotionalCarousel({
               <Button
                 asChild
                 size="lg"
-                className="bg-green-deep transition-all duration-300 hover:bg-green-deep/90"
+                className="bg-green-dark transition-all duration-300 hover:bg-green-dark/90"
               >
                 <Link href="/shop/products">Browse Products</Link>
               </Button>

@@ -1,3 +1,8 @@
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/solid";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +17,8 @@ interface StockIndicatorProps {
   criticalThreshold?: number;
   /** Show "In Stock" badge when stock is normal */
   showInStockBadge?: boolean;
+  /** Size variant */
+  size?: "sm" | "md" | "lg";
   /** Additional CSS classes */
   className?: string;
 }
@@ -22,15 +29,39 @@ export function StockIndicator({
   lowThreshold = 10,
   criticalThreshold = 5,
   showInStockBadge = true,
+  size = "md",
   className,
 }: StockIndicatorProps) {
-  const sizeClasses = "text-xs"; // Always sm size
+  const sizeClasses = {
+    sm: {
+      container: "text-xs gap-1.5",
+      icon: "h-3 w-3",
+    },
+    md: {
+      container: "text-sm gap-2",
+      icon: "h-4 w-4",
+    },
+    lg: {
+      container: "text-base gap-2.5",
+      icon: "h-5 w-5",
+    },
+  };
+
+  const classes = sizeClasses[size];
 
   // Out of stock - prioritize inStock flag over inventory count
   if (!inStock || (inventory !== undefined && inventory <= 0)) {
     return (
-      <Badge variant="destructive" className={cn(sizeClasses, className)}>
-        Out of Stock
+      <Badge
+        variant="destructive"
+        className={cn(
+          "border-red-200 bg-red-50 font-medium text-red-700 hover:bg-red-100",
+          classes.container,
+          className,
+        )}
+      >
+        <XCircleIcon className={classes.icon} />
+        <span>Out of Stock</span>
       </Badge>
     );
   }
@@ -41,12 +72,13 @@ export function StockIndicator({
       <Badge
         variant="default"
         className={cn(
-          "bg-green-100 text-green-800 hover:bg-green-200",
-          sizeClasses,
+          "border-green-200 bg-green-50 font-medium text-green-700 hover:bg-green-100",
+          classes.container,
           className,
         )}
       >
-        ✓ In Stock
+        <CheckCircleIcon className={classes.icon} />
+        <span>In Stock</span>
       </Badge>
     ) : null;
   }
@@ -57,12 +89,15 @@ export function StockIndicator({
       <Badge
         variant="destructive"
         className={cn(
-          "bg-red-100 text-red-800 hover:bg-red-200",
-          sizeClasses,
+          "border-red-200 bg-red-50 font-medium text-red-700 hover:bg-red-100",
+          classes.container,
           className,
         )}
       >
-        Only {inventory} left!
+        <ExclamationTriangleIcon
+          className={cn("animate-pulse", classes.icon)}
+        />
+        <span>Only {inventory} left!</span>
       </Badge>
     );
   }
@@ -73,12 +108,13 @@ export function StockIndicator({
       <Badge
         variant="secondary"
         className={cn(
-          "bg-amber-100 text-amber-800 hover:bg-amber-200",
-          sizeClasses,
+          "border-amber-200 bg-amber-50 font-medium text-amber-700 hover:bg-amber-100",
+          classes.container,
           className,
         )}
       >
-        Only {inventory} left in stock
+        <ExclamationTriangleIcon className={classes.icon} />
+        <span>Only {inventory} left</span>
       </Badge>
     );
   }
@@ -88,12 +124,13 @@ export function StockIndicator({
     <Badge
       variant="default"
       className={cn(
-        "bg-green-100 text-green-800 hover:bg-green-200",
-        sizeClasses,
+        "border-green-200 bg-green-50 font-medium text-green-700 hover:bg-green-100",
+        classes.container,
         className,
       )}
     >
-      ✓ In Stock
+      <CheckCircleIcon className={classes.icon} />
+      <span>In Stock</span>
     </Badge>
   ) : null;
 }

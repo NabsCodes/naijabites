@@ -1,15 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCart } from "@/contexts/cart-context";
 
 export function CartLoadingSkeleton() {
-  const { items: cartItems } = useCart();
-
-  // Show empty cart skeleton if no items
-  if (cartItems.length === 0) {
-    return <EmptyCartSkeleton />;
-  }
-
-  // Show loading skeleton if we have items or are loading
+  // Always show the full cart skeleton when loading
+  // Don't check cart items length during loading state
   return (
     <main className="flex min-h-screen flex-col">
       <div className="container-padding flex-1 py-6 sm:py-8">
@@ -42,127 +35,91 @@ export function CartLoadingSkeleton() {
       </div>
     </main>
   );
-}
 
-// Cart Item Skeleton Component
-function CartItemSkeleton() {
-  return (
-    <div className="flex gap-3 border-b pb-4 last:border-b-0 last:pb-0 sm:gap-4">
-      {/* Product Image */}
-      <div className="relative h-20 w-20 flex-shrink-0 rounded-lg bg-gray-50 sm:h-24 sm:w-24">
-        <Skeleton className="h-full w-full rounded-lg" />
-      </div>
-
-      {/* Product Details */}
-      <div className="min-w-0 flex-1">
-        <div className="mb-2 flex items-start justify-between">
-          <div className="min-w-0 flex-1">
-            <Skeleton className="h-4 w-3/4 sm:h-5" />
-            <Skeleton className="mt-1 h-3 w-1/2 sm:h-4" />
-            <Skeleton className="mt-1 h-4 w-16" />
-            <Skeleton className="mt-2 h-4 w-20" />
-          </div>
-          <Skeleton className="ml-2 h-8 w-8 rounded" />
+  // Cart Item Skeleton Component
+  function CartItemSkeleton() {
+    return (
+      <div className="flex gap-3 border-b pb-4 last:border-b-0 last:pb-0 sm:gap-4">
+        {/* Product Image */}
+        <div className="relative h-20 w-20 flex-shrink-0 rounded-lg bg-gray-50 sm:h-24 sm:w-24">
+          <Skeleton className="h-full w-full rounded-lg" />
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Skeleton className="h-8 w-24" />
-            <Skeleton className="h-8 w-24 sm:w-28" />
-          </div>
-          <div className="text-right">
-            <Skeleton className="h-4 w-16 sm:h-5 sm:w-20" />
-            <Skeleton className="mt-1 h-3 w-12 sm:h-3 sm:w-16" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Order Summary Skeleton Component
-function OrderSummarySkeleton() {
-  return (
-    <div className="rounded-xl border bg-white p-6">
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <Skeleton className="h-6 w-32" />
-        </div>
-
-        {/* Summary Items */}
-        <div className="space-y-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center justify-between">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-4 w-16" />
+        {/* Product Details */}
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex items-start justify-between">
+            <div className="min-w-0 flex-1">
+              <Skeleton className="h-4 w-3/4 sm:h-5" />
+              <Skeleton className="mt-1 h-3 w-1/2 sm:h-4" />
+              <Skeleton className="mt-1 h-4 w-16" />
+              <Skeleton className="mt-2 h-4 w-20" />
             </div>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div className="border-t pt-3">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-5 w-20" />
+            <Skeleton className="ml-2 h-8 w-8 rounded" />
           </div>
-        </div>
 
-        {/* Promo Code Section */}
-        <div className="space-y-3">
-          <Skeleton className="h-4 w-24" />
-          <div className="flex gap-2">
-            <Skeleton className="h-10 flex-1" />
-            <Skeleton className="h-10 w-20" />
-          </div>
-        </div>
-
-        {/* Checkout Button */}
-        <Skeleton className="h-12 w-full" />
-
-        {/* Continue Shopping */}
-        <Skeleton className="h-10 w-full" />
-
-        {/* Checkout Note */}
-        <div className="text-center">
-          <Skeleton className="mx-auto h-3 w-48" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function EmptyCartSkeleton() {
-  return (
-    <main className="flex min-h-screen flex-col">
-      <div className="container-padding flex-1 py-6 sm:py-8">
-        <div className="section-container">
-          <section className="py-12">
-            <div className="mx-auto max-w-2xl text-center">
-              {/* Empty cart icon skeleton */}
-              <div className="mb-6 flex justify-center">
-                <Skeleton className="h-16 w-16 rounded-full" />
-              </div>
-
-              {/* Title skeleton */}
-              <Skeleton className="mx-auto mb-4 h-8 w-48" />
-
-              {/* Description skeleton */}
-              <div className="mb-8 space-y-2">
-                <Skeleton className="mx-auto h-4 w-80" />
-                <Skeleton className="mx-auto h-4 w-72" />
-                <Skeleton className="mx-auto h-4 w-64" />
-              </div>
-
-              {/* Buttons skeleton */}
-              <div className="space-y-4">
-                <Skeleton className="mx-auto h-12 w-48" />
-                <Skeleton className="mx-auto h-4 w-32" />
-              </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-24 sm:w-28" />
             </div>
-          </section>
+            <div className="text-right">
+              <Skeleton className="h-4 w-16 sm:h-5 sm:w-20" />
+            </div>
+          </div>
         </div>
       </div>
-    </main>
-  );
+    );
+  }
+
+  // Order Summary Skeleton Component
+  function OrderSummarySkeleton() {
+    return (
+      <div className="rounded-xl border bg-white p-6">
+        <div className="space-y-6">
+          {/* Header */}
+          <div>
+            <Skeleton className="h-6 w-32" />
+          </div>
+
+          {/* Summary Items */}
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t pt-3">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-5 w-20" />
+            </div>
+          </div>
+
+          {/* Promo Code Section */}
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-24" />
+            <div className="flex gap-2">
+              <Skeleton className="h-10 flex-1" />
+              <Skeleton className="h-10 w-20" />
+            </div>
+          </div>
+
+          {/* Checkout Button */}
+          <Skeleton className="h-12 w-full" />
+
+          {/* Continue Shopping */}
+          <Skeleton className="h-10 w-full" />
+
+          {/* Checkout Note */}
+          <div className="text-center">
+            <Skeleton className="mx-auto h-3 w-48" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 }

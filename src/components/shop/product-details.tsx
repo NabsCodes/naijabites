@@ -5,7 +5,7 @@ import { Product, ProductVariant } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
-import { QuantitySelector } from "@/components/ui/quantity-selector";
+import { QuantitySelector } from "@/components/shop/quantity-selector";
 import { StockIndicator } from "@/components/shop/stock-indicator";
 import { cn } from "@/lib/utils";
 import { ProductIcon } from "@/components/icons/product-icon";
@@ -200,12 +200,12 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       <div className="space-y-2 sm:space-y-3">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Main Price - Always Prominent */}
-          <span className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">
+          <span className="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
             {formatPrice(currentPrice)}
           </span>
           {/* Original Price - When on Sale */}
           {originalPrice && (
-            <span className="text-sm text-gray-500 line-through sm:text-base">
+            <span className="text-base text-gray-500 line-through sm:text-lg">
               {formatPrice(originalPrice)}
             </span>
           )}
@@ -231,22 +231,22 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       {/* Variant Selector */}
       {product.variants && product.variants.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-900 sm:text-base">
-            {product.variants.length === 1 ? "Available Size" : "Size/Pack"}
-          </h3>
-          <div
-            className={cn(
-              "grid gap-2 sm:gap-3",
-              product.variants.length === 1
-                ? "grid-cols-1"
-                : "grid-cols-2 lg:grid-cols-3",
-            )}
-          >
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">
+              {product.variants.length === 1 ? "Size" : "Available Sizes"}
+            </h3>
+            <span className="text-base text-gray-500">
+              {product.variants.length} option
+              {product.variants.length > 1 ? "s" : ""}
+            </span>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {product.variants.map((variant) => {
-              // Variant is disabled if product is out of stock OR variant is unavailable
               const isVariantDisabled =
                 !product.inStock || !variant.isAvailable;
               const isVariantAvailable = product.inStock && variant.isAvailable;
+              const isSelected = selectedVariant?.id === variant.id;
 
               return (
                 <button
@@ -254,56 +254,82 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                   disabled={isVariantDisabled}
                   onClick={() => handleVariantSelect(variant)}
                   className={cn(
-                    "flex items-center gap-2 rounded-xl border-2 p-3 transition-all sm:gap-3",
-                    // Available and selected
-                    selectedVariant?.id === variant.id && isVariantAvailable
-                      ? "border-orange-500 bg-orange-dark text-white shadow-sm"
+                    "relative flex flex-col gap-2 rounded-lg border-2 p-4 text-left transition-all duration-200",
+                    // Selected state
+                    isSelected && isVariantAvailable
+                      ? "border-orange-500 bg-orange-50 ring-2 ring-orange-200"
                       : // Available but not selected
                         isVariantAvailable
-                        ? "border-gray-200 bg-white hover:border-orange-300 hover:shadow-sm"
-                        : // Not available (disabled state)
+                        ? "border-gray-200 bg-white hover:border-orange-300 hover:bg-orange-50/50"
+                        : // Disabled state
                           "cursor-not-allowed border-gray-200 bg-gray-50 opacity-60",
                   )}
                 >
-                  <div
-                    className={cn(
-                      "flex shrink-0 items-center justify-center rounded-full border-2 p-1.5 sm:p-2",
-                      selectedVariant?.id === variant.id && isVariantAvailable
-                        ? "border-white/20 bg-white/10"
-                        : isVariantAvailable
-                          ? "border-gray-300 bg-[#E5FFF5]"
-                          : "border-gray-300 bg-gray-200",
-                    )}
-                  >
-                    <ProductIcon
+                  {/* Selection indicator */}
+                  {isSelected && isVariantAvailable && (
+                    <div className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-orange-500">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-white" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Variant info */}
+                  <div className="flex items-center gap-2">
+                    <div
                       className={cn(
-                        "h-4 w-4 sm:h-5 sm:w-5",
-                        selectedVariant?.id === variant.id && isVariantAvailable
-                          ? "text-white"
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border p-1 sm:h-10 sm:w-10 sm:p-2",
+                        isSelected && isVariantAvailable
+                          ? "border-orange-500 bg-orange-100"
                           : isVariantAvailable
-                            ? "text-orange-dark"
-                            : "text-gray-400",
-                      )}
-                    />
-                  </div>
-                  <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
-                    <span className="truncate text-xs font-medium sm:text-sm">
-                      {variant.title}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xs font-bold sm:text-sm",
-                        isVariantDisabled && "text-gray-400",
+                            ? "border-gray-300 bg-gray-100"
+                            : "border-gray-300 bg-gray-200",
                       )}
                     >
-                      {!product.inStock
-                        ? "Out of Stock"
-                        : !variant.isAvailable
-                          ? "Out of Stock"
-                          : product.isOnSale && variant.salePrice
-                            ? formatPrice(variant.salePrice)
-                            : formatPrice(variant.price)}
-                    </span>
+                      <ProductIcon
+                        className={cn(
+                          "h-4 w-4 sm:h-5 sm:w-5",
+                          isSelected && isVariantAvailable
+                            ? "text-orange-600"
+                            : isVariantAvailable
+                              ? "text-gray-600"
+                              : "text-gray-400",
+                        )}
+                      />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-semibold text-gray-900">
+                        {variant.title}
+                      </div>
+                      <div className="mt-1 flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "text-sm font-semibold",
+                            isVariantDisabled
+                              ? "text-gray-400"
+                              : isSelected
+                                ? "text-orange-600"
+                                : "text-gray-700",
+                          )}
+                        >
+                          {!product.inStock
+                            ? "Out of Stock"
+                            : !variant.isAvailable
+                              ? "Unavailable"
+                              : product.isOnSale && variant.salePrice
+                                ? formatPrice(variant.salePrice)
+                                : formatPrice(variant.price)}
+                        </span>
+                        {product.isOnSale &&
+                          variant.salePrice &&
+                          isVariantAvailable && (
+                            <span className="text-sm text-gray-500 line-through">
+                              {formatPrice(variant.price)}
+                            </span>
+                          )}
+                      </div>
+                    </div>
                   </div>
                 </button>
               );
@@ -314,24 +340,31 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
       {/* Quantity Selector - Only show after Add to Cart is clicked */}
       {cartState === "quantity" && (
-        <div className="space-y-2 sm:space-y-3">
-          <label className="text-base font-semibold text-gray-900 sm:text-lg">
-            Quantity
-          </label>
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-lg font-semibold text-gray-900">
+              Quantity
+            </label>
+            {maxQuantity && (
+              <span className="text-base text-gray-500">
+                Max: {maxQuantity}
+              </span>
+            )}
+          </div>
           <QuantitySelector
             quantity={quantity}
             onQuantityChange={handleQuantityChange}
             min={1}
             max={maxQuantity}
             disabled={!canPurchase}
-            size="md"
+            size="lg"
             className="w-fit"
           />
         </div>
       )}
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3 sm:gap-4">
         <Button
           variant="ghost"
           size="lg"
@@ -362,7 +395,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           )}
         </Button>
         {!canPurchase && (
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-base text-gray-500">
             {stockInfo.hasStock
               ? "Please select an available variant"
               : "Currently out of stock"}

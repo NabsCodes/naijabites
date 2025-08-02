@@ -32,13 +32,6 @@ export function PromotionalCarouselSkeleton() {
           </div>
         </div>
       </div>
-
-      {/* Navigation dots skeleton */}
-      <div className="mt-4 flex justify-center gap-2">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-2 w-8 rounded-full" />
-        ))}
-      </div>
     </div>
   );
 }

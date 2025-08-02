@@ -11,61 +11,61 @@ export const testimonials: Testimonial[] = [
   {
     id: 1,
     name: "Adebayo Olanrewaju",
-    location: "Lagos",
+    location: "Toronto",
     avatar:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
     rating: 4.5,
     comment:
-      "I love Naijabites! The groceries are fresh and the prices are unbeatable. I've been using them for years and I'll continue to do so.",
+      "I love NaijaBites! Finding authentic Nigerian groceries in Canada has never been easier. The palm oil tastes just like home and the delivery is always fresh.",
   },
   {
     id: 2,
     name: "Fatima Ibrahim",
-    location: "Kano",
+    location: "Calgary",
     avatar:
       "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
     rating: 4,
     comment:
-      "Great selection of authentic Nigerian products. Fast delivery and excellent customer service. Highly recommended!",
+      "Great selection of authentic Nigerian products. I can finally make proper jollof rice in Canada! Fast delivery and excellent customer service.",
   },
   {
     id: 3,
     name: "Aisha Tanko",
-    location: "Lagos",
+    location: "Vancouver",
     avatar:
       "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
     rating: 4.5,
     comment:
-      "Naijabites saved me so much time! I can now shop for all my essentials and have them delivered right to my doorstep. Their delivery is always quick and reliable!",
+      "NaijaBites saved me so much time! I was driving 2 hours to African stores before. Now I get everything delivered to my door in Vancouver. Life saver!",
   },
   {
     id: 4,
     name: "Chinedu Okafor",
-    location: "Abuja",
+    location: "Ottawa",
     avatar:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
     rating: 5,
     comment:
-      "Finally found authentic Nigerian ingredients! The rice quality is exactly like what I remember, and delivery is always on time.",
+      "Finally found authentic Nigerian ingredients in Canada! The rice quality is exactly like what I remember from home, and delivery is always on time.",
   },
   {
     id: 5,
     name: "Blessing Adebayo",
-    location: "Port Harcourt",
+    location: "Montreal",
     avatar:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
     rating: 4,
     comment:
-      "NaijaBites has made cooking Nigerian meals so much easier. Everything arrives fresh and the prices are very reasonable.",
+      "NaijaBites has made cooking Nigerian meals so much easier here in Montreal. Everything arrives fresh and the prices are very reasonable for Canada.",
   },
   {
     id: 6,
     name: "Emeka Nwankwo",
-    location: "Enugu",
+    location: "Edmonton",
     avatar:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face&auto=format&q=80",
     rating: 5,
     comment:
-      "The customer service is excellent and they have brands I can't find anywhere else. Highly recommend for all Nigerians!",
+      "The customer service is excellent and they have Nigerian brands I can't find anywhere else in Canada. Highly recommend for all Nigerians in the diaspora!",
   },
 ];

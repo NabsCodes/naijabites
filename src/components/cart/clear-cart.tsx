@@ -27,13 +27,13 @@ export function ClearCartDialog({
     toast({
       title: "Cart cleared",
       description: "All items have been removed from your cart.",
-      variant: "error",
+      variant: "success",
     });
   };
 
   return (
     <Dialog open={clearCartDialog} onOpenChange={setClearCartDialog}>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
             Clear Shopping Cart
@@ -47,14 +47,14 @@ export function ClearCartDialog({
           <Button
             variant="outline"
             onClick={() => setClearCartDialog(false)}
-            className="flex items-center justify-center hover:bg-gray-100"
+            className="flex items-center justify-center transition-all duration-300 hover:bg-gray-100"
           >
             Keep Items
           </Button>
           <Button
             variant="destructive"
             onClick={handleClearCartDialog}
-            className="flex items-center justify-center gap-2 bg-green-dark hover:bg-green-deep"
+            className="flex items-center justify-center gap-2 bg-green-dark transition-all duration-300 hover:bg-green-dark/90"
           >
             <TrashIcon className="h-4 w-4" />
             Clear Cart

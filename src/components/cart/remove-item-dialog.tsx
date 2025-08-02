@@ -37,7 +37,6 @@ export function RemoveItemDialog({
       toast({
         title: "Item removed from cart",
         description: `${removeItemDialog.item.product.name} has been removed from your cart.`,
-        variant: "error",
       });
     }
   };
@@ -48,11 +47,11 @@ export function RemoveItemDialog({
       removeItem(removeItemDialog.item.id);
       setRemoveItemDialog({ isOpen: false, item: null });
       // Show toast notification that item was saved for later
-      // toast({
-      //   title: "Item saved for later",
-      //   description: "The item has been saved for later.",
-      //   variant: "success",
-      // });
+      toast({
+        title: "Item saved for later",
+        description: "The item has been saved for later.",
+        variant: "success",
+      });
     }
   };
 
@@ -105,7 +104,7 @@ export function RemoveItemDialog({
           <Button
             variant="outline"
             onClick={handleSaveForLater}
-            className="flex items-center justify-center rounded-lg border-2 border-green-dark text-green-dark hover:bg-gray-50"
+            className="flex items-center justify-center rounded-lg border-2 border-green-dark text-green-dark transition-all duration-300 hover:bg-gray-50"
           >
             <HeartIcon className="mr-2 h-5 w-5" />
             Save for later
@@ -113,7 +112,7 @@ export function RemoveItemDialog({
           <Button
             variant="destructive"
             onClick={handleRemoveItem}
-            className="flex items-center justify-center rounded-lg bg-green-dark text-white hover:bg-green-deep"
+            className="flex items-center justify-center rounded-lg bg-green-dark text-white transition-all duration-300 hover:bg-green-dark/90"
           >
             <TrashIcon className="mr-2 h-5 w-5" />
             Remove item

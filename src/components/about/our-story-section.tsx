@@ -1,4 +1,14 @@
+"use client";
+
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import {
+  AnimatedSection,
+  AnimatedGrid,
+  AnimatedGridItem,
+} from "@/components/common";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useCounter } from "@/hooks/use-counter";
 
 interface StatCard {
   value: string;
@@ -12,7 +22,42 @@ const stats: StatCard[] = [
   { value: "2+", label: "Years of Excellence" },
 ];
 
+const StatCard = ({
+  stat,
+  isTriggered,
+  delay,
+}: {
+  stat: StatCard;
+  isTriggered: boolean;
+  delay: number;
+}) => {
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  useEffect(() => {
+    if (isTriggered) {
+      const timer = setTimeout(() => setShouldAnimate(true), delay * 1000); // Convert seconds to milliseconds
+      return () => clearTimeout(timer);
+    }
+  }, [isTriggered, delay]);
+
+  const animatedValue = useCounter(stat.value, shouldAnimate);
+
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border border-solid border-gray-200 bg-gray-100 p-6 shadow-sm">
+      <div className="text-2xl font-semibold leading-tight text-green-deep lg:text-3xl">
+        {animatedValue}
+      </div>
+      <div className="text-sm text-gray-600">{stat.label}</div>
+    </div>
+  );
+};
+
 export const OurStorySection = () => {
+  const { ref: statsRef, hasTriggered } =
+    useIntersectionObserver<HTMLDivElement>({
+      threshold: 0.3,
+    });
+
   return (
     <section className="container-padding relative overflow-hidden py-10 lg:py-20">
       {/* Background SVG - positioned in top-left */}
@@ -39,47 +84,54 @@ export const OurStorySection = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
           {/* Content Column - First on mobile, second on desktop */}
           <div className="order-1 flex flex-col justify-center space-y-4 md:order-2">
-            <h2 className="text-2xl font-bold leading-tight text-green-dark md:text-4xl lg:text-5xl">
-              Our Story
-            </h2>
-            <p className="text-sm text-gray-700 sm:text-base lg:text-lg">
-              Naijabites was born from a deep understanding of how challenging
-              it can be to find authentic Nigerian products abroad. As Nigerians
-              living in Canada, we wanted a platform where we could easily shop
-              for trusted brands we grew up with—Golden Morn, Indomie, and Yam,
-              to name a few—without compromising on quality or price. Today,
-              Naijabites serves as a bridge between home and diaspora, making
-              life easier for thousands of Nigerians.
-            </p>
+            <AnimatedSection delay={0.4}>
+              <h2 className="text-2xl font-bold leading-tight text-green-dark md:text-4xl lg:text-5xl">
+                Our Story
+              </h2>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.6}>
+              <p className="text-sm text-gray-700 sm:text-base lg:text-lg">
+                Naijabites was born from a deep understanding of how challenging
+                it can be to find authentic Nigerian products abroad. As
+                Nigerians living in Canada, we wanted a platform where we could
+                easily shop for trusted brands we grew up with—Golden Morn,
+                Indomie, and Yam, to name a few—without compromising on quality
+                or price. Today, Naijabites serves as a bridge between home and
+                diaspora, making life easier for thousands of Nigerians.
+              </p>
+            </AnimatedSection>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-4 pt-4">
-              {stats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col gap-2 rounded-lg border border-solid border-gray-200 bg-gray-100 p-6 shadow-sm"
-                >
-                  <div className="text-2xl font-semibold leading-tight text-green-deep lg:text-3xl">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-gray-600">{stat.label}</div>
-                </div>
-              ))}
+            <div ref={statsRef}>
+              <AnimatedGrid className="grid grid-cols-2 gap-4 pt-4">
+                {stats.map((stat, index) => (
+                  <AnimatedGridItem key={index}>
+                    <StatCard
+                      stat={stat}
+                      isTriggered={hasTriggered}
+                      delay={0.2 + index * 0.1}
+                    />
+                  </AnimatedGridItem>
+                ))}
+              </AnimatedGrid>
             </div>
           </div>
 
           {/* Image Column - Second on mobile, first on desktop */}
-          <div className="relative order-2 h-[450px] overflow-hidden rounded-3xl md:order-1 md:h-[500px] lg:h-[600px]">
-            <div className="absolute inset-0 animate-pulse bg-gray-800/50" />{" "}
-            {/* Placeholder background */}
-            <Image
-              src="/images/our-story.webp"
-              alt="Our story - Woman smiling in a Nigerian grocery store"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="rounded-3xl object-cover"
-            />
-          </div>
+          <AnimatedSection delay={0.6}>
+            <div className="relative order-2 h-[450px] overflow-hidden rounded-3xl md:order-1 md:h-[500px] lg:h-[600px]">
+              <div className="absolute inset-0 animate-pulse bg-gray-800/50" />{" "}
+              {/* Placeholder background */}
+              <Image
+                src="/images/our-story.webp"
+                alt="Our story - Woman smiling in a Nigerian grocery store"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="rounded-3xl object-cover"
+              />
+            </div>
+          </AnimatedSection>
         </div>
       </div>
     </section>

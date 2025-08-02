@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Truck, Package } from "lucide-react";
 import { CartIcon, ContactIcon } from "@/components/icons";
+import { AnimatedSection } from "@/components/common";
 
 const features = [
   {
@@ -33,7 +34,18 @@ const features = [
 ];
 
 export function FeaturesSection() {
-  const [activeFeature, setActiveFeature] = useState<number | null>(null);
+  const [activeFeature, setActiveFeature] = useState<number>(features[0].id);
+  const [_, setRetainedFeature] = useState<number>(features[0].id);
+
+  const handleMouseEnter = (id: number) => {
+    setActiveFeature(id);
+  };
+
+  const handleMouseLeave = () => {
+    // Retain the last hovered feature as the new default
+    setRetainedFeature(activeFeature);
+    setActiveFeature(activeFeature);
+  };
 
   return (
     <section className="bg-white py-12 md:py-16 lg:py-20">
@@ -41,13 +53,15 @@ export function FeaturesSection() {
         <div className="section-container">
           {/* Section Header */}
           <div className="mb-8 text-center sm:mb-10 lg:mb-12">
-            <h2 className="mb-3 text-2xl font-bold text-gray-900 sm:mb-4 sm:text-3xl md:text-4xl lg:text-5xl">
-              Why Thousands of Nigerians Love Naijabites!
-            </h2>
-            <p className="mx-auto max-w-3xl text-sm text-gray-600 sm:text-base md:text-lg">
-              Bringing you closer to the flavours of home, with convenience,
-              savings, and quality at the heart of every delivery
-            </p>
+            <AnimatedSection>
+              <h2 className="mb-3 text-2xl font-bold text-gray-900 sm:mb-4 sm:text-3xl md:text-4xl lg:text-5xl">
+                Why Thousands of Nigerians Love Naijabites!
+              </h2>
+              <p className="mx-auto max-w-3xl text-sm text-gray-600 sm:text-base md:text-lg">
+                Bringing you closer to the flavours of home, with convenience,
+                savings, and quality at the heart of every delivery
+              </p>
+            </AnimatedSection>
           </div>
 
           {/* Features Container - Responsive Layout */}
@@ -68,8 +82,8 @@ export function FeaturesSection() {
                     ease: [0.4, 0, 0.2, 1],
                   }}
                   whileHover={{ y: -2 }}
-                  onMouseEnter={() => setActiveFeature(feature.id)}
-                  onMouseLeave={() => setActiveFeature(null)}
+                  onMouseEnter={() => handleMouseEnter(feature.id)}
+                  onMouseLeave={handleMouseLeave}
                 >
                   {/* Icon Container with SVG Background */}
                   <motion.div

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,43 +20,54 @@ import {
   PencilSquareIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
-
-interface ContactFormData {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
+import {
+  contactFormSchema,
+  type ContactFormData,
+} from "@/lib/validations/contact";
 
 export function ContactForm() {
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
+  });
+
+  const watchedSubject = watch("subject");
+
+  const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // Simulate form submission
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    setIsSubmitted(true);
-    setIsSubmitting(false);
+      console.log("Form data:", data);
+      setIsSubmitted(true);
 
-    // Reset form after 4 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    }, 4000);
-  };
-
-  const handleChange = (field: keyof ContactFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+      // Reset form after 4 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+        reset();
+      }, 4000);
+    } catch (error) {
+      console.error("Form submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -91,9 +104,9 @@ export function ContactForm() {
         </p>
       </CardHeader>
       <CardContent className="p-6 lg:p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div className="space-y-3">
+            <div className="flex flex-col gap-2">
               <Label
                 htmlFor="name"
                 className="text-sm font-medium text-gray-700"
@@ -107,15 +120,20 @@ export function ContactForm() {
                 <Input
                   id="name"
                   type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
+                  {...register("name")}
                   placeholder="Enter your full name"
-                  className="h-12 rounded-xl border-gray-300 bg-gray-50 pl-10 transition-colors focus:border-green-dark focus:bg-white focus:ring-1 focus:ring-green-dark"
+                  className={`h-12 rounded-xl border-gray-300 bg-gray-50 pl-10 transition-colors focus:border-green-dark focus:bg-white focus:ring-1 focus:ring-green-dark ${
+                    errors.name
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : ""
+                  }`}
                 />
               </div>
+              {errors.name && (
+                <p className="text-sm text-red-500">{errors.name.message}</p>
+              )}
             </div>
-            <div className="space-y-3">
+            <div className="flex flex-col gap-2">
               <Label
                 htmlFor="email"
                 className="text-sm font-medium text-gray-700"
@@ -129,17 +147,22 @@ export function ContactForm() {
                 <Input
                   id="email"
                   type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
+                  {...register("email")}
                   placeholder="your.email@example.com"
-                  className="h-12 rounded-xl border-gray-300 bg-gray-50 pl-10 transition-colors focus:border-green-dark focus:bg-white focus:ring-1 focus:ring-green-dark"
+                  className={`h-12 rounded-xl border-gray-300 bg-gray-50 pl-10 transition-colors focus:border-green-dark focus:bg-white focus:ring-1 focus:ring-green-dark ${
+                    errors.email
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : ""
+                  }`}
                 />
               </div>
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="flex flex-col gap-2">
             <Label
               htmlFor="subject"
               className="text-sm font-medium text-gray-700"
@@ -147,11 +170,16 @@ export function ContactForm() {
               Subject <span className="text-red-500">*</span>
             </Label>
             <Select
-              value={formData.subject}
-              onValueChange={(value) => handleChange("subject", value)}
-              required
+              value={watchedSubject}
+              onValueChange={(value) => setValue("subject", value)}
             >
-              <SelectTrigger className="h-12 rounded-xl border-gray-300 bg-gray-50 transition-colors focus:border-green-dark focus:bg-white focus:ring-1 focus:ring-green-dark">
+              <SelectTrigger
+                className={`h-12 rounded-xl border-gray-300 bg-gray-50 transition-colors focus:border-green-dark focus:bg-white focus:ring-1 focus:ring-green-dark ${
+                  errors.subject
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : ""
+                }`}
+              >
                 <SelectValue placeholder="Choose what you need help with" />
               </SelectTrigger>
               <SelectContent>
@@ -177,29 +205,39 @@ export function ContactForm() {
                 <SelectItem value="other">Other Inquiry</SelectItem>
               </SelectContent>
             </Select>
+            {errors.subject && (
+              <p className="text-sm text-red-500">{errors.subject.message}</p>
+            )}
           </div>
 
-          <div className="space-y-3">
-            <Label
-              htmlFor="message"
-              className="text-sm font-medium text-gray-700"
-            >
-              Message <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <div className="pointer-events-none absolute left-3 top-3">
-                <ChatBubbleLeftRightIcon className="h-5 w-5 text-gray-400" />
+          <div>
+            <div className="flex flex-col gap-2">
+              <Label
+                htmlFor="message"
+                className="text-sm font-medium text-gray-700"
+              >
+                Message <span className="text-red-500">*</span>
+              </Label>
+              <div className="relative">
+                <div className="pointer-events-none absolute left-3 top-3">
+                  <ChatBubbleLeftRightIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <textarea
+                  id="message"
+                  {...register("message")}
+                  placeholder="Tell us how we can help you. Please include any relevant details like order numbers, product names, or specific questions..."
+                  rows={6}
+                  className={`w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 pl-10 text-sm transition-colors placeholder:text-gray-500 focus:border-green-dark focus:bg-white focus:outline-none focus:ring-1 focus:ring-green-dark ${
+                    errors.message
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : ""
+                  }`}
+                />
               </div>
-              <textarea
-                id="message"
-                required
-                value={formData.message}
-                onChange={(e) => handleChange("message", e.target.value)}
-                placeholder="Tell us how we can help you. Please include any relevant details like order numbers, product names, or specific questions..."
-                rows={6}
-                className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 pl-10 text-sm transition-colors placeholder:text-gray-500 focus:border-green-dark focus:bg-white focus:outline-none focus:ring-1 focus:ring-green-dark"
-              />
             </div>
+            {errors.message && (
+              <p className="text-sm text-red-500">{errors.message.message}</p>
+            )}
           </div>
 
           {/* Privacy Notice */}
@@ -213,7 +251,7 @@ export function ContactForm() {
 
           <Button
             type="submit"
-            className="h-12 w-full rounded-xl bg-green-dark font-medium text-white transition-colors duration-200 hover:bg-green-dark/90 lg:h-14 lg:text-lg"
+            className="h-12 w-full rounded-xl bg-green-dark font-medium text-white transition-all duration-300 hover:bg-green-dark/90 lg:h-14 lg:text-lg"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

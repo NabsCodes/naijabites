@@ -8,6 +8,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About Us",
+  description:
+    "Learn about NaijaBites - bringing authentic Nigerian flavors to your doorstep in Canada.",
 };
 
 const AboutPage = () => {

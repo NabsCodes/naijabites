@@ -17,7 +17,7 @@ import { locations } from "@/lib/mock-data/locations";
 import { formatPrice } from "@/lib/utils";
 import { useCart, type CartItem } from "@/contexts/cart-context";
 import { ProductSection } from "@/components/shop";
-import { getFeaturedProducts } from "@/lib/mock-data/products";
+import { products } from "@/lib/mock-data/products";
 import {
   CartItemRow,
   EmptyCart,
@@ -100,7 +100,7 @@ export default function CartPage() {
                           </CardTitle>
                         </div>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => setClearCartDialog(true)}
                         >
@@ -231,7 +231,7 @@ export default function CartPage() {
                       {/* Checkout Button */}
                       <Button
                         size="lg"
-                        className="w-full bg-green-dark hover:bg-green-deep"
+                        className="w-full bg-green-dark transition-all duration-300 hover:bg-green-dark/90"
                         asChild
                       >
                         <Link href="/checkout">
@@ -242,7 +242,11 @@ export default function CartPage() {
                       </Button>
 
                       {/* Continue Shopping */}
-                      <Button variant="link" className="w-full" asChild>
+                      <Button
+                        variant="link"
+                        className="w-full text-green-dark transition-all duration-300 hover:text-green-dark/90"
+                        asChild
+                      >
                         <Link href="/shop">Continue Shopping</Link>
                       </Button>
 
@@ -262,7 +266,9 @@ export default function CartPage() {
                 <ProductSection
                   title="You might also like"
                   description="Complete your shopping with these popular Nigerian groceries"
-                  products={getFeaturedProducts().slice(0, 4)}
+                  products={products
+                    .slice(0, 4)
+                    .sort(() => 0.5 - Math.random())} // Might need to change this to a more sophisticated algorithm for production
                   viewAllLink="/shop"
                   noContainer={true}
                 />

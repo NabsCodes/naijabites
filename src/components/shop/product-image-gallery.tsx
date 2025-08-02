@@ -20,7 +20,7 @@ export function ProductImageGallery({
   const activeImage = images[activeImageIndex] || images[0];
 
   return (
-    <div className={cn("sticky top-6", className)}>
+    <div className={cn("", className)}>
       {/* Main Product Image */}
       <div className="relative aspect-square overflow-hidden rounded-2xl border bg-[#F9F9F9] shadow-sm">
         <Image

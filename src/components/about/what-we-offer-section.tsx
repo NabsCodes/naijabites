@@ -13,6 +13,9 @@ import {
 import type { CarouselApi } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { offeringsCarousel } from "@/lib/data/features";
+import { AnimatedSection } from "@/components/common";
+import { motion } from "framer-motion";
+import { fadeInUp } from "@/lib/animations";
 
 export const WhatWeOfferSection = () => {
   const [api, setApi] = useState<CarouselApi>();
@@ -89,17 +92,23 @@ export const WhatWeOfferSection = () => {
       {/* Main Container */}
       <div className="section-container relative z-10">
         {/* Title */}
-        <div className="mb-10">
+        <AnimatedSection className="mb-10" delay={0.2}>
           <h2
             id="offerings-title"
             className="text-2xl font-bold leading-tight text-green-dark md:text-4xl lg:text-5xl"
           >
             What We Offer
           </h2>
-        </div>
+        </AnimatedSection>
 
         {/* Content Layout Container */}
-        <div className="relative flex h-auto flex-col gap-8 xl:h-[600px] xl:flex-row xl:items-center xl:gap-0">
+        <motion.div
+          className="relative flex h-auto flex-col gap-8 xl:h-[600px] xl:flex-row xl:items-center xl:gap-0"
+          variants={fadeInUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
           {/* Image - Hidden on mobile/tablet, positioned on desktop xl+ */}
           <div className="absolute right-0 hidden h-[600px] w-[900px] xl:block">
             <Image
@@ -255,7 +264,7 @@ export const WhatWeOfferSection = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 import { CartIcon } from "@/components/icons";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
-import { QuantitySelector } from "@/components/ui/quantity-selector";
+import { QuantitySelector } from "@/components/shop/quantity-selector";
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/contexts/cart-context";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { VariantSelectorModal } from "@/components/shop/variant-selector-modal";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -44,7 +44,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   // Router for navigation
-  const router = useRouter();
+  // const router = useRouter();
 
   // Check if product has variants
   const hasVariants = product.variants && product.variants.length > 0;
@@ -80,7 +80,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
       toast({
         title: "Removed from cart",
         description: `${product.name} removed from your cart.`,
-        variant: "error",
       });
       return;
     }
@@ -111,9 +110,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
     if (hasVariants) {
       // Show variant selector modal for products with variants
-      // setShowVariantModal(true);
+      setShowVariantModal(true);
       // Navigate to product page for products with variants using Next.js router
-      router.push(`/shop/products/${product.slug}`);
+      // router.push(`/shop/products/${product.slug}`);
     } else {
       // Direct add to cart for products without variants
       setIsSelectingQuantity(true);

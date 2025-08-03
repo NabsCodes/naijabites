@@ -259,6 +259,30 @@ export async function getAllProducts(first: number = 20, after?: string) {
   }
 }
 
+// Get all products without pagination (for sections that need all products)
+export async function getAllProductsList(limit: number = 100) {
+  const query = `
+    ${PRODUCT_FRAGMENT}
+    query GetAllProductsList($first: Int!) {
+      products(first: $first) {
+        edges {
+          node {
+            ...ProductFragment
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await shopifyFetch(query, { first: limit });
+    return data.products.edges.map((edge: any) => edge.node);
+  } catch (error) {
+    console.error('Error fetching all products list:', error);
+    return [];
+  }
+}
+
 // Transform Shopify product to our Product type
 export function transformShopifyProduct(shopifyProduct: any) {
   const firstImage = shopifyProduct.images?.edges?.[0]?.node;

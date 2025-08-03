@@ -273,3 +273,27 @@ export function filterAndPaginateProducts(
   };
 }
 
+// Generate filter options from products
+export function getFilterOptions(products: Product[]) {
+  const categories = [...new Set(products.map(p => p.category))].sort();
+  const brands = [...new Set(products.map(p => p.brand))].sort();
+  const priceRange = getGlobalPriceRange(products);
+  const ratings = [1, 2, 3, 4, 5];
+
+  return {
+    categories,
+    brands,
+    priceRange,
+    ratings,
+    sortOptions: [
+      { value: "name-asc", label: "Name A-Z" },
+      { value: "name-desc", label: "Name Z-A" },
+      { value: "price-asc", label: "Price Low to High" },
+      { value: "price-desc", label: "Price High to Low" },
+      { value: "rating-desc", label: "Highest Rated" },
+      { value: "discount-desc", label: "Biggest Discount" },
+      { value: "newest", label: "Newest First" },
+    ],
+  };
+}
+

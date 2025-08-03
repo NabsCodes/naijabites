@@ -1,9 +1,10 @@
-import { getFeaturedProducts, getProductsOnSale, transformShopifyProduct } from './shopify';
+import { getFeaturedProducts, getProductsOnSale, getAllProductsList, transformShopifyProduct } from './shopify';
 import { Product } from '@/types';
 
 // Cache for Shopify products to avoid repeated API calls
 let cachedFeaturedProducts: Product[] | null = null;
 let cachedSaleProducts: Product[] | null = null;
+let cachedAllProducts: Product[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
@@ -74,6 +75,48 @@ export async function getShopifyHomePageProducts(limit: number = 8): Promise<Pro
   } catch (error) {
     console.error('Error fetching Shopify home page products:', error);
     return [];
+  }
+}
+
+// Get all products from Shopify with caching (for shop sections)
+export async function getShopifyAllProducts(limit: number = 100): Promise<Product[]> {
+  const now = Date.now();
+  
+  // Return cached data if still valid
+  if (cachedAllProducts && (now - cacheTimestamp) < CACHE_DURATION) {
+    return cachedAllProducts.slice(0, limit);
+  }
+
+  try {
+    const shopifyProducts = await getAllProductsList(limit);
+    const transformedProducts = shopifyProducts.map(transformShopifyProduct);
+    
+    // Update cache
+    cachedAllProducts = transformedProducts;
+    cacheTimestamp = now;
+    
+    return transformedProducts;
+  } catch (error) {
+    console.error('Error fetching Shopify all products:', error);
+    // Return empty array if Shopify fails
+    return [];
+  }
+}
+
+// Get product by slug (handle) from Shopify
+export async function getShopifyProductBySlug(slug: string): Promise<Product | null> {
+  try {
+    const { getProductByHandle, transformShopifyProduct } = await import('./shopify');
+    const shopifyProduct = await getProductByHandle(slug);
+    
+    if (!shopifyProduct) {
+      return null;
+    }
+    
+    return transformShopifyProduct(shopifyProduct);
+  } catch (error) {
+    console.error('Error fetching Shopify product by slug:', error);
+    return null;
   }
 }
 

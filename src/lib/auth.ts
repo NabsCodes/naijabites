@@ -85,3 +85,35 @@ export async function fetchCustomerData(): Promise<CustomerData | null> {
     return null;
   }
 }
+
+// Debug utilities for testing
+export function debugAuthState() {
+  const token = getAccessToken();
+  const customerData = getCustomerData();
+  
+  console.log('🔍 Auth Debug Info:');
+  console.log('Token:', token ? 'Present' : 'Not found');
+  console.log('Customer Data:', customerData ? 'Present' : 'Not found');
+  console.log('localStorage customer_data:', localStorage.getItem(CUSTOMER_DATA_KEY));
+  console.log('Cookies:', document.cookie);
+  
+  if (customerData) {
+    console.log('Customer Details:', {
+      name: getCustomerName(),
+      email: getCustomerEmail(),
+      initials: getCustomerInitials()
+    });
+  }
+  
+  return {
+    hasToken: !!token,
+    hasCustomerData: !!customerData,
+    customerData
+  };
+}
+
+export function clearAllAuthData() {
+  Cookies.remove(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(CUSTOMER_DATA_KEY);
+  console.log('🧹 All auth data cleared');
+}

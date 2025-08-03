@@ -35,7 +35,7 @@ import { useCart } from "@/contexts/cart-context";
 import { useSearch } from "@/hooks/use-search";
 import { SearchAutocomplete } from "@/components/search";
 import MobileNav from "./mobile-nav";
-import { isLoggedIn, logout, getCustomerData, getCustomerInitials, getCustomerName, getCustomerEmail } from "@/lib/auth";
+import { isLoggedIn, logout, getCustomerData, getCustomerInitials, getCustomerName, getCustomerEmail, debugAuthState } from "@/lib/auth";
 
 // Navigation items data
 const navigationItems = [
@@ -78,6 +78,11 @@ export default function Header() {
     logout();
     setIsUserLoggedIn(false);
     setCustomerData(null);
+  };
+
+  // Debug function for testing
+  const handleDebugAuth = () => {
+    debugAuthState();
   };
 
   // Search functionality with autocomplete

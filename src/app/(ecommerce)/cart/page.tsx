@@ -17,7 +17,7 @@ import { locations } from "@/lib/mock-data/locations";
 import { formatPrice } from "@/lib/utils";
 import { useCart, type CartItem } from "@/contexts/cart-context";
 import { ProductSection } from "@/components/shop";
-import { getFeaturedProducts } from "@/lib/mock-data/products";
+import { getShopifyFeaturedProducts } from "@/lib/shopify-products";
 import {
   CartItemRow,
   EmptyCart,
@@ -26,7 +26,7 @@ import {
   CartLoadingSkeleton,
 } from "@/components/cart";
 
-export default function CartPage() {
+export default async function CartPage() {
   const { items: cartItems, updateQuantity, totalItems, isLoading } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
@@ -36,6 +36,9 @@ export default function CartPage() {
     item: CartItem | null;
   } | null>(null);
   const [clearCartDialog, setClearCartDialog] = useState(false);
+
+  // Fetch featured products for recommendations
+  const featuredProducts = await getShopifyFeaturedProducts(4);
 
   const handleRemoveItemClick = (item: CartItem) => {
     setRemoveItemDialog({ isOpen: true, item });
@@ -262,7 +265,7 @@ export default function CartPage() {
                 <ProductSection
                   title="You might also like"
                   description="Complete your shopping with these popular Nigerian groceries"
-                  products={getFeaturedProducts().slice(0, 4)}
+                  products={featuredProducts}
                   viewAllLink="/shop"
                   noContainer={true}
                 />

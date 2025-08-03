@@ -1,10 +1,9 @@
 import { ProductCard } from "@/components/shop";
 import { getShopifyHomePageProducts } from "@/lib/shopify-products";
+import { Product } from "@/types";
 
 export async function ProductListingSection() {
-
-
-  let products;
+  let products: Product[] = [];
   try {
     products = await getShopifyHomePageProducts(8);
     

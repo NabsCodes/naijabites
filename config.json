@@ -1,0 +1,18 @@
+{
+  "otp": {
+    "code_expiry": 300,
+    "cooldown_expiry": 120,
+    "code_length": 6,
+    "email": {
+      "subject": "Your OTP Code",
+      "template": "<p>Your OTP is <strong>{otp}</strong>. It expires in {expiry_minutes} minutes.</p>"
+    }
+  },
+  "redis": {
+    "default_ttl": 300
+  },
+  "email": {
+    "from_name": "NaijaBites",
+    "from_email": "noreply@naijabites.com"
+  }
+} 

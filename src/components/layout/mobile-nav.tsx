@@ -37,9 +37,9 @@ import {
 } from "@/components/ui/sheet";
 import { locations } from "@/lib/mock-data/locations";
 import { CartIcon, LogoIcon, Logo2Icon } from "@/components/icons";
-import { mockUser } from "@/lib/mock-data/user";
 import { SearchSuggestion } from "@/types/search";
 import { SearchAutocomplete } from "@/components/search";
+import { logout, getCustomerData, getCustomerInitials, getCustomerName, getCustomerEmail } from "@/lib/auth";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
 
 interface MobileNavProps {
@@ -82,6 +82,15 @@ export default function MobileNav({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [customerData, setCustomerData] = useState<any>(null);
+
+  // Load customer data when component mounts
+  useEffect(() => {
+    if (isUserLoggedIn) {
+      const customer = getCustomerData();
+      setCustomerData(customer);
+    }
+  }, [isUserLoggedIn]);
 
   // Handle search expand/collapse
   const handleSearchToggle = () => {
@@ -109,6 +118,13 @@ export default function MobileNav({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isSearchExpanded, setSearchQuery]);
+
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    setIsUserLoggedIn(false);
+    setCustomerData(null);
+  };
 
   return (
     <div className="lg:hidden">
@@ -207,27 +223,29 @@ export default function MobileNav({
 
                       {/* User Profile Section */}
                       {isUserLoggedIn ? (
-                        <Link href="/account/profile" className="group">
-                          <div className="border-b border-gray-200 p-4 transition-all duration-300 group-hover:bg-green-dark/5">
-                            <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 flex-shrink-0">
-                                <Avatar className="h-10 w-10 ring-2 ring-lemon-dark">
-                                  <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                                    {mockUser.name.charAt(0).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-base font-semibold text-gray-900">
-                                  {mockUser.name}
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  {mockUser.email}
-                                </span>
-                              </div>
+                        <div className="border-b border-gray-200 p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="h-12 w-12 flex-shrink-0">
+                              <Avatar className="h-12 w-12 ring-2 ring-green-200">
+                                <AvatarImage
+                                  src={customerData?.avatar}
+                                  className="h-full w-full object-cover"
+                                />
+                                <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
+                                  {getCustomerInitials()}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-base font-semibold text-gray-900">
+                                {getCustomerName()}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {getCustomerEmail()}
+                              </span>
                             </div>
                           </div>
-                        </Link>
+                        </div>
                       ) : (
                         <div className="border-b border-gray-200 p-4">
                           <div className="w-full space-y-4">
@@ -310,10 +328,7 @@ export default function MobileNav({
                         <div className="border-t border-gray-200 p-4">
                           <button
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-4 text-base font-medium text-red-600 transition-all duration-200 hover:bg-red-50"
-                            onClick={() => {
-                              setIsUserLoggedIn(false);
-                              setIsMenuOpen(false);
-                            }}
+                            onClick={handleLogout}
                           >
                             <ArrowRightOnRectangleIcon className="h-5 w-5" />
                             Sign Out
@@ -374,8 +389,12 @@ export default function MobileNav({
                     >
                       <div className="h-7 w-7 flex-shrink-0">
                         <Avatar className="h-7 w-7 border border-white/30">
+                          <AvatarImage
+                            src={customerData?.avatar}
+                            className="h-full w-full object-cover"
+                          />
                           <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark">
-                            {mockUser.name.charAt(0).toUpperCase()}
+                            {getCustomerInitials()}
                           </AvatarFallback>
                         </Avatar>
                       </div>
@@ -390,16 +409,17 @@ export default function MobileNav({
                     <div className="border-b border-gray-100 px-4 py-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                            {mockUser.name.charAt(0).toUpperCase()}
+                          <AvatarImage src={customerData?.avatar} />
+                          <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
+                            {getCustomerInitials()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold text-gray-900">
-                            {mockUser.name}
+                            {getCustomerName()}
                           </span>
                           <span className="text-xs text-gray-500">
-                            {mockUser.email}
+                            {getCustomerEmail()}
                           </span>
                         </div>
                       </div>
@@ -434,7 +454,7 @@ export default function MobileNav({
                     <div className="border-t border-gray-100 py-1">
                       <button
                         className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition-colors hover:bg-gray-50"
-                        onClick={() => setIsUserLoggedIn(false)}
+                        onClick={handleLogout}
                       >
                         <ArrowRightOnRectangleIcon className="h-4 w-4" />
                         <span>Sign Out</span>

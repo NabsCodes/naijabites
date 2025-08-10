@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa6";
-import { useState } from "react";
+import { Card } from "../ui/card";
+import { useState, useEffect } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,12 +18,23 @@ import {
 } from "@heroicons/react/24/outline";
 import { AuthContainer } from "@/components/auth/auth-container";
 import { cn } from "@/lib/utils";
+import config from '../../../config.json';
+import { saveLogin, fetchCustomerData } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export function SignUpForm({ className, ...props }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<"email" | "complete">("email");
   const [email, setEmail] = useState("");
+  const [otpCountdown, setOtpCountdown] = useState(0);
+  const [otpSent, setOtpSent] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const router = useRouter();
+
+  const otpCodeLength = config.otp.code_length;
+  const otpCooldown = config.otp.cooldown_expiry;
 
   const {
     register,
@@ -36,150 +48,93 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
   });
 
   const password = watch("password");
+  const email = watch("email");
 
-  // Password requirements for checklist
   const passwordRequirements = [
-    {
-      label: "At least 8 characters",
-      test: (pwd: string) => pwd && pwd.length >= 8,
-    },
-    {
-      label: "One uppercase letter",
-      test: (pwd: string) => /[A-Z]/.test(pwd || ""),
-    },
-    {
-      label: "One lowercase letter",
-      test: (pwd: string) => /[a-z]/.test(pwd || ""),
-    },
-    {
-      label: "One number",
-      test: (pwd: string) => /\d/.test(pwd || ""),
-    },
+    { label: "At least 8 characters", test: (pwd: string) => pwd && pwd.length >= 8 },
+    { label: "One uppercase letter", test: (pwd: string) => /[A-Z]/.test(pwd || "") },
+    { label: "One lowercase letter", test: (pwd: string) => /[a-z]/.test(pwd || "") },
+    { label: "One number", test: (pwd: string) => /\d/.test(pwd || "") },
   ];
 
-  const handleEmailSubmit = async (emailData: { email: string }) => {
-    setIsLoading(true);
-
-    // Simulate email validation
-    setTimeout(() => {
-      setIsLoading(false);
-      setEmail(emailData.email);
-      setValue("email", emailData.email);
-      setStep("complete");
+  useEffect(() => {
+    if (otpCountdown <= 0) return;
+    const interval = setInterval(() => {
+      setOtpCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
-  };
+    return () => clearInterval(interval);
+  }, [otpCountdown]);
 
-  const handleBackToEmail = () => {
-    setStep("email");
-    // Keep the email value so user doesn't lose it
+  const handleSendOtp = async () => {
+    if (!email) {
+      setError("Please enter a valid email before requesting OTP.");
+      return;
+    }
+    try {
+      const res = await fetch('/api/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to send OTP');
+
+      setOtpSent(true);
+      setOtpCountdown(otpCooldown); // from config
+    } catch (err) {
+      console.error("❌ OTP Error:", err);
+      setError("Failed to send OTP");
+    }
   };
 
   const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true);
-    setTimeout(() => {
+    setError('');
+    setSuccess(false);
+    try {
+      const res = await fetch('/api/sign-up', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        setError(result.error || 'Something went wrong');
+        return;
+      }
+      console.log('🟢 Signup success: Access Token:', result.accessToken);
+      
+      // Save token in cookies using auth.ts
+      saveLogin(result.accessToken);
+      
+      // Fetch and save customer data
+      await fetchCustomerData();
+      
+      setSuccess(true);
+      
+      // Redirect to home page after successful signup
+      setTimeout(() => {
+        router.push('/');
+      }, 1000);
+    } catch (err) {
+      console.error('❌ Signup error:', err);
+      setError('Something went wrong');
+    } finally {
       setIsLoading(false);
-      console.log("Register form submitted:", data);
-    }, 2000);
+    }
   };
 
-  // Step 1: Email only
-  if (step === "email") {
-    return (
-      <AuthContainer className={className} {...props}>
-        <form
-          className="flex flex-col gap-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const emailValue = formData.get("email") as string;
-
-            // TODO: Remove this manual validation when using real APIs
-            // This is just for demo to show loading state even with validation errors
-            trigger("email").then((isValid) => {
-              if (isValid) {
-                handleEmailSubmit({ email: emailValue });
-              }
-            });
-
-            // Use the following when using real APIs
-            // handleEmailSubmit({ email: emailValue });
-          }}
-        >
-          <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="text-2xl font-bold text-green-dark">
-              Create your account
-            </h1>
-            <p className="text-balance text-sm text-muted-foreground">
-              Enter your email to get started with Naijabites
-            </p>
-          </div>
-
-          <div className="grid gap-5">
-            <div className="grid gap-2">
-              <Label
-                htmlFor="signup-email"
-                className="text-sm font-medium text-green-dark"
-              >
-                Email address
-              </Label>
-              <Input
-                id="signup-email"
-                type="email"
-                autoComplete="email"
-                defaultValue={email}
-                placeholder="Enter your email"
-                className={cn(
-                  "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
-                  errors.email &&
-                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
-                )}
-                {...register("email")}
-              />
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-              )}
-            </div>
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="h-12 w-full bg-green-dark font-medium text-white transition-all duration-300 hover:bg-green-dark/90 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                  Checking email...
-                </div>
-              ) : (
-                "Continue"
-              )}
-            </Button>
-          </div>
-
-          <div className="text-center text-xs">
-            <span className="text-muted-foreground">
-              Already have an account?{" "}
-            </span>
-            <Link
-              href="/login"
-              className="font-medium text-green-dark underline underline-offset-4 transition-colors hover:text-green-dark/80"
-            >
-              Sign in
-            </Link>
-          </div>
-        </form>
-      </AuthContainer>
-    );
-  }
-
-  // Step 2: Complete profile
   return (
-    <AuthContainer className={className} {...props}>
+    <Card className={cn("rounded-3xl bg-white/80 p-6 shadow-none md:p-8", className)} {...props}>
       <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col items-center gap-3 text-center">
-          <h1 className="text-2xl font-bold text-green-dark">
-            Complete your profile
-          </h1>
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold text-green-dark">Sign up for Naijabites</h1>
           <p className="text-balance text-sm text-muted-foreground">
             Almost done! Just a few more details to create your account
           </p>
@@ -190,68 +145,56 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
         </div>
 
         <div className="grid gap-5">
-          {/* Name Fields */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label
-                htmlFor="firstName"
-                className="text-sm font-medium text-green-dark"
-              >
-                First name
-              </Label>
-              <Input
-                id="firstName"
-                type="text"
-                placeholder="John"
-                autoComplete="given-name"
-                {...register("firstName")}
-                className={cn(
-                  "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
-                  errors.firstName &&
-                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
-                )}
-              />
-              {errors.firstName && (
-                <p className="text-xs text-red-500">
-                  {errors.firstName.message}
-                </p>
-              )}
+              <Label htmlFor="firstName">First name</Label>
+              <Input id="firstName" type="text" placeholder="John" {...register("firstName")} />
+              {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
             </div>
             <div className="grid gap-2">
-              <Label
-                htmlFor="lastName"
-                className="text-sm font-medium text-green-dark"
-              >
-                Last name
-              </Label>
-              <Input
-                id="lastName"
-                type="text"
-                placeholder="Doe"
-                autoComplete="family-name"
-                {...register("lastName")}
-                className={cn(
-                  "h-12 border-green-dark/20 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
-                  errors.lastName &&
-                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
-                )}
-              />
-              {errors.lastName && (
-                <p className="text-xs text-red-500">
-                  {errors.lastName.message}
-                </p>
-              )}
+              <Label htmlFor="lastName">Last name</Label>
+              <Input id="lastName" type="text" placeholder="Doe" {...register("lastName")} />
+              {errors.lastName && <p className="text-xs text-red-500">{errors.lastName.message}</p>}
             </div>
           </div>
 
-          {/* Password Field */}
           <div className="grid gap-2">
-            <Label
-              htmlFor="signup-password"
-              className="text-sm font-medium text-green-dark"
-            >
-              Password
-            </Label>
+            <Label htmlFor="email">Email address</Label>
+            <Input id="email" type="email" placeholder="name@example.com" {...register("email")} />
+            {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+          </div>
+
+          {/* OTP Section */}
+          <div className="grid gap-2">
+            <Label htmlFor="otp">OTP Code</Label>
+            <div className="flex gap-2">
+              <Input 
+                id="otp" 
+                type="text" 
+                placeholder={`Enter ${otpCodeLength}-digit OTP`} 
+                className="flex-1"
+                maxLength={otpCodeLength}
+                {...register("otp")} 
+              />
+              <Button
+                type="button"
+                onClick={handleSendOtp}
+                disabled={otpCountdown > 0 || !email}
+                className="h-10 w-1/4 bg-green-dark text-white disabled:opacity-50"
+              >
+                {otpCountdown > 0 ? `${otpCountdown}s` : "Get OTP"}
+              </Button>
+            </div>
+            {errors.otp && <p className="text-xs text-red-500">{errors.otp.message}</p>}
+            {otpSent && otpCountdown > 0 && (
+              <p className="text-xs text-muted-foreground text-center">
+                OTP sent to <span className="font-medium">{email}</span>
+              </p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
             <div className="relative">
               <Input
                 id="signup-password"
@@ -259,49 +202,28 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                 autoComplete="new-password"
                 placeholder="Enter your password"
                 {...register("password")}
-                className={cn(
-                  "h-12 border-green-dark/20 pr-12 transition-colors focus-visible:border-green-dark focus-visible:ring-green-dark/20",
-                  errors.password &&
-                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
-                )}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-green-dark"
+                className="absolute right-3 top-1/2 -translate-y-1/2"
               >
-                {showPassword ? (
-                  <EyeSlashIcon className="h-5 w-5" />
-                ) : (
-                  <EyeIcon className="h-5 w-5" />
-                )}
+                {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
               </button>
             </div>
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
           </div>
-          {/* Password requirements checklist */}
+
           {password && (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-green-dark">
-                Password requirements:
-              </p>
+            <div className="mt-2 space-y-2">
+              <p className="text-xs font-medium text-green-dark">Password requirements:</p>
               <div className="grid grid-cols-2 gap-2">
-                {passwordRequirements.map((requirement, idx) => {
-                  const isMet = requirement.test(password);
+                {passwordRequirements.map((req, idx) => {
+                  const isMet = req.test(password);
                   return (
                     <div key={idx} className="flex items-center gap-2 text-xs">
-                      {isMet ? (
-                        <CheckCircleIcon className="h-3 w-3 text-green-600" />
-                      ) : (
-                        <XCircleIcon className="h-3 w-3 text-gray-400" />
-                      )}
-                      <span
-                        className={isMet ? "text-green-600" : "text-gray-500"}
-                      >
-                        {requirement.label}
-                      </span>
+                      {isMet ? <CheckCircleIcon className="h-3 w-3 text-green-600" /> : <XCircleIcon className="h-3 w-3 text-gray-400" />}
+                      <span className={isMet ? "text-green-600" : "text-gray-500"}>{req.label}</span>
                     </div>
                   );
                 })}
@@ -309,11 +231,10 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
             </div>
           )}
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="h-12 w-full bg-green-dark font-medium text-white transition-all duration-300 hover:bg-green-dark/90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          {error && <div className="text-sm text-red-500 -mt-2">{error}</div>}
+          {success && <div className="text-sm text-green-600 -mt-2">✅ Account created successfully!</div>}
+
+          <Button type="submit" disabled={isLoading} className="h-12 w-full bg-green-dark text-white">
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
@@ -328,30 +249,17 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-green-dark/20"></div>
             </div>
-            <span className="relative bg-white px-4 text-muted-foreground">
-              Or continue with
-            </span>
+            <span className="relative bg-white px-4 text-muted-foreground">Or continue with</span>
           </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            disabled
-            className="h-12 w-full border-green-dark/20 bg-white text-green-dark transition-all duration-300 hover:border-green-dark/40 hover:bg-green-dark/5"
-          >
-            <FaGoogle className="mr-2" size={18} />
-            Continue with Google
+          <Button type="button" variant="outline" className="h-12 w-full border-green-dark/20 text-green-dark">
+            <FaGoogle className="mr-2" size={18} /> Continue with Google
           </Button>
         </div>
 
         <div className="text-center text-xs">
-          <span className="text-muted-foreground">
-            Already have an account?{" "}
-          </span>
-          <Link
-            href="/login"
-            className="font-medium text-green-dark underline underline-offset-4 transition-colors hover:text-green-dark/80"
-          >
+          <span className="text-muted-foreground">Already have an account? </span>
+          <Link href="/login" className="font-medium text-green-dark underline underline-offset-4 hover:text-green-dark/80">
             Sign in
           </Link>
         </div>

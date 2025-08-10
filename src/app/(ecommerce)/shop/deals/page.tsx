@@ -8,11 +8,12 @@ import {
   ShopBreadcrumbs,
   ProductSection,
 } from "@/components/shop";
-import { products } from "@/lib/mock-data/products";
+import { getShopifyAllProducts } from "@/lib/shopify-products";
 import {
   parseSearchParams,
   parseProductFilters,
-  prepareDealsFilters,
+  filterAndPaginateProducts,
+  getFilterOptions,
 } from "@/lib/product-filters";
 import { Separator } from "@/components/ui/separator";
 
@@ -22,7 +23,7 @@ interface DealsPageProps {
 
 export const metadata: Metadata = {
   title: "Hot Deals",
-  description: "Special offers and discounts on Nigerian groceries",
+  description: "Limited time offers you can't miss!",
 };
 
 export default async function DealsPage({ searchParams }: DealsPageProps) {
@@ -33,10 +34,17 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
+  // Fetch products from Shopify
+  const allProducts = await getShopifyAllProducts(100);
+  
+  // Filter for deals only
+  const dealsProducts = allProducts.filter(product => product.isOnSale);
+
   // Parse search parameters and apply deals-specific filtering
   const urlSearchParams = parseSearchParams(resolvedSearchParams);
   const filters = parseProductFilters(urlSearchParams);
-  const { result, filterOptions } = prepareDealsFilters(products, filters);
+  const result = filterAndPaginateProducts(dealsProducts, filters);
+  const filterOptions = getFilterOptions(dealsProducts);
 
   const displayProducts = result.products.slice(0, 4);
 

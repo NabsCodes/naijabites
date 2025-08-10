@@ -37,6 +37,11 @@ export const signUpSchema = z.object({
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/\d/, "Password must contain at least one number"),
+  otp: z
+    .string()
+    .min(1, "OTP is required")
+    .length(6, "OTP must be exactly 6 digits")
+    .regex(/^\d{6}$/, "OTP must contain only numbers"),
 });
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;

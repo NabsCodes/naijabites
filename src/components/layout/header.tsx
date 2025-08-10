@@ -22,11 +22,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { locations } from "@/lib/mock-data/locations";
 import { CartIcon, LogoIcon } from "@/components/icons";
-import { mockUser } from "@/lib/mock-data/user";
 import { useCart } from "@/contexts/cart-context";
 import { useSearch } from "@/hooks/use-search";
 import { SearchAutocomplete } from "@/components/search";
 import MobileNav from "./mobile-nav";
+import { isLoggedIn, logout, getCustomerData, getCustomerInitials, getCustomerName, getCustomerEmail, debugAuthState } from "@/lib/auth";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
 
 export default function Header() {
@@ -36,7 +36,31 @@ export default function Header() {
     (typeof locations)[0] | null
   >(null);
   const { totalItems } = useCart();
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(mockUser.isLoggedIn);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [customerData, setCustomerData] = useState<any>(null);
+
+  // Check login status and load customer data on component mount
+  useEffect(() => {
+    const loggedIn = isLoggedIn();
+    setIsUserLoggedIn(loggedIn);
+    
+    if (loggedIn) {
+      const customer = getCustomerData();
+      setCustomerData(customer);
+    }
+  }, []);
+
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    setIsUserLoggedIn(false);
+    setCustomerData(null);
+  };
+
+  // Debug function for testing
+  const handleDebugAuth = () => {
+    debugAuthState();
+  };
 
   // Search functionality with autocomplete
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -257,13 +281,14 @@ export default function Header() {
                           className="flex h-auto items-center gap-2 rounded-full border border-solid border-white bg-white/5 p-1.5 pr-3 transition-colors hover:bg-white/10 focus:bg-white/10 lg:gap-3 lg:pr-4"
                         >
                           <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
+                            <AvatarImage src={customerData?.avatar} />
                             <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark lg:text-sm">
-                              {mockUser.name.charAt(0).toUpperCase()}
+                              {getCustomerInitials()}
                             </AvatarFallback>
                           </Avatar>
 
                           <span className="hidden max-w-[80px] truncate text-xs font-semibold text-white sm:inline lg:max-w-none lg:text-sm">
-                            {mockUser.name}
+                            {getCustomerName()}
                           </span>
 
                           <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-lemon-light lg:h-5 lg:w-5" />
@@ -277,16 +302,17 @@ export default function Header() {
                         <div className="border-b border-gray-100 px-4 py-3">
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10">
+                              <AvatarImage src={customerData?.avatar} />
                               <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                                {mockUser.name.charAt(0).toUpperCase()}
+                                {getCustomerInitials()}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
                               <span className="text-sm font-semibold text-gray-900">
-                                {mockUser.name}
+                                {getCustomerName()}
                               </span>
                               <span className="text-xs text-gray-500">
-                                {mockUser.email}
+                                {getCustomerEmail()}
                               </span>
                             </div>
                           </div>
@@ -307,7 +333,7 @@ export default function Header() {
                         <div className="border-t border-gray-100">
                           <DropdownMenuItem
                             className="cursor-pointer p-3 text-red-600 hover:bg-gray-50 focus:text-red-600"
-                            onClick={() => setIsUserLoggedIn(false)}
+                            onClick={handleLogout}
                           >
                             <span>Sign Out</span>
                           </DropdownMenuItem>

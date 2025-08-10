@@ -7,19 +7,18 @@ export function cn(...inputs: ClassValue[]) {
 
 // Centralized price formatting utility
 interface FormatPriceOptions {
-  currency?: "NGN" | "CAD" | "USD";
+  currency?: "CAD" | "USD";
   locale?: string;
   minimumFractionDigits?: number;
 }
 
 const CURRENCY_CONFIG = {
-  NGN: { locale: "en-NG", currency: "NGN", minimumFractionDigits: 0 },
   CAD: { locale: "en-CA", currency: "CAD", minimumFractionDigits: 2 },
   USD: { locale: "en-US", currency: "USD", minimumFractionDigits: 2 },
 } as const;
 
 // Default app currency - easily configurable
-const DEFAULT_CURRENCY = "NGN" as const;
+const DEFAULT_CURRENCY = "CAD" as const;
 
 export function formatPrice(
   price: number,
@@ -38,8 +37,7 @@ export function formatPrice(
 }
 
 // Convenience functions for specific currencies
-export const formatNGN = (price: number) =>
-  formatPrice(price, { currency: "NGN" });
+
 export const formatCAD = (price: number) =>
   formatPrice(price, { currency: "CAD" });
 export const formatUSD = (price: number) =>

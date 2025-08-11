@@ -28,6 +28,7 @@ import { useSearch } from "@/hooks/use-search";
 import { SearchAutocomplete } from "@/components/search";
 import MobileNav from "./mobile-nav";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
+import { LogOutIcon } from "lucide-react";
 
 export default function Header() {
   const pathname = usePathname();
@@ -296,9 +297,9 @@ export default function Header() {
                           <DropdownMenuItem key={item.label} asChild>
                             <Link
                               href={item.href}
-                              className="flex cursor-pointer items-center px-3 py-2.5 hover:bg-gray-50"
+                              className="flex cursor-pointer items-center px-3 py-2.5"
                             >
-                              <item.icon className="mr-3 h-4 w-4" />
+                              <item.icon className="mr-1 h-4 w-4" />
                               <span>{item.label}</span>
                             </Link>
                           </DropdownMenuItem>
@@ -306,9 +307,10 @@ export default function Header() {
 
                         <div className="border-t border-gray-100">
                           <DropdownMenuItem
-                            className="cursor-pointer p-3 text-red-600 hover:bg-gray-50 focus:text-red-600"
+                            className="cursor-pointer p-3 text-red-600 focus:bg-red-600/5 focus:text-red-600"
                             onClick={() => setIsUserLoggedIn(false)}
                           >
+                            <LogOutIcon className="mr-1 h-4 w-4" />
                             <span>Sign Out</span>
                           </DropdownMenuItem>
                         </div>

@@ -22,14 +22,14 @@ export default function AccountLayout({
             </div>
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
               {/* Sidebar */}
-              <div className="lg:col-span-1">
+              <div className="lg:sticky lg:top-40 lg:col-span-1 lg:self-start">
                 <Suspense fallback={<div>Loading...</div>}>
                   <AccountNav />
                 </Suspense>
               </div>
 
               {/* Main Content */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-3 lg:min-h-screen">
                 <div className="rounded-2xl bg-white p-6 shadow-sm">
                   {children}
                 </div>

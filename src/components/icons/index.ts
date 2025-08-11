@@ -7,3 +7,4 @@ export { LogoIcon } from "./logo-icon";
 export { LogoSingleIcon } from "./logo-single-icon";
 export { Logo2Icon } from "./logo-2-icon";
 export { ShoppingBagIcon } from "./shopping-bag-icon";
+export { ProductIcon } from "./product-icon";

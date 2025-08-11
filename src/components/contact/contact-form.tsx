@@ -182,27 +182,79 @@ export function ContactForm() {
               >
                 <SelectValue placeholder="Choose what you need help with" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="order-inquiry">
-                  Order Inquiry & Status
+              <SelectContent className="rounded-xl border shadow-lg">
+                <SelectItem
+                  value="order-inquiry"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Order Inquiry & Status
+                  </div>
                 </SelectItem>
-                <SelectItem value="product-question">
-                  Product Questions
+                <SelectItem
+                  value="product-question"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Product Questions
+                  </div>
                 </SelectItem>
-                <SelectItem value="shipping-delivery">
-                  Shipping & Delivery
+                <SelectItem
+                  value="shipping-delivery"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Shipping & Delivery
+                  </div>
                 </SelectItem>
-                <SelectItem value="returns-refunds">
-                  Returns & Refunds
+                <SelectItem
+                  value="returns-refunds"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Returns & Refunds
+                  </div>
                 </SelectItem>
-                <SelectItem value="technical-support">
-                  Website Technical Support
+                <SelectItem
+                  value="technical-support"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Website Technical Support
+                  </div>
                 </SelectItem>
-                <SelectItem value="partnership">
-                  Partnership & Wholesale
+                <SelectItem
+                  value="partnership"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Partnership & Wholesale
+                  </div>
                 </SelectItem>
-                <SelectItem value="feedback">Feedback & Suggestions</SelectItem>
-                <SelectItem value="other">Other Inquiry</SelectItem>
+                <SelectItem
+                  value="feedback"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Feedback & Suggestions
+                  </div>
+                </SelectItem>
+                <SelectItem
+                  value="other"
+                  className="rounded-lg transition-colors duration-150 focus:bg-green-dark focus:text-white data-[highlighted]:bg-green-dark data-[highlighted]:text-white"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-lemon-deep"></div>
+                    Other Inquiry
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
             {errors.subject && (

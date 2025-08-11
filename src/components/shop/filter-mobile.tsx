@@ -23,7 +23,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Rating } from "@/components/ui/rating";
 import { cn } from "@/lib/utils";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import { ProductFilters } from "@/lib/product-filters";
 import { useFilterState } from "@/hooks/use-filter-state";
 

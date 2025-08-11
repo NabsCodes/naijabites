@@ -75,7 +75,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {/* Product Layout */}
           <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10">
             {/* Sticky Image Gallery */}
-            <div className="lg:sticky lg:top-[120px] lg:self-start">
+            <div className="lg:sticky lg:top-36 lg:self-start">
               <ProductImageGallery
                 images={productImages}
                 productName={product.name}

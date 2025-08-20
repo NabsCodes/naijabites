@@ -9,10 +9,10 @@ import {
   MapPinIcon,
   ChevronDownIcon,
   XMarkIcon,
-  ArrowRightOnRectangleIcon,
   Bars3Icon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
+import { LogOutIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +41,7 @@ import { mockUser } from "@/lib/mock-data/user";
 import { SearchSuggestion } from "@/types/search";
 import { SearchAutocomplete } from "@/components/search";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
+import { Separator } from "@/components/ui/separator";
 
 interface MobileNavProps {
   cartItemsCount: number;
@@ -80,6 +81,7 @@ export default function MobileNav({
 }: MobileNavProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
@@ -101,6 +103,7 @@ export default function MobileNav({
         searchContainerRef.current &&
         !searchContainerRef.current.contains(event.target as Node)
       ) {
+        // Close search when clicking outside
         setIsSearchExpanded(false);
         setSearchQuery("");
       }
@@ -146,12 +149,13 @@ export default function MobileNav({
                         <Link href="/" onClick={() => setIsMenuOpen(false)}>
                           <Logo2Icon width={100} height={45} />
                         </Link>
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setIsMenuOpen(false)}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-900 transition-colors hover:bg-gray-200"
                         >
                           <XMarkIcon className="h-5 w-5" />
-                        </button>
+                        </Button>
                       </div>
 
                       {/* Location Section Only (Search moved to header) */}
@@ -265,22 +269,84 @@ export default function MobileNav({
                               Main Menu
                             </p>
                           </div>
-                          {navigationItems.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              className={`flex items-center gap-3 rounded-lg px-3 py-4 text-base font-medium transition-all duration-200 ${
-                                pathname === item.href
-                                  ? "bg-green-dark/5 text-green-dark"
-                                  : "text-gray-700 hover:bg-green-dark/5"
-                              }`}
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              <item.icon size={20} color="currentColor" />
-                              {item.label}
-                            </Link>
-                          ))}
+                          {navigationItems.map((item) =>
+                            item.hasDropdown ? (
+                              <div key={item.href} className="space-y-1">
+                                <Button
+                                  variant="ghost"
+                                  className={`group h-12 w-full justify-start gap-3 rounded-lg text-base font-medium hover:bg-green-dark/5 hover:text-green-dark ${
+                                    pathname === item.href ||
+                                    pathname.startsWith("/shop")
+                                      ? "bg-green-dark/5 text-green-dark"
+                                      : "text-gray-700 hover:text-green-dark"
+                                  }`}
+                                  onClick={() => {
+                                    setOpenDropdown(
+                                      openDropdown === item.href
+                                        ? null
+                                        : item.href,
+                                    );
+                                  }}
+                                >
+                                  <item.icon size={20} color="currentColor" />
+                                  <span className="flex-1 text-left">
+                                    {item.label}
+                                  </span>
+                                  <ChevronDownIcon className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                                </Button>
+                                {/* Dropdown items */}
+                                <div
+                                  className={`ml-6 space-y-1 transition-all duration-200 ${
+                                    openDropdown === item.href
+                                      ? "block"
+                                      : "hidden"
+                                  }`}
+                                >
+                                  {item.dropdownItems?.map((dropdownItem) => (
+                                    <Link
+                                      key={dropdownItem.href}
+                                      href={dropdownItem.href}
+                                      className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-200 ${
+                                        pathname === dropdownItem.href
+                                          ? "bg-green-dark/5 text-green-dark"
+                                          : "text-gray-600 hover:bg-green-dark/5 hover:text-green-dark"
+                                      }`}
+                                      onClick={() => setIsMenuOpen(false)}
+                                    >
+                                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-green-dark/10">
+                                        <dropdownItem.icon className="h-4 w-4 text-green-dark" />
+                                      </div>
+                                      <div className="flex flex-col">
+                                        <span className="font-medium">
+                                          {dropdownItem.label}
+                                        </span>
+                                        <span className="text-xs text-gray-500">
+                                          {dropdownItem.description}
+                                        </span>
+                                      </div>
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ) : (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-4 text-base font-medium transition-all duration-200 ${
+                                  pathname === item.href
+                                    ? "bg-green-dark/5 text-green-dark"
+                                    : "text-gray-700 hover:bg-green-dark/5 hover:text-green-dark"
+                                }`}
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <item.icon size={20} color="currentColor" />
+                                {item.label}
+                              </Link>
+                            ),
+                          )}
                         </div>
+
+                        <Separator className="my-4" />
 
                         {/* Account Section (when logged in) */}
                         {isUserLoggedIn && (
@@ -294,7 +360,7 @@ export default function MobileNav({
                               <Link
                                 key={item.label}
                                 href={item.href}
-                                className="flex w-full items-center gap-3 rounded-lg px-3 py-4 text-base font-medium text-gray-700 transition-all duration-200 hover:bg-gray-50"
+                                className="flex w-full items-center gap-3 rounded-lg px-3 py-4 text-base font-medium text-gray-700 transition-all duration-200 hover:bg-green-dark/5"
                                 onClick={() => setIsMenuOpen(false)}
                               >
                                 <item.icon className="h-5 w-5" />
@@ -308,16 +374,17 @@ export default function MobileNav({
                       {/* Sign Out Section (when logged in) */}
                       {isUserLoggedIn && (
                         <div className="border-t border-gray-200 p-4">
-                          <button
-                            className="flex w-full items-center gap-3 rounded-lg px-3 py-4 text-base font-medium text-red-600 transition-all duration-200 hover:bg-red-50"
+                          <Button
+                            variant="ghost"
+                            className="h-12 w-full justify-start rounded-lg text-base font-medium text-red-600 hover:bg-red-50 hover:text-red-600"
                             onClick={() => {
                               setIsUserLoggedIn(false);
                               setIsMenuOpen(false);
                             }}
                           >
-                            <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                            <LogOutIcon className="h-5 w-5" />
                             Sign Out
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -411,7 +478,7 @@ export default function MobileNav({
                         <Link
                           key={item.label}
                           href={item.href}
-                          className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                          className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-green-dark/5 hover:text-green-dark"
                         >
                           <item.icon className="h-4 w-4" />
                           <span>{item.label}</span>
@@ -422,7 +489,7 @@ export default function MobileNav({
                     {/* Navigation Access */}
                     <div className="border-t border-gray-100 py-1">
                       <button
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-green-dark/5 hover:text-green-dark"
                         onClick={() => setIsMenuOpen(true)}
                       >
                         <Bars3Icon className="h-4 w-4" />
@@ -433,10 +500,10 @@ export default function MobileNav({
                     {/* Sign Out */}
                     <div className="border-t border-gray-100 py-1">
                       <button
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition-colors hover:bg-gray-50"
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition-colors hover:bg-red-600/5"
                         onClick={() => setIsUserLoggedIn(false)}
                       >
-                        <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                        <LogOutIcon className="h-4 w-4" />
                         <span>Sign Out</span>
                       </button>
                     </div>

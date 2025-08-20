@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FilteredProductsResult, buildFilterUrl } from "@/lib/product-filters";
 import { useRouter, usePathname } from "next/navigation";
@@ -11,6 +10,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const PER_PAGE_OPTIONS = [8, 12, 16, 24, 32];
 
@@ -115,7 +123,7 @@ export function ProductPagination({
               value={itemsPerPage.toString()}
               onValueChange={(value) => changeItemsPerPage(parseInt(value))}
             >
-              <SelectTrigger className="h-9 w-20 border-input bg-background">
+              <SelectTrigger className="h-9 w-20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -133,66 +141,55 @@ export function ProductPagination({
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-1">
-          {/* Previous Button */}
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={!hasPreviousPage}
-            className={cn(
-              "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-              !hasPreviousPage
-                ? "cursor-not-allowed text-gray-400"
-                : "text-gray-700 hover:bg-gray-100 hover:text-green-dark",
-            )}
-            aria-label="Go to previous page"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="hidden sm:block">Previous</span>
-          </button>
+        <Pagination>
+          <PaginationContent>
+            {/* Previous Button */}
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (hasPreviousPage) goToPage(currentPage - 1);
+                }}
+                className={
+                  !hasPreviousPage ? "pointer-events-none opacity-50" : ""
+                }
+              />
+            </PaginationItem>
 
-          {/* Page Numbers */}
-          <div className="flex items-center gap-1">
+            {/* Page Numbers */}
             {pageNumbers.map((page, index) => (
-              <div key={index}>
+              <PaginationItem key={index}>
                 {page === "..." ? (
-                  <span className="flex h-9 w-9 items-center justify-center text-sm text-gray-400">
-                    ...
-                  </span>
+                  <PaginationEllipsis />
                 ) : (
-                  <button
-                    onClick={() => goToPage(page as number)}
-                    className={cn(
-                      "h-9 w-9 rounded-md text-sm font-medium transition-colors",
-                      currentPage === page
-                        ? "bg-green-dark text-white shadow-sm"
-                        : "text-gray-700 hover:bg-green-50 hover:text-green-dark",
-                    )}
-                    aria-label={`Go to page ${page}`}
-                    aria-current={currentPage === page ? "page" : undefined}
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToPage(page as number);
+                    }}
+                    isActive={currentPage === page}
                   >
                     {page}
-                  </button>
+                  </PaginationLink>
                 )}
-              </div>
+              </PaginationItem>
             ))}
-          </div>
 
-          {/* Next Button */}
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={!hasNextPage}
-            className={cn(
-              "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-              !hasNextPage
-                ? "cursor-not-allowed text-gray-400"
-                : "text-gray-700 hover:bg-gray-100 hover:text-green-dark",
-            )}
-            aria-label="Go to next page"
-          >
-            <span className="hidden sm:block">Next</span>
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
+            {/* Next Button */}
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (hasNextPage) goToPage(currentPage + 1);
+                }}
+                className={!hasNextPage ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       )}
     </div>
   );

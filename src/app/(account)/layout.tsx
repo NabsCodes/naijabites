@@ -1,9 +1,19 @@
-import { Suspense } from "react";
+import { Metadata } from "next";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import { AccountNav } from "@/components/account";
+import { AccountNav, AccountNavTabsMobile } from "@/components/account";
+import { Card } from "@/components/ui/card";
 
-export default function AccountLayout({
+export const metadata: Metadata = {
+  title: {
+    template: "%s | My Account - Naijabites",
+    default: "My Account - Naijabites",
+  },
+  description: "Manage your profile, orders, and preferences",
+  keywords: ["account", "profile", "orders", "wishlist"],
+};
+
+export default async function AccountLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -14,25 +24,24 @@ export default function AccountLayout({
       <div className="min-h-screen bg-gray-50">
         <div className="container-padding py-8">
           <div className="section-container">
-            <div className="mb-8">
+            <div className="mb-4 lg:mb-8">
               <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
               <p className="mt-2 text-gray-600">
                 Manage your profile, orders, and preferences
               </p>
             </div>
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-2 lg:grid-cols-4 lg:gap-8">
+              <AccountNavTabsMobile />
               {/* Sidebar */}
-              <div className="lg:sticky lg:top-40 lg:col-span-1 lg:self-start">
-                <Suspense fallback={<div>Loading...</div>}>
-                  <AccountNav />
-                </Suspense>
+              <div className="hidden lg:sticky lg:top-40 lg:col-span-1 lg:block lg:self-start">
+                <AccountNav />
               </div>
 
               {/* Main Content */}
               <div className="lg:col-span-3 lg:min-h-screen">
-                <div className="rounded-2xl bg-white p-6 shadow-sm">
+                <Card className="rounded-2xl border bg-white p-6 shadow-none">
                   {children}
-                </div>
+                </Card>
               </div>
             </div>
           </div>

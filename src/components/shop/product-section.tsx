@@ -5,8 +5,7 @@ import { ProductCard } from "@/components/shop";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
-import { EmptySection } from "./empty-section";
+import { EmptySection } from "@/components/common/empty-section";
 
 interface ProductSectionProps {
   title: string;
@@ -29,7 +28,7 @@ export function ProductSection({
   const displayProducts = products.slice(0, 8);
 
   // Early return for empty state
-  if (products.length === 0) {
+  if (products.length) {
     return (
       <section className={className}>
         <div className={noContainer ? "" : "container-padding"}>
@@ -75,53 +74,30 @@ export function ProductSection({
           <div className="relative">
             {/* Desktop: Grid Layout */}
             <div className="hidden grid-cols-2 gap-3 sm:grid sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {displayProducts.map((product, i) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.1, duration: 0.4 }}
-                  viewport={{ once: true }}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
+              {displayProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
 
             {/* Mobile: Simple Horizontal Scroll */}
             <div className="flex gap-4 overflow-x-auto pb-4 sm:hidden">
-              {displayProducts.map((product, i) => (
-                <motion.div
-                  key={product.id}
-                  className="w-[280px] flex-shrink-0"
-                  initial={{ x: 100 }}
-                  animate={{ x: 0 }}
-                  transition={{
-                    delay: i * 0.1,
-                    duration: 0.5,
-                    ease: "easeOut",
-                  }}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
+              {displayProducts.map((product) => (
+                <div key={product.id} className="w-[280px] flex-shrink-0">
+                  <ProductCard key={product.id} product={product} />
+                </div>
               ))}
             </div>
           </div>
 
           {/* Mobile View All Button */}
-          <motion.div
-            className="mt-6 sm:hidden"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.4 }}
-          >
+          <div className="mt-6 sm:hidden">
             <Button
               asChild
               className="w-full bg-green-dark transition-all duration-300 hover:bg-green-dark/90"
             >
               <Link href={viewAllLink}>View All Items</Link>
             </Button>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -86,7 +86,7 @@ export function AddressCard({
               className="h-8 px-2 text-xs text-gray-600 hover:bg-gray-100 hover:text-gray-800"
             >
               <PencilIcon className="mr-1 h-3 w-3" />
-              Edit
+              <span className="hidden sm:block">Edit</span>
             </Button>
             <Button
               variant="ghost"
@@ -96,7 +96,7 @@ export function AddressCard({
               className="h-8 px-2 text-xs text-red-600 hover:bg-red-50 hover:text-red-700"
             >
               <TrashIcon className="mr-1 h-3 w-3" />
-              Delete
+              <span className="hidden sm:block">Delete</span>
             </Button>
           </div>
         </div>

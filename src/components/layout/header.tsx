@@ -88,7 +88,7 @@ export default function Header() {
       {/* Desktop Header */}
       <div className="hidden lg:block">
         <div className="container-padding">
-          <div className="section-container py-4 lg:py-6">
+          <div className="section-container py-4">
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-8">
               {/* Logo Section */}
               <div className="flex items-center">
@@ -207,20 +207,96 @@ export default function Header() {
 
                 {/* Navigation Links */}
                 <nav className="flex items-center justify-between">
-                  {navigationItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
-                        pathname === item.href
-                          ? "text-lemon-light"
-                          : "text-white hover:text-lemon-light"
-                      }`}
-                    >
-                      <item.icon size={18} color="currentColor" />
-                      {item.label}
-                    </Link>
-                  ))}
+                  {navigationItems.map((item) =>
+                    item.hasDropdown ? (
+                      <DropdownMenu key={item.href}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className={`group hover:bg-transparent hover:text-lemon-light focus-visible:ring-1 focus-visible:ring-lemon-light focus-visible:ring-offset-0 ${
+                              pathname === item.href ||
+                              pathname.startsWith("/shop")
+                                ? "text-lemon-light"
+                                : "text-white"
+                            }`}
+                          >
+                            <item.icon size={18} color="currentColor" />
+                            {item.label}
+                            <ChevronDownIcon className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="start"
+                          className="mt-2 border-0 bg-green-deep shadow-2xl"
+                          sideOffset={8}
+                        >
+                          <div className="p-2">
+                            {item.dropdownItems?.map((dropdownItem) => (
+                              <DropdownMenuItem key={dropdownItem.href} asChild>
+                                <Link
+                                  href={dropdownItem.href}
+                                  className={`group flex cursor-pointer items-start gap-3 rounded-lg p-3 transition-all duration-200 ${
+                                    pathname === dropdownItem.href
+                                      ? "text-lemon-light"
+                                      : "text-white"
+                                  }`}
+                                >
+                                  <div
+                                    className={`flex h-8 w-8 items-center justify-center rounded-md transition-all duration-200 ${
+                                      pathname === dropdownItem.href
+                                        ? "bg-lemon-light/20"
+                                        : "bg-white/10"
+                                    }`}
+                                  >
+                                    <dropdownItem.icon
+                                      className={`h-5 w-5 transition-colors duration-200 ${
+                                        pathname === dropdownItem.href
+                                          ? "text-lemon-light"
+                                          : "text-white group-hover:text-lemon-light/90"
+                                      }`}
+                                    />
+                                  </div>
+                                  <div className="flex flex-col">
+                                    <span
+                                      className={`text-sm font-semibold ${
+                                        pathname === dropdownItem.href
+                                          ? "text-lemon-light"
+                                          : "text-white group-hover:text-lemon-light/90"
+                                      }`}
+                                    >
+                                      {dropdownItem.label}
+                                    </span>
+                                    <span
+                                      className={`mt-0.5 text-xs ${
+                                        pathname === dropdownItem.href
+                                          ? "text-lemon-light/70"
+                                          : "text-white/70"
+                                      }`}
+                                    >
+                                      {dropdownItem.description}
+                                    </span>
+                                  </div>
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`flex h-10 items-center gap-2 px-3 text-sm font-medium transition-all duration-200 ${
+                          pathname === item.href
+                            ? "text-lemon-light"
+                            : "text-white hover:text-lemon-light"
+                        }`}
+                      >
+                        <item.icon size={18} color="currentColor" />
+                        {item.label}
+                      </Link>
+                    ),
+                  )}
                 </nav>
               </div>
 

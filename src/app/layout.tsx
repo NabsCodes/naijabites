@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/contexts/cart-context";
+import { QueryProvider } from "@/providers/query-provider";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -54,10 +55,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <body className="min-h-screen bg-gray-50 font-sans antialiased">
-        <CartProvider>
-          {children}
-          <Toaster />
-        </CartProvider>
+        <QueryProvider>
+          <CartProvider>
+            {children}
+            <Toaster />
+          </CartProvider>
+        </QueryProvider>
       </body>
     </html>
   );

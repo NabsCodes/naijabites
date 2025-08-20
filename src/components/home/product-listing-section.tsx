@@ -36,7 +36,7 @@ export async function ProductListingSection() {
           <AnimatedGrid className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
             {displayProducts.map((product) => (
               <AnimatedGridItem key={product.id}>
-                <ProductCard product={product} />
+                <ProductCard key={product.id} product={product} />
               </AnimatedGridItem>
             ))}
           </AnimatedGrid>

@@ -68,7 +68,7 @@ export default function Footer() {
                         <li key={`${section.title}-${link.label}`}>
                           <Link
                             href={link.href}
-                            className="text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
+                            className="text-sm font-medium text-gray-900 transition-colors duration-300 hover:text-gray-600"
                           >
                             {link.label}
                           </Link>

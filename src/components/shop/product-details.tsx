@@ -33,7 +33,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   >("default");
 
   // Cart context
-  const { addItem } = useCart();
+  const { addItem, updateQuantity, items } = useCart();
   const { toast } = useToast();
   // Reset selected variant if it becomes unavailable or doesn't exist
   useMemo(() => {
@@ -58,14 +58,22 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     selectedVariant,
   });
 
-  // Use centralized inventory hook
+  // Use centralized inventory hook - with inventory for zero stock check
   const { inventory, inStock, maxQuantity } = useInventory({
     product,
     selectedVariant,
   });
 
-  // Stock status
+  // Stock status with inventory check
   const stockInfo = useMemo(() => {
+    // Check if main product has zero inventory
+    if (inventory === 0) {
+      return {
+        hasStock: false,
+        isPartialStock: false,
+      };
+    }
+
     // If main product is out of stock, entire product is out of stock
     if (!product.inStock) {
       return {
@@ -92,12 +100,42 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       hasStock: product.inStock,
       isPartialStock: false,
     };
-  }, [product.variants, product.inStock]);
+  }, [product.variants, product.inStock, inventory]);
 
-  // Can purchase - if main product is in stock, check variant availability
+  // Check if item is already at max quantity in cart
+  const existingCartItem = useMemo(() => {
+    return items.find(
+      (item) =>
+        item.productId === product.id &&
+        (selectedVariant
+          ? item.variantId === selectedVariant.id
+          : !item.variantId),
+    );
+  }, [items, product.id, selectedVariant]);
+
+  const isAtMaxQuantity =
+    existingCartItem && existingCartItem.quantity >= maxQuantity;
+
+  // Calculate available quantity (accounting for items already in cart)
+  const availableQuantity = useMemo(() => {
+    const currentInCart = existingCartItem?.quantity || 0;
+    return Math.max(0, maxQuantity - currentInCart);
+  }, [maxQuantity, existingCartItem]);
+
+  // Can purchase - with inventory and variant availability checks
   const canPurchase = useMemo(() => {
+    // If main product has zero inventory, can't purchase
+    if (inventory === 0) {
+      return false;
+    }
+
     // If main product is out of stock, can't purchase regardless of variants
     if (!product.inStock) {
+      return false;
+    }
+
+    // If already at max quantity, can't purchase more
+    if (isAtMaxQuantity) {
       return false;
     }
 
@@ -109,7 +147,13 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       return product.variants.some((v) => v.isAvailable);
     }
     return product.inStock;
-  }, [selectedVariant, product.variants, product.inStock]);
+  }, [
+    selectedVariant,
+    product.variants,
+    product.inStock,
+    isAtMaxQuantity,
+    inventory,
+  ]);
 
   // Event handlers
   const handleVariantSelect = (variant: ProductVariant) => {
@@ -118,16 +162,25 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     setCartState("default"); // Reset cart state when variant changes
   };
 
-  // Quantity change
+  // Quantity change - Fixed to respect available quantity
   const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= maxQuantity) {
+    if (newQuantity >= 1 && newQuantity <= availableQuantity) {
       setQuantity(newQuantity);
     }
   };
 
-  // Add to cart function
+  // Add to cart function - Fixed to use the same pattern as Product Card
   const handleAddToCart = () => {
     if (cartState === "default") {
+      // Check if already at max quantity before showing quantity selector
+      if (isAtMaxQuantity) {
+        toast({
+          title: "Maximum quantity reached",
+          description: `You already have the maximum quantity (${maxQuantity}) of ${product.name}${selectedVariant ? ` (${selectedVariant.title})` : ""} in your cart.`,
+          variant: "error",
+        });
+        return;
+      }
       // First time clicking - show quantity selector
       setCartState("quantity");
       return;
@@ -139,28 +192,54 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
       // Simulate API call
       setTimeout(() => {
-        // Add item to cart
-        addItem({
-          productId: product.id,
-          variantId: selectedVariant?.id,
-          quantity,
-          price: selectedVariant?.price || product.price,
-          salePrice: selectedVariant?.salePrice || product.salePrice,
-          product,
-          variant: selectedVariant || undefined,
-        });
-        toast({
-          title: "Added to cart",
-          description: `${product.name} added to your cart.`,
-          variant: "success",
-        });
-        console.log("Added to cart:", {
-          product: product.name,
-          variant: selectedVariant?.title,
-          quantity,
-          price: currentPrice,
-          total: currentPrice * quantity,
-        });
+        // Use the same pattern as Product Card - update existing or add new
+        if (existingCartItem) {
+          // Update existing item quantity
+          const newTotalQuantity = existingCartItem.quantity + quantity;
+          if (newTotalQuantity > maxQuantity) {
+            const availableQuantity = maxQuantity - existingCartItem.quantity;
+
+            if (availableQuantity <= 0) {
+              toast({
+                title: "Maximum quantity reached",
+                description: `You already have the maximum quantity (${maxQuantity}) of ${product.name}${selectedVariant ? ` (${selectedVariant.title})` : ""} in your cart.`,
+                variant: "error",
+              });
+            } else {
+              toast({
+                title: "Quantity exceeds limit",
+                description: `You can only add ${availableQuantity} more of this item to your cart.`,
+                variant: "error",
+              });
+            }
+            setCartState("quantity");
+            return;
+          }
+
+          // Update existing item
+          updateQuantity(existingCartItem.id, newTotalQuantity);
+          toast({
+            title: "Updated cart",
+            description: `${product.name} quantity updated in your cart.`,
+            variant: "success",
+          });
+        } else {
+          // Add new item
+          addItem({
+            productId: product.id,
+            variantId: selectedVariant?.id,
+            quantity,
+            price: selectedVariant?.price || product.price,
+            salePrice: selectedVariant?.salePrice || product.salePrice,
+            product,
+            variant: selectedVariant || undefined,
+          });
+          toast({
+            title: "Added to cart",
+            description: `${product.name} added to your cart.`,
+            variant: "success",
+          });
+        }
 
         setCartState("added");
 
@@ -347,7 +426,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </label>
             {maxQuantity && (
               <span className="text-base text-gray-500">
-                Max: {maxQuantity}
+                Max: {availableQuantity} available
               </span>
             )}
           </div>
@@ -355,7 +434,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             quantity={quantity}
             onQuantityChange={handleQuantityChange}
             min={1}
-            max={maxQuantity}
+            max={availableQuantity}
             disabled={!canPurchase}
             size="lg"
             className="w-fit"
@@ -396,9 +475,11 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         </Button>
         {!canPurchase && (
           <p className="mt-2 text-base text-gray-500">
-            {stockInfo.hasStock
-              ? "Please select an available variant"
-              : "Currently out of stock"}
+            {isAtMaxQuantity
+              ? `Maximum quantity (${maxQuantity}) already in cart`
+              : stockInfo.hasStock
+                ? "Please select an available variant"
+                : "Currently out of stock"}
           </p>
         )}
       </div>

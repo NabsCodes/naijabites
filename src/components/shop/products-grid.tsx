@@ -1,7 +1,7 @@
 "use client";
 
 import { ProductCard, ProductPagination } from "@/components/shop";
-import { EmptySection } from "./empty-section";
+import { EmptySection } from "../common/empty-section";
 import { cn } from "@/lib/utils";
 import { FilteredProductsResult } from "@/lib/product-filters";
 

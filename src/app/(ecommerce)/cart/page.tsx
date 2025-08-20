@@ -41,12 +41,6 @@ export default function CartPage() {
     setRemoveItemDialog({ isOpen: true, item });
   };
 
-  // Wishlist/Save for Later - Removed for MVP
-  // const moveToWishlist = (itemId: string) => {
-  //   removeItem(itemId);
-  //   // TODO: Implement wishlist functionality later
-  // };
-
   // Show loading skeleton while cart is loading
   if (isLoading) {
     return <CartLoadingSkeleton />;
@@ -67,13 +61,13 @@ export default function CartPage() {
     return sum + price * item.quantity;
   }, 0);
 
-  const tax = subtotal * 0.075; // 7.5% VAT (Nigeria)
-  const selectedLocationData = locations.find(
-    (loc) => loc.id === selectedLocation,
-  );
-  const shippingFee = selectedLocationData?.deliveryFee || 0;
-  const shipping = shippingFee;
-  const total = subtotal + tax + shipping;
+  // const tax = subtotal * 0.075; // 7.5% VAT (Nigeria)
+  // const selectedLocationData = locations.find(
+  //   (loc) => loc.id === selectedLocation,
+  // );
+  // const shippingFee = selectedLocationData?.deliveryFee || 0;
+  // const shipping = shippingFee;
+  // const total = subtotal + tax + shipping;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -177,20 +171,12 @@ export default function CartPage() {
                           <span className="text-gray-600">
                             Estimated Delivery Fee
                           </span>
-                          <span className="font-medium">
-                            {shipping === 0 ? (
-                              <span className="text-green-600">Free</span>
-                            ) : (
-                              formatPrice(shipping)
-                            )}
-                          </span>
+                          <span className="font-medium">{formatPrice(0)}</span>
                         </div>
 
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Tax</span>
-                          <span className="font-medium">
-                            {formatPrice(tax)}
-                          </span>
+                          <span className="font-medium">{formatPrice(0)}</span>
                         </div>
                       </div>
 
@@ -201,7 +187,7 @@ export default function CartPage() {
                             Estimated Total
                           </span>
                           <span className="font-bold">
-                            {formatPrice(total)}
+                            {formatPrice(subtotal)}
                           </span>
                         </div>
                       </div>

@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { QuantitySelector } from "@/components/shop/quantity-selector";
 import { StockIndicator } from "@/components/shop/stock-indicator";
 import { useInventory } from "@/hooks/use-inventory";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { formatPrice } from "@/lib/utils";
 import { CartItem } from "@/contexts/cart-context";
 import { TrashIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { ProductIcon } from "../icons/product-icon";
 
 interface CartItemRowProps {
@@ -27,6 +30,29 @@ export function CartItemRow({
     product: item.product,
     selectedVariant: item.variant,
   });
+
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+
+  const isWishlisted = isInWishlist(item.product.id, item.variant?.id);
+
+  const handleSaveForLater = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isWishlistLoading) return;
+
+    setIsWishlistLoading(true);
+    try {
+      // Small delay for better UX and to prevent rapid clicking
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      toggleWishlist(item.product, item.variant);
+    } catch (error) {
+      console.error("Wishlist toggle failed:", error);
+    } finally {
+      setIsWishlistLoading(false);
+    }
+  };
 
   return (
     <div
@@ -148,10 +174,24 @@ export function CartItemRow({
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-500 hover:text-green-dark"
+              onClick={handleSaveForLater}
+              disabled={isWishlistLoading}
+              className={`transition-all duration-200 ${
+                isWishlisted
+                  ? "text-green-dark hover:text-green-700"
+                  : "text-gray-500 hover:text-green-dark"
+              }`}
             >
-              <HeartIcon className="mr-1 h-4 w-4" />
-              <span className="hidden sm:inline">Save for Later</span>
+              {isWishlistLoading ? (
+                <div className="mr-1 h-4 w-4 animate-spin rounded-full border border-current border-t-transparent" />
+              ) : isWishlisted ? (
+                <HeartIconSolid className="mr-1 h-4 w-4" />
+              ) : (
+                <HeartIcon className="mr-1 h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">
+                {isWishlisted ? "Saved for Later" : "Save for Later"}
+              </span>
             </Button>
             <div className="block sm:hidden">
               <Button

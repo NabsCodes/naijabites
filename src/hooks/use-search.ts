@@ -11,7 +11,7 @@ import {
   prepareQueryForUrl,
   getSearchSuggestions,
   getSearchUrl,
-} from "@/utils/search";
+} from "@/lib/utils/search";
 
 // Constants
 const STORAGE_KEY = "naijabites-search-history";

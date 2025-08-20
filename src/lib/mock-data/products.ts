@@ -21,7 +21,7 @@ export const products: Product[] = [
     brand: "Maggi",
     inStock: true,
     isOnSale: false,
-    inventory: 17, // 5 in stock
+    inventory: 2, // Only 2 in stock - for testing
   },
 
   // 2. Discount Card - Golden Morn
@@ -43,9 +43,9 @@ export const products: Product[] = [
     slug: "golden-morn-1kg",
     category: "Breakfast & Cereals",
     brand: "Nestle",
-    inStock: true,
+    inStock: false,
     isOnSale: true,
-    inventory: 17, // 5 in stock
+    inventory: 0, // Out of stock - for testing
   },
 
   // 3. Product with Variants - Premium Nigerian Yam (Weekend Sale!)
@@ -78,7 +78,7 @@ export const products: Product[] = [
         price: 39000,
         salePrice: 35100, // 10% off
         isAvailable: true,
-        inventory: 43,
+        inventory: 0,
       },
       {
         id: "yam-large-dozen",
@@ -208,8 +208,10 @@ export const products: Product[] = [
     category: "Cooking Oils & Essentials",
     brand: "Devon King",
     inStock: true,
-    isOnSale: false,
-    inventory: 20,
+    salePrice: 16200,
+    discountPercentage: 10,
+    isOnSale: true,
+    inventory: 10,
   },
 
   // 7. Discount Card - Gino Tomatoes

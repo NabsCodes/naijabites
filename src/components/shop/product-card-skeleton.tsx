@@ -34,9 +34,14 @@ export function ProductCardSkeleton({ className }: ProductCardSkeletonProps) {
           </div>
 
           {/* Price Section Skeleton */}
-          <div className="flex items-baseline gap-2">
+          <div className="mb-2 flex items-baseline gap-2">
             <Skeleton className="h-6 w-20" />
             <Skeleton className="h-4 w-16" />
+          </div>
+
+          {/* Add to Cart Button Skeleton */}
+          <div className="flex justify-end">
+            <Skeleton className="h-8 w-full" />
           </div>
         </div>
       </div>

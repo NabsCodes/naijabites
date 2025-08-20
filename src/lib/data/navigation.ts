@@ -3,13 +3,53 @@ import {
   ShoppingBagIcon,
   MapPinIcon,
   HeartIcon,
+  HomeIcon,
+  StarIcon,
+  FireIcon,
+  CubeIcon,
 } from "@heroicons/react/24/outline";
-import { HomeIcon, ShopIcon, AboutIcon, ContactIcon } from "@/components/icons";
+import {
+  HomeIcon as HomeIconCustom,
+  ShopIcon,
+  AboutIcon,
+  ContactIcon,
+} from "@/components/icons";
 
-// Navigation items data - shared between header and mobile nav
+// Enhanced navigation items with shop dropdown
 export const navigationItems = [
-  { href: "/", label: "Home", icon: HomeIcon },
-  { href: "/shop", label: "Shop", icon: ShopIcon },
+  { href: "/", label: "Home", icon: HomeIconCustom },
+  {
+    href: "/shop",
+    label: "Shop",
+    icon: ShopIcon,
+    hasDropdown: true,
+    dropdownItems: [
+      {
+        href: "/shop",
+        label: "Shop Home",
+        description: "Featured collections & deals",
+        icon: HomeIcon,
+      },
+      {
+        href: "/shop/products",
+        label: "All Products",
+        description: "Browse our complete catalog",
+        icon: CubeIcon,
+      },
+      {
+        href: "/shop/deals",
+        label: "Deals",
+        description: "Special offers & discounts",
+        icon: FireIcon,
+      },
+      {
+        href: "/shop/recommended",
+        label: "Recommended",
+        description: "Personalized picks for you",
+        icon: StarIcon,
+      },
+    ],
+  },
   { href: "/about", label: "About Us", icon: AboutIcon },
   { href: "/contact", label: "Contact Us", icon: ContactIcon },
 ];

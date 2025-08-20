@@ -30,6 +30,9 @@ export { PromotionalCarousel } from "./promotional-carousel";
 export { PromotionalCarouselSkeleton } from "./promotional-carousel-skeleton";
 
 // Utility Components
-export { EmptySection } from "./empty-section";
+export { EmptySection } from "../common/empty-section";
 export { ShopPageSkeleton } from "./shop-page-skeleton";
 export { StockIndicator } from "./stock-indicator";
+
+// Wishlist Components
+export { WishlistVariantModal } from "./wishlist-variant-modal";

@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ProductFilters, buildFilterUrl } from "@/lib/product-filters";
+import { buildFilterUrl, ProductFilters } from "@/lib/product-filters";
 import { useRouter, usePathname } from "next/navigation";
 
 interface ProductsHeaderProps {
@@ -46,12 +46,13 @@ export function ProductsHeader({
 
   // Handle sort change
   const handleSortChange = (newSort: string) => {
-    const newUrl = buildFilterUrl(pathname, {
-      ...appliedFilters,
-      sort: newSort,
-      page: 1, // Reset to first page when sorting
-    });
-    router.push(newUrl);
+    router.push(
+      buildFilterUrl(pathname, {
+        ...appliedFilters,
+        sort: newSort,
+        page: 1, // Reset to first page when sorting
+      }),
+    );
   };
 
   return (
@@ -71,36 +72,42 @@ export function ProductsHeader({
         <div className="flex flex-col gap-3 border-b border-gray-200 pb-4 md:flex-row md:items-center md:justify-between md:gap-0">
           {/* Results Count */}
           <div className="text-sm text-gray-600">
-            {totalProducts.toLocaleString()} product
-            {totalProducts !== 1 ? "s " : ""}
-            {/* Show page info */}
-            {currentPage && totalPages && totalPages > 1 && (
-              <span className="ml-2 text-gray-400">
-                (Page {currentPage} of {totalPages})
+            {totalProducts === 0 ? (
+              <span className="text-gray-500">
+                No products found matching your criteria
               </span>
+            ) : (
+              <>
+                {totalProducts.toLocaleString()} product
+                {totalProducts !== 1 ? "s " : ""}
+                {/* Show page info */}
+                {currentPage && totalPages && totalPages > 1 && (
+                  <span className="ml-2 text-gray-400">
+                    (Page {currentPage} of {totalPages})
+                  </span>
+                )}
+              </>
             )}
           </div>
 
-          {/* Sort Controls */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600">Sort by:</span>
-            <Select value={sortValue} onValueChange={handleSortChange}>
-              <SelectTrigger className="h-9 w-[180px] border-gray-300 text-sm focus:border-green-dark focus:ring-green-dark">
-                <SelectValue placeholder="Select sorting" />
-              </SelectTrigger>
-              <SelectContent>
-                {sortOptions.map((option) => (
-                  <SelectItem
-                    key={option.value}
-                    value={option.value}
-                    className="text-sm focus:bg-green-50 focus:text-green-dark"
-                  >
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Sort Controls - Only show if there are products */}
+          {totalProducts > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600">Sort by:</span>
+              <Select value={sortValue} onValueChange={handleSortChange}>
+                <SelectTrigger className="h-9 w-[180px]">
+                  <SelectValue placeholder="Select sorting" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sortOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
       </div>
     </div>

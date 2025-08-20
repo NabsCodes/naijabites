@@ -9,8 +9,7 @@ import { useProductCardPricing } from "@/hooks/use-product-pricing";
 import { useInventory } from "@/hooks/use-inventory";
 import { Button } from "@/components/ui/button";
 import { CartIcon } from "@/components/icons";
-import { HeartIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
+import { WishlistButton } from "@/components/shop/wishlist-button";
 import { QuantitySelector } from "@/components/shop/quantity-selector";
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/contexts/cart-context";
@@ -40,9 +39,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const { addItem, updateQuantity, removeItem, items } = useCart();
   const { toast } = useToast();
 
-  // Mock Wishlist state
-  const [isWishlisted, setIsWishlisted] = useState(false);
-
   // Router for navigation
   // const router = useRouter();
 
@@ -58,7 +54,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
       return;
     }
 
-    const existingItem = items.find((item) => item.productId === product.id);
+    const existingItem = items.find(
+      (item) => item.productId === product.id && !item.variantId,
+    );
     if (existingItem) {
       setIsSelectingQuantity(true);
       setQuantity(existingItem.quantity);
@@ -73,7 +71,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
     if (hasVariants) return; // Don't handle quantity changes for variant products
 
     setQuantity(newQuantity);
-    const existingItem = items.find((item) => item.productId === product.id);
+    const existingItem = items.find(
+      (item) => item.productId === product.id && !item.variantId,
+    );
     if (newQuantity === 0 && existingItem) {
       removeItem(existingItem.id);
       setIsSelectingQuantity(false); // Show Add to Cart button again
@@ -131,15 +131,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
       });
     }
   };
-
-  const handleWishlistClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
-    console.log("Wishlist clicked");
-    // Add wishlist toggle logic here
-  };
-
   return (
     <div
       className={cn(
@@ -171,16 +162,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
           )}
 
           {/* Wishlist Button */}
-          <button
-            onClick={handleWishlistClick}
-            className="absolute bottom-2 right-2 z-10 rounded-full border border-green-dark bg-white p-1.5 transition-all duration-300 hover:bg-gray-50"
-          >
-            {isWishlisted ? (
-              <HeartSolidIcon className="h-4 w-4 text-green-dark" />
-            ) : (
-              <HeartIcon className="h-4 w-4 text-gray-600" />
-            )}
-          </button>
+          <WishlistButton
+            product={product}
+            size="md"
+            className="bottom-2 right-2"
+          />
         </div>
 
         {/* Product Details */}
@@ -195,7 +181,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             {product.shortDescription}
           </p>
 
-          {/* Rating (always reserve space) */}
+          {/* Rating */}
           <div className="flex min-h-[22px] items-center">
             {product.rating ? (
               <Rating
@@ -270,15 +256,29 @@ export function ProductCard({ product, className }: ProductCardProps) {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <QuantitySelector
-                quantity={quantity}
-                onQuantityChange={handleQuantityChange}
-                min={0}
-                max={maxQuantity}
-                size="card"
-                className="w-full"
-                disabled={!inStock}
-              />
+              {inStock ? (
+                <QuantitySelector
+                  quantity={quantity}
+                  onQuantityChange={handleQuantityChange}
+                  min={0}
+                  max={maxQuantity}
+                  size="card"
+                  className="w-full"
+                  disabled={!inStock}
+                />
+              ) : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handleAddToCartClick}
+                  // disabled={!inStock}
+                  aria-disabled={!inStock}
+                  aria-label="Out of Stock"
+                  className="w-full cursor-not-allowed border border-gray-300 bg-gray-50 text-gray-500 opacity-60 hover:bg-gray-50/90"
+                >
+                  Out of Stock
+                </Button>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

@@ -1,3 +1,9 @@
 export { AccountNav } from "./account-nav";
-export { AddressModal } from "./address-modal";
-export { AddressCard } from "./address-card";
+export { AddressModal } from "./address/address-modal";
+export { AddressCard } from "./address/address-card";
+export { AccountNavTabsMobile } from "./account-nav-tabs-mobile";
+export { ProfileForm } from "./profile-form";
+export { AddressesForm } from "./address/addresses-form";
+export { WishlistForm } from "./wishlist-form";
+export { SecurityForm } from "./security-form";
+export { OrdersForm } from "./orders-form";

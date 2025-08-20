@@ -35,7 +35,7 @@ export function VariantSelectorModal({
   );
   const [quantity, setQuantity] = useState(1);
 
-  const { addItem, items } = useCart();
+  const { addItem, updateQuantity, items } = useCart();
   const { toast } = useToast();
 
   // Use centralized pricing hook
@@ -81,21 +81,58 @@ export function VariantSelectorModal({
   const handleAddToCart = () => {
     if (!selectedVariant) return;
 
-    addItem({
-      productId: product.id,
-      variantId: selectedVariant.id,
-      quantity,
-      price: selectedVariant.price,
-      salePrice: selectedVariant.salePrice,
-      product,
-      variant: selectedVariant,
-    });
+    // Check if adding this quantity would exceed max quantity
+    const existingCartItem = items.find(
+      (item) =>
+        item.productId === product.id && item.variantId === selectedVariant.id,
+    );
 
-    toast({
-      title: "Added to cart",
-      description: `${product.name} (${selectedVariant.title}) added to your cart.`,
-      variant: "success",
-    });
+    if (existingCartItem) {
+      // Update existing item quantity
+      const newTotalQuantity = existingCartItem.quantity + quantity;
+      if (newTotalQuantity > maxQuantity) {
+        const availableQuantity = maxQuantity - existingCartItem.quantity;
+
+        if (availableQuantity <= 0) {
+          toast({
+            title: "Maximum quantity reached",
+            description: `You already have the maximum quantity (${maxQuantity}) of ${product.name} (${selectedVariant.title}) in your cart.`,
+            variant: "error",
+          });
+        } else {
+          toast({
+            title: "Quantity exceeds limit",
+            description: `You can only add ${availableQuantity} more of this item to your cart.`,
+            variant: "error",
+          });
+        }
+        return;
+      }
+
+      // Update existing item
+      updateQuantity(existingCartItem.id, newTotalQuantity);
+      toast({
+        title: "Updated cart",
+        description: `${product.name} (${selectedVariant.title}) quantity updated in your cart.`,
+        variant: "success",
+      });
+    } else {
+      // Add new item
+      addItem({
+        productId: product.id,
+        variantId: selectedVariant.id,
+        quantity,
+        price: selectedVariant.price,
+        salePrice: selectedVariant.salePrice,
+        product,
+        variant: selectedVariant,
+      });
+      toast({
+        title: "Added to cart",
+        description: `${product.name} (${selectedVariant.title}) added to your cart.`,
+        variant: "success",
+      });
+    }
 
     onClose();
   };
@@ -145,10 +182,17 @@ export function VariantSelectorModal({
 
               <div className="grid gap-3 sm:grid-cols-2">
                 {product.variants.map((variant) => {
+                  // Variant availability with zero inventory check
+                  const variantInventory =
+                    variant.inventory ?? product.inventory;
                   const isVariantDisabled =
-                    !product.inStock || !variant.isAvailable;
+                    !product.inStock ||
+                    !variant.isAvailable ||
+                    variantInventory === 0;
                   const isVariantAvailable =
-                    product.inStock && variant.isAvailable;
+                    product.inStock &&
+                    variant.isAvailable &&
+                    variantInventory !== 0;
                   const isSelected = selectedVariant?.id === variant.id;
 
                   return (
@@ -219,10 +263,12 @@ export function VariantSelectorModal({
                               {!product.inStock
                                 ? "Out of Stock"
                                 : !variant.isAvailable
-                                  ? "Unavailable"
-                                  : product.isOnSale && variant.salePrice
-                                    ? formatPrice(variant.salePrice)
-                                    : formatPrice(variant.price)}
+                                  ? "Out of Stock"
+                                  : variantInventory === 0
+                                    ? "Out of Stock"
+                                    : product.isOnSale && variant.salePrice
+                                      ? formatPrice(variant.salePrice)
+                                      : formatPrice(variant.price)}
                             </span>
                             {product.isOnSale &&
                               variant.salePrice &&

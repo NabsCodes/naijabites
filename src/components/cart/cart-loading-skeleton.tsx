@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProductCardSkeleton } from "../shop";
 
 export function CartLoadingSkeleton() {
   // Always show the full cart skeleton when loading
@@ -30,6 +31,11 @@ export function CartLoadingSkeleton() {
             <div className="lg:col-span-1">
               <OrderSummarySkeleton />
             </div>
+          </div>
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:mt-16 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductCardSkeleton key={i} className="h-fit w-full" />
+            ))}
           </div>
         </div>
       </div>

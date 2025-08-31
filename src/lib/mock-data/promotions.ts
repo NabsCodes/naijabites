@@ -4,26 +4,27 @@ export interface PromotionalBanner {
   description: string;
   ctaText: string;
   ctaLink: string;
-  backgroundColor: string;
-  textColor: string;
-  expiryDate?: string;
   productImages: string;
-  discountType: "percentage" | "buy-x-get-y";
+  expiryDate?: string;
+  isActive: boolean;
+  backgroundColor?: string;
+  textColor?: string;
+  discountType?: string;
 }
 
 export const promotionalBanners: PromotionalBanner[] = [
   {
-    id: "cooking-essentials-20",
-    title: "Up to 20% Off Cooking Essentials!",
+    id: "summer-sale",
+    title: "Summer Sale - Up to 50% Off!",
     description:
-      "Get discounts on Devon King's Oil, Golden penny Spaghetti, and more.",
-    ctaText: "Grab the Deals",
+      "Get amazing deals on your favorite Nigerian groceries this summer",
+    ctaText: "Shop Now",
     ctaLink: "/shop/deals",
     backgroundColor: "bg-[#EDF2EE]",
     textColor: "text-gray-900",
     expiryDate: "August 30, 2025",
     productImages: "/images/nigerian-groceries.webp",
-    discountType: "percentage",
+    isActive: true,
   },
   {
     id: "indomie-noodles-10",
@@ -37,6 +38,7 @@ export const promotionalBanners: PromotionalBanner[] = [
     expiryDate: "August 30, 2025",
     productImages: "/images/indomie-noodles.webp",
     discountType: "percentage",
+    isActive: true,
   },
   {
     id: "tomato-paste-bogo",
@@ -49,17 +51,19 @@ export const promotionalBanners: PromotionalBanner[] = [
     expiryDate: "August 15, 2025",
     productImages: "/images/tomato-paste.webp",
     discountType: "buy-x-get-y",
+    isActive: true,
+  },
+  {
+    id: "new-arrivals",
+    title: "Fresh New Arrivals",
+    description: "Discover the latest products from Nigeria",
+    ctaText: "Explore",
+    ctaLink: "/shop/products",
+    productImages: "/images/nigerian-groceries.webp",
+    isActive: true,
   },
 ];
 
-// For Shopify integration later, this could map to:
-// - Shopify Collections with discount metafields
-// - Promotional banners configured in admin
-// - Automatic expiry handling
-export const getActivePromotions = (): PromotionalBanner[] => {
-  const now = new Date();
-  return promotionalBanners.filter((banner) => {
-    if (!banner.expiryDate) return true;
-    return new Date(banner.expiryDate) > now;
-  });
-};
+export function getActivePromotions(): PromotionalBanner[] {
+  return promotionalBanners.filter((banner) => banner.isActive);
+}

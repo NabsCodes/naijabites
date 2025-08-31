@@ -23,7 +23,7 @@ export default async function ShopPage() {
 
   // Fetch data server-side
   const promotions = getActivePromotions();
-  const sections = getShopSections();
+  const sections = await getShopSections();
 
   return (
     <main className="flex min-h-screen flex-col overflow-hidden">
@@ -43,7 +43,7 @@ export default async function ShopPage() {
           key={section.id}
           title={section.title}
           description={section.description}
-          products={section.getProducts()}
+          products={section.products || []}
           viewAllLink={section.viewAllLink}
           className={index % 2 === 0 ? "bg-white py-12" : "bg-gray-50 py-12"}
         />

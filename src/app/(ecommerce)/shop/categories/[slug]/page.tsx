@@ -8,12 +8,13 @@ import {
   ShopBreadcrumbs,
   FilterMobile,
 } from "@/components/shop";
-import { products } from "@/lib/mock-data/products";
+import { getShopifyAllProducts } from "@/lib/shopify-products";
 import { getCategoryBySlug } from "@/lib/mock-data/categories";
 import {
   parseSearchParams,
   parseProductFilters,
-  prepareCategoryFilters,
+  filterAndPaginateProducts,
+  getFilterOptions,
 } from "@/lib/product-filters";
 
 interface CategoryPageProps {
@@ -62,14 +63,19 @@ export default async function CategoryPage({
     notFound();
   }
 
+  // Fetch products from Shopify
+  const allProducts = await getShopifyAllProducts(100);
+  
+  // Filter products by category
+  const categoryProducts = allProducts.filter(product => 
+    product.category.toLowerCase() === category.name.toLowerCase()
+  );
+
   // Parse search parameters and apply category-specific filtering
   const urlSearchParams = parseSearchParams(resolvedSearchParams);
   const filters = parseProductFilters(urlSearchParams);
-  const { result, filterOptions } = prepareCategoryFilters(
-    products,
-    filters,
-    category.name,
-  );
+  const result = filterAndPaginateProducts(categoryProducts, filters);
+  const filterOptions = getFilterOptions(categoryProducts);
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -84,7 +90,10 @@ export default async function CategoryPage({
           {/* Page Header */}
           <ProductsHeader
             title={category.name}
-            description={category.description}
+            description={
+              category.description ||
+              `Browse our selection of ${category.name.toLowerCase()}`
+            }
             totalProducts={result.totalCount}
             currentPage={result.currentPage}
             totalPages={result.totalPages}
@@ -92,7 +101,7 @@ export default async function CategoryPage({
           />
 
           <div className="grid grid-cols-1 gap-8 py-8 lg:grid-cols-4">
-            {/* Desktop Sidebar - Hidden on Mobile */}
+            {/* Sidebar */}
             <div className="hidden lg:block">
               <FilterDesktop
                 filterOptions={filterOptions}

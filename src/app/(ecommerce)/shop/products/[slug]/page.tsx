@@ -6,7 +6,7 @@ import {
   ProductDetails,
   ProductImageGallery,
 } from "@/components/shop";
-import { getProductBySlug } from "@/lib/mock-data/products";
+import { getShopifyProductBySlug } from "@/lib/shopify-products";
 import { getSimilarProductsSection } from "@/lib/data/shop-sections";
 
 interface ProductPageProps {
@@ -19,7 +19,7 @@ export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const product = getProductBySlug(resolvedParams.slug);
+  const product = await getShopifyProductBySlug(resolvedParams.slug);
 
   if (!product) {
     return {
@@ -46,14 +46,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
-  const product = getProductBySlug(resolvedParams.slug);
+  const product = await getShopifyProductBySlug(resolvedParams.slug);
 
   if (!product) {
     notFound();
   }
 
   // Use existing shop-sections logic for consistency
-  const similarProductsSection = getSimilarProductsSection(
+  const similarProductsSection = await getSimilarProductsSection(
     product.id,
     product.category,
   );

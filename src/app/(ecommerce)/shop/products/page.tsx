@@ -7,7 +7,7 @@ import {
   FilterMobile,
   FilterDesktop,
 } from "@/components/shop";
-import { products } from "@/lib/mock-data/products";
+import { getShopifyAllProducts } from "@/lib/shopify-products";
 import {
   parseSearchParams,
   parseProductFilters,
@@ -21,8 +21,7 @@ interface ProductsPageProps {
 
 export const metadata: Metadata = {
   title: "All Products",
-  description:
-    "Browse our complete collection of Nigerian groceries and essentials",
+  description: "Browse our complete collection of Nigerian groceries",
 };
 
 export default async function ProductsPage({
@@ -34,6 +33,9 @@ export default async function ProductsPage({
   if (process.env.NODE_ENV === "development") {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
+
+  // Fetch products from Shopify
+  const products = await getShopifyAllProducts(100);
 
   // Parse search parameters into filters
   const urlSearchParams = parseSearchParams(resolvedSearchParams);
@@ -82,6 +84,8 @@ export default async function ProductsPage({
           </div>
         </div>
       </div>
+
+      {/* Mobile Filter - Fixed at bottom */}
       <FilterMobile
         filterOptions={filterOptions}
         appliedFilters={result.appliedFilters}

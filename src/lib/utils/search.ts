@@ -1,7 +1,5 @@
 import { SearchSuggestion } from "@/types/search";
-import { products } from "@/lib/mock-data/products";
-import { categories } from "@/lib/mock-data/categories";
-import { brands } from "@/lib/mock-data/brands";
+import { shopifyFetch, transformShopifyProduct } from "@/lib/shopify";
 
 // Constants
 export const SEARCH_VALIDATION = {
@@ -17,97 +15,115 @@ export function prepareQueryForUrl(query: string): string {
   return query.trim().replace(/\s+/g, " ");
 }
 
-// Search utility functions
-const textMatches = (text: string, searchQuery: string): boolean =>
-  text.toLowerCase().includes(searchQuery.toLowerCase());
+// Product fragment reused from shopify.ts
+const PRODUCT_FRAGMENT = `
+  fragment ProductFragment on Product {
+    id
+    title
+    handle
+    description
+    vendor
+    productType
+    tags
+    images(first: 1) {
+      edges {
+        node {
+          url
+        }
+      }
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    variants(first: 1) {
+      edges {
+        node {
+          availableForSale
+        }
+      }
+    }
+  }
+`;
 
-export function searchProducts(
+export async function searchProducts(
   query: string,
   limit: number = 5,
-): SearchSuggestion[] {
+): Promise<SearchSuggestion[]> {
   if (!query.trim()) return [];
 
-  const searchQuery = query.trim().toLowerCase();
+  const gqlQuery = `
+    ${PRODUCT_FRAGMENT}
+    query SearchProducts($query: String!, $first: Int!) {
+      products(first: $first, query: $query) {
+        edges {
+          node {
+            ...ProductFragment
+          }
+        }
+      }
+    }
+  `;
 
-  return products
-    .filter((product) => {
-      return (
-        textMatches(product.name, searchQuery) ||
-        textMatches(product.brand, searchQuery) ||
-        textMatches(product.category, searchQuery)
-      );
-    })
-    .slice(0, limit)
-    .map(
-      (product): SearchSuggestion => ({
+  try {
+    const data = await shopifyFetch(gqlQuery, {
+      query: `title:*${query.trim()}*`,
+      first: limit,
+    });
+
+    return data.products.edges.map((edge: any): SearchSuggestion => {
+      const product = transformShopifyProduct(edge.node);
+      return {
         id: product.id,
         type: "product",
         title: product.name,
         subtitle: `${product.brand} • ${product.category}`,
-        image: product.image || undefined,
+        image: product.image,
         slug: product.slug,
         category: product.category,
-      }),
-    );
+      };
+    });
+  } catch (error) {
+    console.error("Error searching Shopify products:", error);
+    return [];
+  }
 }
 
 export function searchCategories(
   query: string,
   limit: number = 3,
 ): SearchSuggestion[] {
-  if (!query.trim()) return [];
-
-  const searchQuery = query.trim().toLowerCase();
-
-  return categories
-    .filter((category) => textMatches(category.name, searchQuery))
-    .slice(0, limit)
-    .map(
-      (category): SearchSuggestion => ({
-        id: category.id,
-        type: "category",
-        title: category.name,
-        subtitle: category.description || "Browse category",
-        slug: category.slug,
-      }),
-    );
+  return []; // To be implemented (e.g., from collections or tags)
 }
 
 export function searchBrands(
   query: string,
   limit: number = 3,
 ): SearchSuggestion[] {
-  if (!query.trim()) return [];
-
-  const searchQuery = query.trim().toLowerCase();
-
-  return brands
-    .filter((brand) => textMatches(brand.name, searchQuery))
-    .slice(0, limit)
-    .map(
-      (brand): SearchSuggestion => ({
-        id: brand.id,
-        type: "brand",
-        title: brand.name,
-        subtitle: brand.description || "Browse brand",
-        slug: brand.slug,
-      }),
-    );
+  return []; // To be implemented (e.g., from vendor field or metafields)
 }
 
-export function getSearchSuggestions(
+export async function getSearchSuggestions(
   query: string,
   options: {
     maxProducts?: number;
     maxCategories?: number;
     maxBrands?: number;
   } = {},
-): SearchSuggestion[] {
+): Promise<SearchSuggestion[]> {
   if (!query.trim()) return [];
 
-  const productResults = searchProducts(query, options.maxProducts);
-  const categoryResults = searchCategories(query, options.maxCategories);
-  const brandResults = searchBrands(query, options.maxBrands);
+  const productResults = await searchProducts(query, options.maxProducts);
+  const categoryResults: SearchSuggestion[] = [];
+  const brandResults: SearchSuggestion[] = [];
 
   return [...productResults, ...categoryResults, ...brandResults];
 }

@@ -6,6 +6,7 @@ import {
   TestimonialSection,
   ProductListingSectionSkeleton,
 } from "@/components/home";
+import { ShopifyStatus } from "@/components/home/shopify-status";
 
 export default function HomePage() {
   return (
@@ -20,6 +21,9 @@ export default function HomePage() {
         <FeaturesSection />
         <TestimonialSection />
       </main>
+      
+      {/* Shopify Integration Status (Development Only) */}
+      <ShopifyStatus />
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRightIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { locations } from "@/lib/mock-data/locations";
 import { formatPrice } from "@/lib/utils";
 import { useCart, type CartItem } from "@/contexts/cart-context";
 import { ProductSection } from "@/components/shop";
-import { products } from "@/lib/mock-data/products";
+import { getShopifyFeaturedProducts } from "@/lib/shopify-products";
 import {
   CartItemRow,
   EmptyCart,
@@ -36,6 +36,21 @@ export default function CartPage() {
     item: CartItem | null;
   } | null>(null);
   const [clearCartDialog, setClearCartDialog] = useState(false);
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+
+  // Fetch featured products for recommendations
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await getShopifyFeaturedProducts(4);
+        setFeaturedProducts(products);
+      } catch (error) {
+        console.error("Error fetching featured products:", error);
+        setFeaturedProducts([]);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const handleRemoveItemClick = (item: CartItem) => {
     setRemoveItemDialog({ isOpen: true, item });
@@ -141,7 +156,7 @@ export default function CartPage() {
                               value={selectedLocation}
                               onValueChange={setSelectedLocation}
                             >
-                              <SelectTrigger className="w-auto border-none bg-transparent p-0 text-sm font-normal text-gray-600 hover:text-gray-900">
+                              <SelectTrigger className="w-auto border-none bg-transparent text-sm font-normal text-gray-600 hover:text-gray-900">
                                 <SelectValue placeholder="Select location" />
                               </SelectTrigger>
                               <SelectContent>
@@ -252,9 +267,7 @@ export default function CartPage() {
                 <ProductSection
                   title="You might also like"
                   description="Complete your shopping with these popular Nigerian groceries"
-                  products={products
-                    .slice(0, 4)
-                    .sort(() => 0.5 - Math.random())} // Might need to change this to a more sophisticated algorithm for production
+                  products={featuredProducts}
                   viewAllLink="/shop"
                   noContainer={true}
                 />

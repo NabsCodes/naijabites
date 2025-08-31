@@ -3,7 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/contexts/cart-context";
-import { QueryProvider } from "@/providers/query-provider";
+import { QueryProvider } from "@/providers";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800"],

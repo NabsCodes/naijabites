@@ -8,6 +8,7 @@ import {
   FilterDesktop,
 } from "@/components/shop";
 import { getShopifyAllProducts } from "@/lib/shopify-products";
+import { products as mockProducts } from "@/lib/mock-data/products";
 import {
   parseSearchParams,
   parseProductFilters,
@@ -34,8 +35,9 @@ export default async function ProductsPage({
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
-  // Fetch products from Shopify
-  const products = await getShopifyAllProducts(100);
+  // Get products from Shopify or fallback to mock data for testing
+  const shopifyProducts = await getShopifyAllProducts(100).catch(() => null);
+  const products = shopifyProducts || mockProducts;
 
   // Parse search parameters into filters
   const urlSearchParams = parseSearchParams(resolvedSearchParams);

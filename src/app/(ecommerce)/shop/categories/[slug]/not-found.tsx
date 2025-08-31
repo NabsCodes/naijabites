@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CategoryNav, ShopBreadcrumbs } from "@/components/shop";
-import { TagIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 
 export default function CategoryNotFound() {
   return (
@@ -54,8 +54,8 @@ export default function CategoryNotFound() {
 
               <Button asChild variant="outline" size="lg">
                 <Link href="/shop">
-                  <TagIcon className="mr-2 h-4 w-4" />
-                  View Categories
+                  <ArrowLeftIcon className="mr-2 h-4 w-4" />
+                  Back to Shop
                 </Link>
               </Button>
             </div>

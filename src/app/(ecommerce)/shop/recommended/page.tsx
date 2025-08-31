@@ -38,7 +38,7 @@ export default async function RecommendedPage({
 
   // Fetch products from Shopify
   const allProducts = await getShopifyAllProducts(100);
-  
+
   // For now, use random selection as recommended (would be algorithm-based in real app)
   const recommendedProducts = [...allProducts].sort(() => 0.5 - Math.random());
 

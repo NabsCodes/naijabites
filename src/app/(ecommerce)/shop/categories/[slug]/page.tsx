@@ -65,10 +65,10 @@ export default async function CategoryPage({
 
   // Fetch products from Shopify
   const allProducts = await getShopifyAllProducts(100);
-  
+
   // Filter products by category
-  const categoryProducts = allProducts.filter(product => 
-    product.category.toLowerCase() === category.name.toLowerCase()
+  const categoryProducts = allProducts.filter(
+    (product) => product.category.toLowerCase() === category.name.toLowerCase(),
   );
 
   // Parse search parameters and apply category-specific filtering

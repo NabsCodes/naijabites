@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 // Load config from JSON file
-const configPath = path.join(process.cwd(), 'config.json');
-const configFile = fs.readFileSync(configPath, 'utf8');
+const configPath = path.join(process.cwd(), "config.json");
+const configFile = fs.readFileSync(configPath, "utf8");
 const config = JSON.parse(configFile);
 
 export interface OTPConfig {
@@ -40,4 +40,4 @@ export const getOTPConfig = (): OTPConfig => appConfig.otp;
 export const getRedisConfig = (): RedisConfig => appConfig.redis;
 
 // Helper function to get Email config
-export const getEmailConfig = (): EmailConfig => appConfig.email; 
+export const getEmailConfig = (): EmailConfig => appConfig.email;

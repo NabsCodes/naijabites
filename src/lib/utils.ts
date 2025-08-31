@@ -37,7 +37,6 @@ export function formatPrice(
 }
 
 // Convenience functions for specific currencies
-
 export const formatCAD = (price: number) =>
   formatPrice(price, { currency: "CAD" });
 export const formatUSD = (price: number) =>

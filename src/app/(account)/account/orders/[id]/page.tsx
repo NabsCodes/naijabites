@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatNGN } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { OrderStatusBadge } from "@/components/account/orders/order-status-badge";
 import {
   ArrowLeftIcon,
@@ -141,7 +141,7 @@ export default async function OrderDetailsPage({ params }: Props) {
                 className="hidden h-4 sm:block"
               />
               <span className="text-base font-semibold text-green-dark">
-                {formatNGN(order.totals.total)}
+                {formatPrice(order.totals.total)}
               </span>
             </div>
             {/* Mobile compact order info */}
@@ -246,11 +246,11 @@ export default async function OrderDetailsPage({ params }: Props) {
                         </span>
                         <div className="text-right">
                           <div className="text-sm font-semibold text-gray-900 sm:text-base">
-                            {formatNGN(item.lineTotal)}
+                            {formatPrice(item.lineTotal)}
                           </div>
                           {item.quantity > 1 && (
                             <div className="text-xs text-gray-500">
-                              {formatNGN(item.unitPrice)} each
+                              {formatPrice(item.unitPrice)} each
                             </div>
                           )}
                         </div>
@@ -449,7 +449,7 @@ export default async function OrderDetailsPage({ params }: Props) {
                               : "Payment Failed"}
                       </div>
                       <div className="text-sm text-gray-600">
-                        {formatNGN(order.totals.total)} on{" "}
+                        {formatPrice(order.totals.total)} on{" "}
                         {orderDate.toLocaleDateString("en-CA", {
                           month: "short",
                           day: "numeric",
@@ -522,21 +522,21 @@ export default async function OrderDetailsPage({ params }: Props) {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="font-medium">
-                    {formatNGN(order.totals.subtotal)}
+                    {formatPrice(order.totals.subtotal)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Shipping</span>
                   <span className="font-medium">
                     {order.totals.shipping > 0
-                      ? formatNGN(order.totals.shipping)
+                      ? formatPrice(order.totals.shipping)
                       : "Free"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax</span>
                   <span className="font-medium">
-                    {formatNGN(order.totals.tax)}
+                    {formatPrice(order.totals.tax)}
                   </span>
                 </div>
                 <div className="border-t pt-3">
@@ -545,7 +545,7 @@ export default async function OrderDetailsPage({ params }: Props) {
                       Total
                     </span>
                     <span className="text-lg font-bold text-gray-900">
-                      {formatNGN(order.totals.total)}
+                      {formatPrice(order.totals.total)}
                     </span>
                   </div>
                 </div>

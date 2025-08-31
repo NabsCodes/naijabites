@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/validations/auth";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { AuthContainer } from "./auth-container";
+import { useToast } from "@/hooks/use-toast";
 
 export function ForgotPasswordForm({
   className,
@@ -20,47 +22,72 @@ export function ForgotPasswordForm({
 }: {
   className?: string;
 }) {
+  const searchParams = useSearchParams();
+  const emailFromQuery = searchParams.get("email") ?? "";
+  const { toast } = useToast();
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    reset,
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { email: emailFromQuery },
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const [error, setError] = useState('');
+  const onSubmit = async (data: ForgotPasswordFormData) => {
+    try {
+      const res = await fetch("/api/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: data.email }),
+      });
 
-const onSubmit = async (data: ForgotPasswordFormData) => {
-  setIsLoading(true);
-  setError('');
+      const result = await res.json();
 
-  try {
-    const res = await fetch('/api/forgot-password', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: data.email }),
-    });
+      if (!res.ok) {
+        toast({
+          variant: "error",
+          title: "Failed to send reset link",
+          description:
+            result.error || "Something went wrong. Please try again.",
+        });
+        return;
+      }
 
-    const result = await res.json();
+      if (!result.success && !result.message) {
+        console.error("🔴 Invalid API response: missing success indicator");
+        toast({
+          variant: "error",
+          title: "Failed to send reset link",
+          description: "Server returned invalid response. Please try again.",
+        });
+        return;
+      }
 
-    if (!res.ok) {
-      setError(result.error || 'Something went wrong');
-      return;
+      toast({
+        variant: "success",
+        title: "Reset link sent",
+        description: "Check your email for password reset instructions.",
+      });
+
+      // Reset form and show success state
+      reset();
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error("❌ Forgot password error:", err);
+      toast({
+        variant: "error",
+        title: "Something went wrong",
+        description:
+          "Please try again or contact support if the issue persists.",
+      });
     }
-
-    setIsSubmitted(true);
-  } catch (err) {
-    console.error('❌ Forgot password error:', err);
-    setError('Something went wrong. Please try again.');
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   if (isSubmitted) {
     return (
@@ -88,7 +115,10 @@ const onSubmit = async (data: ForgotPasswordFormData) => {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsSubmitted(false)}
+              onClick={() => {
+                setIsSubmitted(false);
+                reset();
+              }}
               className="h-10 border-green-dark/20 bg-white text-green-dark transition-all duration-300 hover:border-green-dark/40 hover:bg-green-dark/5"
             >
               Try again
@@ -130,24 +160,28 @@ const onSubmit = async (data: ForgotPasswordFormData) => {
                 errors.email &&
                   "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
               )}
+              disabled={isSubmitting}
+              aria-describedby={errors.email ? "email-error" : undefined}
+              aria-invalid={!!errors.email}
+              aria-required="true"
             />
             {errors.email && (
-              <p className="text-xs text-red-500">{errors.email.message}</p>
+              <p id="email-error" className="text-xs text-red-500" role="alert">
+                {errors.email.message}
+              </p>
             )}
           </div>
-          {error && (
-            <p className="text-sm text-red-500">{error}</p>
-          )}
 
           <Button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="h-12 w-full bg-green-dark font-medium text-white transition-all duration-300 hover:bg-green-dark/90 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-describedby={isSubmitting ? "forgot-loading" : undefined}
           >
-            {isLoading ? (
+            {isSubmitting ? (
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                Sending reset link...
+                <span id="forgot-loading">Sending reset link...</span>
               </div>
             ) : (
               "Send reset link"

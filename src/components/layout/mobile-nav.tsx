@@ -39,20 +39,16 @@ import { locations } from "@/lib/mock-data/locations";
 import { CartIcon, LogoIcon, Logo2Icon } from "@/components/icons";
 import { SearchSuggestion } from "@/types/search";
 import { SearchAutocomplete } from "@/components/search";
-import {
-  logout,
-  getCustomerData,
-  getCustomerInitials,
-  getCustomerName,
-  getCustomerEmail,
-} from "@/lib/auth";
+import { AuthSkeleton } from "@/components/common/auth-skeleton";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
 import { Separator } from "@/components/ui/separator";
+import { useAuthActions, useUserInfo } from "@/lib/stores/auth-store";
+import { useToast } from "@/hooks/use-toast";
 
 interface MobileNavProps {
   cartItemsCount: number;
   isUserLoggedIn: boolean;
-  setIsUserLoggedIn: (_value: boolean) => void;
+  authLoading: boolean;
   selectedLocation: (typeof locations)[0] | null;
   setSelectedLocation: (_location: (typeof locations)[0] | null) => void;
   // Search props for expandable header search
@@ -71,7 +67,7 @@ interface MobileNavProps {
 export default function MobileNav({
   cartItemsCount,
   isUserLoggedIn,
-  setIsUserLoggedIn,
+  authLoading,
   selectedLocation,
   setSelectedLocation,
   searchQuery,
@@ -90,15 +86,11 @@ export default function MobileNav({
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
-  const [customerData, setCustomerData] = useState<any>(null);
 
-  // Load customer data when component mounts
-  useEffect(() => {
-    if (isUserLoggedIn) {
-      const customer = getCustomerData();
-      setCustomerData(customer);
-    }
-  }, [isUserLoggedIn]);
+  // Use Zustand auth store
+  const { logout } = useAuthActions();
+  const { user: customerData, initials, name, email } = useUserInfo();
+  const { toast } = useToast();
 
   // Handle search expand/collapse
   const handleSearchToggle = () => {
@@ -128,11 +120,24 @@ export default function MobileNav({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isSearchExpanded, setSearchQuery]);
 
-  // Handle logout
+  // Handle logout with toast feedback
   const handleLogout = () => {
-    logout();
-    setIsUserLoggedIn(false);
-    setCustomerData(null);
+    try {
+      logout();
+
+      toast({
+        variant: "success",
+        title: "Signed out successfully",
+        description: "You have been logged out of your account.",
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast({
+        variant: "error",
+        title: "Logout failed",
+        description: "There was an issue signing you out. Please try again.",
+      });
+    }
   };
 
   return (
@@ -232,26 +237,30 @@ export default function MobileNav({
                       </div>
 
                       {/* User Profile Section */}
-                      {isUserLoggedIn ? (
+                      {authLoading ? (
+                        <div className="border-b border-gray-200 p-4">
+                          <AuthSkeleton variant="mobile" />
+                        </div>
+                      ) : isUserLoggedIn ? (
                         <div className="border-b border-gray-200 p-4">
                           <div className="flex items-center gap-3">
                             <div className="h-12 w-12 flex-shrink-0">
-                              <Avatar className="h-12 w-12 ring-2 ring-green-200">
+                              <Avatar className="h-12 w-12">
                                 <AvatarImage
                                   src={customerData?.avatar}
                                   className="h-full w-full object-cover"
                                 />
-                                <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
-                                  {getCustomerInitials()}
+                                <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
+                                  {initials}
                                 </AvatarFallback>
                               </Avatar>
                             </div>
                             <div className="flex flex-col">
                               <span className="text-base font-semibold text-gray-900">
-                                {getCustomerName()}
+                                {name}
                               </span>
                               <span className="text-xs text-gray-500">
-                                {getCustomerEmail()}
+                                {email}
                               </span>
                             </div>
                           </div>
@@ -451,7 +460,9 @@ export default function MobileNav({
               </Link>
 
               {/* User Profile/Auth */}
-              {isUserLoggedIn ? (
+              {authLoading ? (
+                <AuthSkeleton variant="mobile" />
+              ) : isUserLoggedIn ? (
                 <Popover>
                   <PopoverTrigger asChild>
                     <button
@@ -466,7 +477,7 @@ export default function MobileNav({
                             className="h-full w-full object-cover"
                           />
                           <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark">
-                            {getCustomerInitials()}
+                            {initials}
                           </AvatarFallback>
                         </Avatar>
                       </div>
@@ -482,17 +493,15 @@ export default function MobileNav({
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={customerData?.avatar} />
-                          <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
-                            {getCustomerInitials()}
+                          <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
+                            {initials}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold text-gray-900">
-                            {getCustomerName()}
+                            {name}
                           </span>
-                          <span className="text-xs text-gray-500">
-                            {getCustomerEmail()}
-                          </span>
+                          <span className="text-xs text-gray-500">{email}</span>
                         </div>
                       </div>
                     </div>

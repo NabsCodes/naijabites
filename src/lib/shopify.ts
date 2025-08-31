@@ -3,16 +3,19 @@ const SHOPIFY_STOREFRONT_TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN!;
 
 export async function shopifyFetch<T = any>(
   query: string,
-  variables?: Record<string, any>
+  variables?: Record<string, any>,
 ): Promise<T> {
-  const res = await fetch(`https://${SHOPIFY_DOMAIN}/api/2024-07/graphql.json`, {
-    method: 'POST',
-    headers: {
-      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN,
-      'Content-Type': 'application/json',
+  const res = await fetch(
+    `https://${SHOPIFY_DOMAIN}/api/2024-07/graphql.json`,
+    {
+      method: "POST",
+      headers: {
+        "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_TOKEN,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query, variables }),
     },
-    body: JSON.stringify({ query, variables }),
-  });
+  );
 
   const json = await res.json();
   if (json.errors) throw new Error(JSON.stringify(json.errors));
@@ -23,17 +26,20 @@ export async function shopifyFetch<T = any>(
 export async function shopifyCustomerFetch<T = any>(
   query: string,
   customerAccessToken: string,
-  variables?: Record<string, any>
+  variables?: Record<string, any>,
 ): Promise<T> {
-  const res = await fetch(`https://${SHOPIFY_DOMAIN}/api/2024-07/graphql.json`, {
-    method: 'POST',
-    headers: {
-      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN,
-      'X-Shopify-Customer-Access-Token': customerAccessToken,
-      'Content-Type': 'application/json',
+  const res = await fetch(
+    `https://${SHOPIFY_DOMAIN}/api/2024-07/graphql.json`,
+    {
+      method: "POST",
+      headers: {
+        "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_TOKEN,
+        "X-Shopify-Customer-Access-Token": customerAccessToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query, variables }),
     },
-    body: JSON.stringify({ query, variables }),
-  });
+  );
 
   const json = await res.json();
   if (json.errors) throw new Error(JSON.stringify(json.errors));
@@ -146,13 +152,16 @@ export async function getFeaturedProducts(limit: number = 8) {
     const data = await shopifyFetch(query, { first: limit });
     return data.products.edges.map((edge: any) => edge.node);
   } catch (error) {
-    console.error('Error fetching featured products:', error);
+    console.error("Error fetching featured products:", error);
     return [];
   }
 }
 
 // Get products by collection
-export async function getProductsByCollection(collectionHandle: string, limit: number = 20) {
+export async function getProductsByCollection(
+  collectionHandle: string,
+  limit: number = 20,
+) {
   const query = `
     ${PRODUCT_FRAGMENT}
     query GetProductsByCollection($handle: String!, $first: Int!) {
@@ -173,10 +182,13 @@ export async function getProductsByCollection(collectionHandle: string, limit: n
   `;
 
   try {
-    const data = await shopifyFetch(query, { handle: collectionHandle, first: limit });
+    const data = await shopifyFetch(query, {
+      handle: collectionHandle,
+      first: limit,
+    });
     return data.collection?.products.edges.map((edge: any) => edge.node) || [];
   } catch (error) {
-    console.error('Error fetching products by collection:', error);
+    console.error("Error fetching products by collection:", error);
     return [];
   }
 }
@@ -196,7 +208,7 @@ export async function getProductByHandle(handle: string) {
     const data = await shopifyFetch(query, { handle });
     return data.product;
   } catch (error) {
-    console.error('Error fetching product by handle:', error);
+    console.error("Error fetching product by handle:", error);
     return null;
   }
 }
@@ -221,7 +233,7 @@ export async function getProductsOnSale(limit: number = 8) {
     const data = await shopifyFetch(query, { first: limit });
     return data.products.edges.map((edge: any) => edge.node);
   } catch (error) {
-    console.error('Error fetching products on sale:', error);
+    console.error("Error fetching products on sale:", error);
     return [];
   }
 }
@@ -251,10 +263,10 @@ export async function getAllProducts(first: number = 20, after?: string) {
     const data = await shopifyFetch(query, { first, after });
     return {
       products: data.products.edges.map((edge: any) => edge.node),
-      pageInfo: data.products.pageInfo
+      pageInfo: data.products.pageInfo,
     };
   } catch (error) {
-    console.error('Error fetching all products:', error);
+    console.error("Error fetching all products:", error);
     return { products: [], pageInfo: null };
   }
 }
@@ -278,7 +290,7 @@ export async function getAllProductsList(limit: number = 100) {
     const data = await shopifyFetch(query, { first: limit });
     return data.products.edges.map((edge: any) => edge.node);
   } catch (error) {
-    console.error('Error fetching all products list:', error);
+    console.error("Error fetching all products list:", error);
     return [];
   }
 }
@@ -287,47 +299,52 @@ export async function getAllProductsList(limit: number = 100) {
 export function transformShopifyProduct(shopifyProduct: any) {
   const firstImage = shopifyProduct.images?.edges?.[0]?.node;
   const firstVariant = shopifyProduct.variants?.edges?.[0]?.node;
-  
+
   // Calculate pricing
   const minPrice = parseFloat(shopifyProduct.priceRange.minVariantPrice.amount);
   const maxPrice = parseFloat(shopifyProduct.priceRange.maxVariantPrice.amount);
-  const minComparePrice = parseFloat(shopifyProduct.compareAtPriceRange.minVariantPrice.amount);
-  
+  const minComparePrice = parseFloat(
+    shopifyProduct.compareAtPriceRange.minVariantPrice.amount,
+  );
+
   // Determine if product is on sale
   const isOnSale = minComparePrice > minPrice;
-  const discountPercentage = isOnSale 
+  const discountPercentage = isOnSale
     ? Math.round(((minComparePrice - minPrice) / minComparePrice) * 100)
     : undefined;
 
   // Transform variants
-  const variants = shopifyProduct.variants?.edges?.map((edge: any) => {
-    const variant = edge.node;
-    return {
-      id: variant.id,
-      title: variant.title,
-      price: parseFloat(variant.price.amount), // Keep as dollars, not cents
-      salePrice: variant.compareAtPrice 
-        ? parseFloat(variant.compareAtPrice.amount) 
-        : undefined,
-      inventory: variant.quantityAvailable || 0,
-      isAvailable: variant.availableForSale,
-    };
-  }) || [];
+  const variants =
+    shopifyProduct.variants?.edges?.map((edge: any) => {
+      const variant = edge.node;
+      return {
+        id: variant.id,
+        title: variant.title,
+        price: parseFloat(variant.price.amount), // Keep as dollars, not cents
+        salePrice: variant.compareAtPrice
+          ? parseFloat(variant.compareAtPrice.amount)
+          : undefined,
+        inventory: variant.quantityAvailable || 0,
+        isAvailable: variant.availableForSale,
+      };
+    }) || [];
 
   return {
     id: shopifyProduct.id,
     name: shopifyProduct.title,
-    shortDescription: shopifyProduct.description?.substring(0, 100) + '...' || '',
+    shortDescription:
+      shopifyProduct.description?.substring(0, 100) + "..." || "",
     description: shopifyProduct.description,
-    image: firstImage?.url || '/images/product-placeholder.svg',
-    images: shopifyProduct.images?.edges?.map((edge: any) => edge.node.url) || [],
+    image: firstImage?.url || "/images/product-placeholder.svg",
+    images:
+      shopifyProduct.images?.edges?.map((edge: any) => edge.node.url) || [],
     price: minPrice, // Keep as dollars, not cents
     salePrice: isOnSale ? minPrice : undefined,
     discountPercentage,
     variants: variants.length > 1 ? variants : undefined,
     slug: shopifyProduct.handle,
-    category: shopifyProduct.productType || 'General',
-    brand: shopifyProduct.vendor || 'Unknown',
+    category: shopifyProduct.productType || "General",
+    brand: shopifyProduct.vendor || "Unknown",
     inStock: shopifyProduct.availableForSale,
     isOnSale,
     inventory: shopifyProduct.totalInventory || 0,

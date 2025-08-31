@@ -4,6 +4,8 @@ import { z } from "zod";
 export const loginSchema = z.object({
   email: z
     .string()
+    .trim()
+    .toLowerCase()
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
   password: z
@@ -28,6 +30,8 @@ export const signUpSchema = z.object({
     .max(50, "Last name must be less than 50 characters"),
   email: z
     .string()
+    .trim()
+    .toLowerCase()
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
   password: z
@@ -50,6 +54,8 @@ export type SignUpFormData = z.infer<typeof signUpSchema>;
 export const forgotPasswordSchema = z.object({
   email: z
     .string()
+    .trim()
+    .toLowerCase()
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
 });
@@ -79,6 +85,8 @@ export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export const emailVerificationSchema = z.object({
   email: z
     .string()
+    .trim()
+    .toLowerCase()
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
 });

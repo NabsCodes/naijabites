@@ -47,6 +47,7 @@ export function RemoveItemDialog({
       toast({
         title: "Item removed from cart",
         description: `${currentItem.product.name} has been removed from your cart.`,
+        variant: "success",
       });
     }
   };

@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useDebounce } from "./use-debounce";
+import { useDebounce } from "@/hooks/use-debounce";
 import {
   SearchSuggestion,
   SearchHistory,
@@ -117,7 +117,10 @@ function useSearchHistory() {
 // Main search hook - handles all search functionality
 export function useSearch(options: UseSearchOptions = {}) {
   const router = useRouter();
-  const config = { ...DEFAULT_SEARCH_CONFIG, ...options };
+  const config = useMemo(
+    () => ({ ...DEFAULT_SEARCH_CONFIG, ...options }),
+    [options],
+  );
 
   // Get search history functions
   const { addToHistory, removeFromHistory, clearHistory, getRecentSearches } =
@@ -136,21 +139,39 @@ export function useSearch(options: UseSearchOptions = {}) {
   const debouncedQuery = useDebounce(searchState.query, config.debounceMs);
 
   // Get suggestions based on what user typed
-  const currentSuggestions = useMemo(() => {
-    if (!shouldTriggerSearch(debouncedQuery)) {
-      return getRecentSearches(config.maxHistory).map((history) => ({
-        id: history.id,
-        type: "history" as const,
-        title: history.query,
-        slug: history.query,
-      }));
-    }
+  const [currentSuggestions, setCurrentSuggestions] = useState<
+    SearchSuggestion[]
+  >([]);
 
-    return getSearchSuggestions(debouncedQuery, {
-      maxProducts: 5,
-      maxCategories: 2,
-      maxBrands: 2,
-    });
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (!shouldTriggerSearch(debouncedQuery)) {
+        const historySuggestions = getRecentSearches(config.maxHistory).map(
+          (history) => ({
+            id: history.id,
+            type: "history" as const,
+            title: history.query,
+            slug: history.query,
+          }),
+        );
+        setCurrentSuggestions(historySuggestions);
+        return;
+      }
+
+      try {
+        const suggestions = await getSearchSuggestions(debouncedQuery, {
+          maxProducts: 5,
+          maxCategories: 2,
+          maxBrands: 2,
+        });
+        setCurrentSuggestions(suggestions);
+      } catch (error) {
+        console.error("Error fetching search suggestions:", error);
+        setCurrentSuggestions([]);
+      }
+    };
+
+    fetchSuggestions();
   }, [debouncedQuery, config.maxHistory, getRecentSearches]);
 
   // Helper function to clear search state
@@ -234,19 +255,33 @@ export function useSearch(options: UseSearchOptions = {}) {
     ],
   );
 
-  return {
-    // State
-    query: searchState.query,
-    isOpen: searchState.isOpen,
-    suggestions: currentSuggestions,
+  return useMemo(
+    () => ({
+      // State
+      query: searchState.query,
+      isOpen: searchState.isOpen,
+      suggestions: currentSuggestions,
 
-    // Actions
-    setQuery: updateQuery,
-    setIsOpen: setDropdownOpen,
-    performSearch: doSearch,
-    clearSearch: clearSearchState,
-    handleSuggestionSelect: handleSuggestionClick,
-    removeSuggestion: removeFromHistory,
-    clearSearchHistory: clearHistory,
-  };
+      // Actions
+      setQuery: updateQuery,
+      setIsOpen: setDropdownOpen,
+      performSearch: doSearch,
+      clearSearch: clearSearchState,
+      handleSuggestionSelect: handleSuggestionClick,
+      removeSuggestion: removeFromHistory,
+      clearSearchHistory: clearHistory,
+    }),
+    [
+      searchState.query,
+      searchState.isOpen,
+      currentSuggestions,
+      updateQuery,
+      setDropdownOpen,
+      doSearch,
+      clearSearchState,
+      handleSuggestionClick,
+      removeFromHistory,
+      clearHistory,
+    ],
+  );
 }

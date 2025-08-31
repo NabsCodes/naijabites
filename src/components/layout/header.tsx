@@ -25,18 +25,12 @@ import { CartIcon, LogoIcon } from "@/components/icons";
 import { useCart } from "@/contexts/cart-context";
 import { useSearch } from "@/hooks/use-search";
 import { SearchAutocomplete } from "@/components/search";
-import MobileNav from "./mobile-nav";
-import {
-  isLoggedIn,
-  logout,
-  getCustomerData,
-  getCustomerInitials,
-  getCustomerName,
-  getCustomerEmail,
-  debugAuthState,
-} from "@/lib/auth";
+import { AuthSkeleton } from "@/components/common/auth-skeleton";
+import MobileNav from "@/components/layout/mobile-nav";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
 import { LogOutIcon } from "lucide-react";
+import { useAuth, useAuthActions, useUserInfo } from "@/lib/stores/auth-store";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Header() {
   const pathname = usePathname();
@@ -45,30 +39,36 @@ export default function Header() {
     (typeof locations)[0] | null
   >(null);
   const { totalItems } = useCart();
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  const [customerData, setCustomerData] = useState<any>(null);
 
-  // Check login status and load customer data on component mount
+  // Use Zustand auth store
+  const { isLoggedIn: isUserLoggedIn, isLoading } = useAuth();
+  const { logout, initialize } = useAuthActions();
+  const { user: customerData, initials, name, email } = useUserInfo();
+  const { toast } = useToast();
+
+  // Initialize auth state on component mount
   useEffect(() => {
-    const loggedIn = isLoggedIn();
-    setIsUserLoggedIn(loggedIn);
+    initialize();
+  }, [initialize]);
 
-    if (loggedIn) {
-      const customer = getCustomerData();
-      setCustomerData(customer);
-    }
-  }, []);
-
-  // Handle logout
+  // Handle logout with toast feedback
   const handleLogout = () => {
-    logout();
-    setIsUserLoggedIn(false);
-    setCustomerData(null);
-  };
+    try {
+      logout();
 
-  // Debug function for testing
-  const handleDebugAuth = () => {
-    debugAuthState();
+      toast({
+        variant: "success",
+        title: "Signed out successfully",
+        description: "You have been logged out of your account.",
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast({
+        variant: "error",
+        title: "Logout failed",
+        description: "There was an issue signing you out. Please try again.",
+      });
+    }
   };
 
   // Search functionality with autocomplete
@@ -334,8 +334,10 @@ export default function Header() {
 
               {/* Right Side: Auth + Cart + Profile */}
               <div className="flex items-center gap-4">
-                {/* Auth Buttons or User Profile */}
-                {isUserLoggedIn ? (
+                {/* Show loading skeleton while auth initializes */}
+                {isLoading ? (
+                  <AuthSkeleton variant="desktop" />
+                ) : isUserLoggedIn ? (
                   <>
                     {/* Cart */}
                     <Link href="/cart" className="relative" aria-label="Cart">
@@ -368,12 +370,12 @@ export default function Header() {
                           <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
                             <AvatarImage src={customerData?.avatar} />
                             <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark lg:text-sm">
-                              {getCustomerInitials()}
+                              {initials}
                             </AvatarFallback>
                           </Avatar>
 
                           <span className="hidden max-w-[80px] truncate text-xs font-semibold text-white sm:inline lg:max-w-none lg:text-sm">
-                            {getCustomerName()}
+                            {name}
                           </span>
 
                           <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-lemon-light lg:h-5 lg:w-5" />
@@ -389,15 +391,15 @@ export default function Header() {
                             <Avatar className="h-10 w-10">
                               <AvatarImage src={customerData?.avatar} />
                               <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                                {getCustomerInitials()}
+                                {initials}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
                               <span className="text-sm font-semibold text-gray-900">
-                                {getCustomerName()}
+                                {name}
                               </span>
                               <span className="text-xs text-gray-500">
-                                {getCustomerEmail()}
+                                {email}
                               </span>
                             </div>
                           </div>
@@ -457,7 +459,7 @@ export default function Header() {
       <MobileNav
         cartItemsCount={totalItems}
         isUserLoggedIn={isUserLoggedIn}
-        setIsUserLoggedIn={setIsUserLoggedIn}
+        authLoading={isLoading}
         selectedLocation={selectedLocation}
         setSelectedLocation={setSelectedLocation}
         searchQuery={searchQuery}

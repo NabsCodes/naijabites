@@ -18,14 +18,14 @@ export function AuthContainer({
   return (
     <>
       {/* Mobile: No card wrapper */}
-      <div className={cn("md:hidden", className)} {...props}>
+      <div className={cn("px-2 sm:hidden", className)} {...props}>
         {children}
       </div>
 
       {/* Tablet and up: Card wrapper with styling */}
       <Card
         className={cn(
-          "hidden rounded-3xl bg-white/80 p-6 shadow-none md:block md:p-8",
+          "hidden rounded-3xl bg-white/80 p-6 shadow-none sm:block sm:p-8",
           className,
         )}
         {...props}

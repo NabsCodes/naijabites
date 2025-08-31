@@ -21,7 +21,7 @@ export default function HomePage() {
         <FeaturesSection />
         <TestimonialSection />
       </main>
-      
+
       {/* Shopify Integration Status (Development Only) */}
       <ShopifyStatus />
     </>

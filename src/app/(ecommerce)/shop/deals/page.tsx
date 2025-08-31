@@ -36,9 +36,9 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
 
   // Fetch products from Shopify
   const allProducts = await getShopifyAllProducts(100);
-  
+
   // Filter for deals only
-  const dealsProducts = allProducts.filter(product => product.isOnSale);
+  const dealsProducts = allProducts.filter((product) => product.isOnSale);
 
   // Parse search parameters and apply deals-specific filtering
   const urlSearchParams = parseSearchParams(resolvedSearchParams);

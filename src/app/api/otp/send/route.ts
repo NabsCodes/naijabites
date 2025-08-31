@@ -5,14 +5,18 @@ import { getOTPConfig } from "@/lib/config";
 
 export async function POST(req: NextRequest) {
   const { email } = await req.json();
-  if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });
+  if (!email)
+    return NextResponse.json({ error: "Email is required" }, { status: 400 });
 
   const otpConfig = getOTPConfig();
   const cooldownKey = `otp:cooldown:${email}`;
   const existingCooldown = await redis.get(cooldownKey);
 
   if (existingCooldown) {
-    return NextResponse.json({ error: "OTP already sent. Try again later." }, { status: 429 });
+    return NextResponse.json(
+      { error: "OTP already sent. Try again later." },
+      { status: 429 },
+    );
   }
 
   // Generate OTP with configurable length
@@ -28,8 +32,8 @@ export async function POST(req: NextRequest) {
     // Send email with configurable template
     const expiryMinutes = Math.floor(otpConfig.code_expiry / 60);
     const emailContent = otpConfig.email.template
-      .replace('{otp}', otp)
-      .replace('{expiry_minutes}', expiryMinutes.toString());
+      .replace("{otp}", otp)
+      .replace("{expiry_minutes}", expiryMinutes.toString());
     await sendEmail(email, emailContent);
 
     return NextResponse.json({ success: true });

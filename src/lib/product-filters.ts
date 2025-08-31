@@ -275,8 +275,8 @@ export function filterAndPaginateProducts(
 
 // Generate filter options from products
 export function getFilterOptions(products: Product[]) {
-  const categories = [...new Set(products.map(p => p.category))].sort();
-  const brands = [...new Set(products.map(p => p.brand))].sort();
+  const categories = [...new Set(products.map((p) => p.category))].sort();
+  const brands = [...new Set(products.map((p) => p.brand))].sort();
   const priceRange = getGlobalPriceRange(products);
   const ratings = [1, 2, 3, 4, 5];
 
@@ -296,4 +296,3 @@ export function getFilterOptions(products: Product[]) {
     ],
   };
 }
-

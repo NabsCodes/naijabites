@@ -5,9 +5,11 @@ This guide explains how to test the authentication functionality in the Naijabit
 ## 🧪 Testing Methods
 
 ### 1. Test Page (Recommended)
+
 Visit `/test-auth` in your browser to access the interactive test page.
 
 **Features:**
+
 - Real-time status monitoring
 - Login form with error handling
 - Customer data display
@@ -15,37 +17,43 @@ Visit `/test-auth` in your browser to access the interactive test page.
 - Manual logout functionality
 
 ### 2. Browser Console Testing
+
 Load the test script and run commands in the browser console.
 
 **Setup:**
+
 1. Open browser console (F12)
 2. Copy and paste the contents of `src/lib/test-auth.js`
 3. Use the test functions
 
 **Available Commands:**
+
 ```javascript
 // Run complete test
-testAuth.runFullTest('your-email@example.com', 'your-password')
+testAuth.runFullTest("your-email@example.com", "your-password");
 
 // Test individual components
-testAuth.testLogin('email', 'password')
-testAuth.testCustomerData()
-testAuth.checkCustomerData()
+testAuth.testLogin("email", "password");
+testAuth.testCustomerData();
+testAuth.checkCustomerData();
 
 // Clear all data
-testAuth.clearAll()
+testAuth.clearAll();
 ```
 
 ### 3. Manual Testing
+
 Test the authentication flow manually:
 
 1. **Login Test:**
+
    - Go to `/login`
    - Enter valid credentials
    - Check if redirected to home page
    - Verify header shows user information
 
 2. **Signup Test:**
+
    - Go to `/signup`
    - Complete registration process
    - Verify automatic login after signup
@@ -59,6 +67,7 @@ Test the authentication flow manually:
 ## 🔍 What to Test
 
 ### Authentication Flow
+
 - [ ] Login with valid credentials
 - [ ] Login with invalid credentials (error handling)
 - [ ] Signup with valid information
@@ -67,6 +76,7 @@ Test the authentication flow manually:
 - [ ] Token persistence across page refreshes
 
 ### Customer Data
+
 - [ ] Customer data fetched after login
 - [ ] Customer data stored in localStorage
 - [ ] Customer name displayed in header
@@ -74,12 +84,14 @@ Test the authentication flow manually:
 - [ ] Customer email displayed in dropdown
 
 ### Security
+
 - [ ] Token stored in HTTP-only cookies
 - [ ] Customer data cleared on logout
 - [ ] Token cleared on logout
 - [ ] Secure cookie settings (HTTPS, sameSite)
 
 ### Error Handling
+
 - [ ] Network errors during login
 - [ ] Invalid token handling
 - [ ] Missing customer data handling
@@ -88,28 +100,32 @@ Test the authentication flow manually:
 ## 🐛 Debugging
 
 ### Check Auth State
+
 ```javascript
 // In browser console
-debugAuthState()
+debugAuthState();
 ```
 
 ### Check Storage
+
 ```javascript
 // Check cookies
-console.log(document.cookie)
+console.log(document.cookie);
 
 // Check localStorage
-console.log(localStorage.getItem('customer_data'))
+console.log(localStorage.getItem("customer_data"));
 ```
 
 ### Common Issues
 
 1. **Token not saved:**
+
    - Check if cookies are enabled
    - Verify HTTPS is being used (for secure cookies)
    - Check browser console for errors
 
 2. **Customer data not fetched:**
+
    - Verify token is present
    - Check network tab for API calls
    - Verify Shopify API credentials
@@ -125,7 +141,7 @@ Use these test credentials (replace with actual test accounts):
 
 ```javascript
 // Test login
-testAuth.runFullTest('test@example.com', 'password123')
+testAuth.runFullTest("test@example.com", "password123");
 
 // Test signup
 // Use the signup form with a new email address
@@ -149,4 +165,4 @@ If you encounter issues:
 2. Verify API endpoints are working
 3. Check Shopify API credentials
 4. Review network tab for failed requests
-5. Test with the debug utilities provided 
+5. Test with the debug utilities provided

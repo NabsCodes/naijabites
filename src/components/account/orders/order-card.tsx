@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { OrderStatusBadge } from "@/components/account/orders/order-status-badge";
-import { formatNGN } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import type { Order } from "@/types/order";
 import { Button } from "@/components/ui/button";
 
@@ -50,7 +50,7 @@ export function OrderCard({ order }: OrderCardProps) {
                   Total
                 </div>
                 <div className="text-lg font-bold text-green-dark">
-                  {formatNGN(order.totals.total)}
+                  {formatPrice(order.totals.total)}
                 </div>
               </div>
             </div>
@@ -60,7 +60,7 @@ export function OrderCard({ order }: OrderCardProps) {
                   Total
                 </div>
                 <div className="text-lg font-bold text-green-dark">
-                  {formatNGN(order.totals.total)}
+                  {formatPrice(order.totals.total)}
                 </div>
               </div>
               <div className="text-right">

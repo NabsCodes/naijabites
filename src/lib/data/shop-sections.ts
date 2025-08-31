@@ -23,13 +23,17 @@ export const sectionFilters = {
   // Products with discounts/sales
   "hot-deals": async () => {
     const products = await getShopifyAllProducts();
-    return products.filter((p: Product) => p.isOnSale && p.discountPercentage).slice(0, 4);
+    return products
+      .filter((p: Product) => p.isOnSale && p.discountPercentage)
+      .slice(0, 4);
   },
 
   // Products with high ratings (4.0+) - Note: Shopify doesn't have ratings, so this will be empty for now
   "top-picks": async () => {
     const products = await getShopifyAllProducts();
-    return products.filter((p: Product) => p.rating && p.rating.average >= 4.0).slice(0, 4);
+    return products
+      .filter((p: Product) => p.rating && p.rating.average >= 4.0)
+      .slice(0, 4);
   },
 
   // Featured sale products (subset of hot deals)
@@ -49,7 +53,8 @@ export const sectionFilters = {
     const products = await getShopifyAllProducts();
     return products
       .filter(
-        (product: Product) => product.id !== productId && product.category === category,
+        (product: Product) =>
+          product.id !== productId && product.category === category,
       )
       .slice(0, limit);
   },
@@ -81,7 +86,9 @@ export const shopSections: ShopSection[] = [
 ];
 
 // Helper to get products for specific section
-export const getProductsForSection = async (sectionId: SectionType): Promise<Product[]> => {
+export const getProductsForSection = async (
+  sectionId: SectionType,
+): Promise<Product[]> => {
   if (sectionId === "similar") {
     return []; // Similar products need parameters, use sectionFilters.similar() directly
   }
@@ -94,9 +101,9 @@ export const getShopSections = async (): Promise<ShopSection[]> => {
     shopSections.map(async (section) => {
       const products = await section.getProducts();
       return { ...section, products };
-    })
+    }),
   );
-  
+
   return sectionsWithProducts.filter((section) => section.products.length > 0);
 };
 

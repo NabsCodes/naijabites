@@ -41,27 +41,22 @@ export function ResetPasswordForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     watch,
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const password = watch("password");
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    setIsLoading(true);
-
     // Simulate password reset process
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSubmitted(true);
-      console.log("Reset password form submitted", data);
-    }, 2000);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setIsSubmitted(true);
+    console.log("Reset password form submitted", data);
   };
 
   if (isSubmitted) {
@@ -124,6 +119,7 @@ export function ResetPasswordForm({
                   errors.password &&
                     "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
+                disabled={isSubmitting}
               />
               {errors.password && (
                 <p className="text-xs text-red-500">
@@ -162,6 +158,7 @@ export function ResetPasswordForm({
                   errors.confirmPassword &&
                     "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
                 )}
+                disabled={isSubmitting}
               />
               {errors.confirmPassword && (
                 <p className="text-xs text-red-500">
@@ -215,10 +212,10 @@ export function ResetPasswordForm({
 
           <Button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="h-12 w-full bg-green-dark font-medium text-white transition-all duration-300 hover:bg-green-dark/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isLoading ? (
+            {isSubmitting ? (
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                 Updating password...

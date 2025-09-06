@@ -42,7 +42,7 @@ import type { WishlistItem } from "@/lib/stores/wishlist-store";
 export function WishlistForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const { items: cartItems, addItem } = useCart();
+  const { items: cartItems, addItem, updateQuantity } = useCart();
   const {
     items: wishlist,
     removeFromWishlist,
@@ -148,48 +148,54 @@ export function WishlistForm() {
   const handleAddToCart = async (item: WishlistItem) => {
     try {
       const variant = findSelectedVariant(item);
-      if (variant) {
-        addItem({
-          productId: item.product.id,
-          variantId: variant.id,
-          quantity: 1,
-          price: variant.price,
-          salePrice: variant.salePrice,
-          product: item.product,
-          variant,
-        });
+
+      // Check if item already exists in cart
+      const existingCartItem = cartItems.find(
+        (ci) =>
+          ci.productId === item.product.id &&
+          ((variant && ci.variantId === variant.id) ||
+            (!variant && !ci.variantId)),
+      );
+
+      if (existingCartItem) {
+        // Update existing item quantity by 1
+        updateQuantity(existingCartItem.id, existingCartItem.quantity + 1);
       } else {
-        addItem({
-          productId: item.product.id,
-          quantity: 1,
-          price: item.product.price,
-          salePrice: item.product.salePrice,
-          product: item.product,
-        });
-      }
-
-      // Check if item is now in cart and show appropriate message
-      if (isInCart(item)) {
-        const cartItem = cartItems.find(
-          (ci) =>
-            ci.productId === item.product.id &&
-            ((variant && ci.variantId === variant.id) ||
-              (!variant && !ci.variantId)),
-        );
-
-        if (cartItem && cartItem.quantity > 1) {
-          toast({
-            title: "Quantity updated",
-            description: `${item.product.name} quantity increased to ${cartItem.quantity}`,
-            variant: "success",
+        // Add new item to cart
+        if (variant) {
+          addItem({
+            productId: item.product.id,
+            variantId: variant.id,
+            quantity: 1,
+            price: variant.price,
+            salePrice: variant.salePrice,
+            product: item.product,
+            variant,
           });
         } else {
-          toast({
-            title: "Added to cart",
-            description: `${item.product.name} has been added to your cart`,
-            variant: "success",
+          addItem({
+            productId: item.product.id,
+            quantity: 1,
+            price: item.product.price,
+            salePrice: item.product.salePrice,
+            product: item.product,
           });
         }
+      }
+
+      // Show appropriate success message
+      if (existingCartItem) {
+        toast({
+          title: "Quantity updated",
+          description: `${item.product.name} quantity increased to ${existingCartItem.quantity + 1}`,
+          variant: "success",
+        });
+      } else {
+        toast({
+          title: "Added to cart",
+          description: `${item.product.name} has been added to your cart`,
+          variant: "success",
+        });
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -360,7 +366,7 @@ export function WishlistForm() {
             <h3 className="mb-2 text-lg font-medium text-gray-900">
               Your wishlist is empty
             </h3>
-            <p className="mb-6 max-w-sm text-gray-600">
+            <p className="mb-6 text-gray-600">
               Start shopping and save items you love for later. Your wishlist
               helps you keep track of products you're interested in.
             </p>
@@ -416,7 +422,7 @@ const WishlistItemRow = memo(function WishlistItemRow({
     selectedVariant,
   });
 
-  const { inStock, inventory, maxQuantity } = useInventory({
+  const { inStock, maxQuantity } = useInventory({
     product: item.product,
     selectedVariant,
   });
@@ -433,12 +439,6 @@ const WishlistItemRow = memo(function WishlistItemRow({
 
   const isAtMaxQuantity =
     existingCartItem && existingCartItem.quantity >= maxQuantity;
-
-  // Calculate available quantity (accounting for items already in cart)
-  const availableQuantity = useMemo(() => {
-    const currentInCart = existingCartItem?.quantity || 0;
-    return Math.max(0, maxQuantity - currentInCart);
-  }, [maxQuantity, existingCartItem]);
 
   return (
     <Card className="group transition-all duration-300">
@@ -543,12 +543,7 @@ const WishlistItemRow = memo(function WishlistItemRow({
               <Button
                 size="sm"
                 onClick={onAddToCart}
-                disabled={
-                  !inStock ||
-                  (inventory !== undefined &&
-                    cartQuantity !== undefined &&
-                    cartQuantity >= inventory)
-                }
+                disabled={!inStock || isAtMaxQuantity}
                 className={cn(
                   "flex-1",
                   !inStock
@@ -560,10 +555,8 @@ const WishlistItemRow = memo(function WishlistItemRow({
               >
                 {!inStock
                   ? "Out of Stock"
-                  : inventory !== undefined &&
-                      cartQuantity !== undefined &&
-                      cartQuantity >= inventory
-                    ? `Max Quantity (${inventory})`
+                  : isAtMaxQuantity
+                    ? `Max Quantity (${maxQuantity})`
                     : isInCart
                       ? `In Cart (${cartQuantity})`
                       : "Add to Cart"}
@@ -668,12 +661,7 @@ const WishlistItemRow = memo(function WishlistItemRow({
                 <Button
                   size="sm"
                   onClick={onAddToCart}
-                  disabled={
-                    !inStock ||
-                    (inventory !== undefined &&
-                      cartQuantity !== undefined &&
-                      cartQuantity >= inventory)
-                  }
+                  disabled={!inStock || isAtMaxQuantity}
                   className={cn(
                     "h-8 px-3 text-xs",
                     !inStock
@@ -685,10 +673,8 @@ const WishlistItemRow = memo(function WishlistItemRow({
                 >
                   {!inStock
                     ? "Out of Stock"
-                    : inventory !== undefined &&
-                        cartQuantity !== undefined &&
-                        cartQuantity >= inventory
-                      ? `Max Quantity (${inventory})`
+                    : isAtMaxQuantity
+                      ? `Max Quantity (${maxQuantity})`
                       : isInCart
                         ? `In Cart (${cartQuantity})`
                         : "Add to Cart"}
@@ -716,6 +702,8 @@ const WishlistItemRow = memo(function WishlistItemRow({
             year: "numeric",
             month: "short",
             day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
           })}
         </div>
       </CardContent>

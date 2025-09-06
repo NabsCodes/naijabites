@@ -169,8 +169,7 @@ export function OrderCard({ order }: OrderCardProps) {
                 )}
 
                 {/* Reorder button for completed orders */}
-                {(order.fulfillmentStatus === "FULFILLED" ||
-                  order.fulfillmentStatus === "CANCELLED") && (
+                {order.fulfillmentStatus === "FULFILLED" && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -226,8 +225,7 @@ export function OrderCard({ order }: OrderCardProps) {
               )}
 
               {/* Reorder button for completed orders */}
-              {(order.fulfillmentStatus === "FULFILLED" ||
-                order.fulfillmentStatus === "CANCELLED") && (
+              {order.fulfillmentStatus === "FULFILLED" && (
                 <Button
                   variant="outline"
                   size="sm"

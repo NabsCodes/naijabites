@@ -88,8 +88,8 @@ function createLineItem(
 // Helper function to calculate order totals from line items
 function calculateOrderTotals(lineItems: OrderLineItem[]): OrderTotals {
   const subtotal = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
-  const shipping = subtotal > 50000 ? 1000 : 1500; // Free shipping over 50k
-  const tax = Math.round(subtotal * 0.05); // 5% tax
+  const shipping = subtotal > 50 ? 0 : 9.99; // Free shipping over $50 CAD
+  const tax = Math.round(subtotal * 0.13 * 100) / 100; // 13% HST (Ontario)
   const total = subtotal + shipping + tax;
 
   return {
@@ -203,7 +203,7 @@ export const mockOrders: Order[] = (() => {
         type: "shipping",
         company: "UPS",
         identifier: "1Z999AA9876543210",
-        status: "In transit",
+        status: "Partially shipped",
         estimatedWindow: "Today 1:00 PM - 3:00 PM",
         trackingUrl:
           "https://www.ups.com/track?loc=en_CA&tracknum=1Z999AA9876543210",
@@ -356,7 +356,7 @@ export const mockOrders: Order[] = (() => {
         type: "shipping",
         company: "Canada Post",
         identifier: "1234567890123456",
-        status: "Processing",
+        status: "Preparing order",
         estimatedWindow: "Tomorrow 10:00 AM - 2:00 PM",
         trackingUrl:
           "https://www.canadapost-postescanada.ca/track-reperage/en#/details/1234567890123456",
@@ -430,7 +430,7 @@ export const mockOrders: Order[] = (() => {
         type: "pickup",
         company: "Naijabites Warehouse",
         identifier: "PK-1009",
-        status: "Ready for pickup",
+        status: "Preparing order",
         estimatedWindow: "Today 10:00 AM - 8:00 PM",
       },
     },
@@ -506,7 +506,7 @@ export const mockOrders: Order[] = (() => {
         type: "shipping",
         company: "UPS",
         identifier: "1Z999AA9045123456",
-        status: "In transit",
+        status: "Partially shipped",
         estimatedWindow: "Today 1:00 PM - 3:00 PM",
         trackingUrl:
           "https://www.ups.com/track?loc=en_CA&tracknum=1Z999AA9045123456",

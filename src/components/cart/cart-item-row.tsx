@@ -65,13 +65,14 @@ export function CartItemRow({
       <div className="relative h-24 w-24 flex-shrink-0 rounded-lg bg-gray-50 sm:h-24 sm:w-24">
         <Link href={`/shop/products/${item.product.slug}`}>
           <Image
-            src={item.product.image || "/images/placeholder.png"}
+            src={item.product.image || "/images/product-placeholder.svg"}
             alt={item.product.name}
             className={`h-full w-full rounded-lg object-contain p-1 transition-transform hover:scale-105 ${
               !inStock ? "grayscale" : ""
             }`}
             width={100}
             height={100}
+            priority
           />
         </Link>
         {item.product.isOnSale &&

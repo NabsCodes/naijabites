@@ -15,7 +15,7 @@ export const products: Product[] = [
       "/images/grocery.webp",
       "/images/nigerian-groceries.webp",
     ],
-    price: 12000,
+    price: 11.99,
     slug: "maggi-cubes-250g",
     category: "Seasonings & Spices",
     brand: "Maggi",
@@ -37,8 +37,8 @@ export const products: Product[] = [
       "/images/grocery.webp",
       "/images/nigerian-groceries.webp",
     ],
-    price: 8500,
-    salePrice: 7650,
+    price: 8.49,
+    salePrice: 7.64,
     discountPercentage: 10,
     slug: "golden-morn-1kg",
     category: "Breakfast & Cereals",
@@ -62,34 +62,34 @@ export const products: Product[] = [
       "/images/nigerian-groceries.webp",
       "/images/grocery.webp",
     ],
-    price: 19020, // Base price for smallest variant
+    price: 17.99, // Base price for smallest variant
     variants: [
       {
         id: "yam-small-2kg",
         title: "1 bag (2kg)",
-        price: 19020,
-        salePrice: 17118, // 10% off
+        price: 17.99,
+        salePrice: 16.19, // 10% off
         isAvailable: true,
         inventory: 15,
       },
       {
         id: "yam-medium-3tubes",
         title: "3 tubers",
-        price: 39000,
-        salePrice: 35100, // 10% off
+        price: 35.99,
+        salePrice: 32.39, // 10% off
         isAvailable: true,
         inventory: 0,
       },
       {
         id: "yam-large-dozen",
         title: "dozen",
-        price: 109020,
-        salePrice: 98118, // 10% off
+        price: 99.99,
+        salePrice: 89.99, // 10% off
         isAvailable: true,
         inventory: 10,
       },
     ],
-    salePrice: 17118, // Sale price for base variant
+    salePrice: 16.19, // Sale price for base variant
     discountPercentage: 10,
     rating: {
       average: 4.7,
@@ -115,34 +115,34 @@ export const products: Product[] = [
       "/images/indomie-noodles.webp",
       "/images/grocery.webp",
     ],
-    price: 1500, // Base price for single pack
+    price: 1.49, // Base price for single pack
     variants: [
       {
         id: "indomie-single",
         title: "1 pack",
-        price: 1500,
-        salePrice: 1200, // 20% off
+        price: 1.49,
+        salePrice: 1.19, // 20% off
         inventory: 0,
         isAvailable: false,
       },
       {
         id: "indomie-5pack",
         title: "5 packs",
-        price: 7000,
-        salePrice: 5600, // 20% off
+        price: 6.99,
+        salePrice: 5.59, // 20% off
         inventory: 10,
         isAvailable: true,
       },
       {
         id: "indomie-carton",
         title: "40 pack carton",
-        price: 15000,
-        salePrice: 12000, // 20% off
+        price: 14.99,
+        salePrice: 11.99, // 20% off
         inventory: 5,
         isAvailable: true,
       },
     ],
-    salePrice: 1200, // Sale price for base variant
+    salePrice: 1.19, // Sale price for base variant
     discountPercentage: 20,
     rating: {
       average: 4.5,
@@ -163,26 +163,26 @@ export const products: Product[] = [
     description:
       "Premium quality parboiled rice from Dangote. Long grain rice perfect for all Nigerian dishes.",
     image: "/images/grocery.webp",
-    price: 75000,
+    price: 69.99,
     variants: [
       {
         id: "dangote-rice-50kg",
         title: "50kg Bag",
-        price: 75000,
-        salePrice: 67500, // 10% off
+        price: 69.99,
+        salePrice: 62.99, // 10% off
         isAvailable: true,
         inventory: 23,
       },
       {
         id: "dangote-rice-100kg",
         title: "100kg Bag",
-        price: 145000,
-        salePrice: 130500, // 10% off
+        price: 134.99,
+        salePrice: 121.49, // 10% off
         isAvailable: true,
         inventory: 18,
       },
     ],
-    salePrice: 67500,
+    salePrice: 62.99,
     discountPercentage: 10,
     rating: {
       average: 4.2,
@@ -203,12 +203,12 @@ export const products: Product[] = [
     description:
       "Pure red palm oil extracted from fresh palm fruits. Rich in vitamins and perfect for cooking.",
     image: "/images/golden-morn.webp",
-    price: 18000,
+    price: 16.99,
     slug: "devon-palm-oil-5l",
     category: "Cooking Oils & Essentials",
     brand: "Devon King",
     inStock: true,
-    salePrice: 16200,
+    salePrice: 15.29,
     discountPercentage: 10,
     isOnSale: true,
     inventory: 10,
@@ -227,8 +227,8 @@ export const products: Product[] = [
       "/images/tomato-paste.webp",
       "/images/grocery.webp",
     ],
-    price: 24000,
-    salePrice: 21600,
+    price: 22.99,
+    salePrice: 20.69,
     discountPercentage: 10,
     slug: "gino-tomato-paste-400g",
     category: "Tomato & Sauces",
@@ -246,7 +246,7 @@ export const products: Product[] = [
     description:
       "Crispy plantain chips made from fresh plantains. Perfect snack for all occasions.",
     image: "/images/golden-morn.webp",
-    price: 3500,
+    price: 3.49,
     rating: {
       average: 4.8,
       count: 67,
@@ -267,7 +267,7 @@ export const products: Product[] = [
     description:
       "100% pure natural honey with no artificial additives. Perfect for sweetening and health benefits.",
     image: "/images/tin-tomato.webp",
-    price: 6500,
+    price: 6.49,
     slug: "rowland-honey-500ml",
     category: "Cooking Oils & Essentials",
     brand: "Rowland",
@@ -284,8 +284,8 @@ export const products: Product[] = [
     description:
       "Rich and creamy powdered milk fortified with essential vitamins. Perfect for tea, coffee, and cooking.",
     image: "/images/indomie.webp",
-    price: 4500,
-    salePrice: 3825,
+    price: 4.49,
+    salePrice: 3.82,
     discountPercentage: 15,
     slug: "peak-milk-400g",
     category: "Dairy & Beverages",
@@ -302,7 +302,7 @@ export const products: Product[] = [
     shortDescription: "1kg Pack",
     description: "Fine quality semovita for making delicious swallow meals.",
     image: "/images/yam-tuber.webp",
-    price: 2800,
+    price: 2.79,
     rating: {
       average: 4.3,
       count: 156,
@@ -322,7 +322,7 @@ export const products: Product[] = [
     shortDescription: "3 Liters Jerry Can",
     description: "Pure groundnut oil extracted from premium groundnuts.",
     image: "/images/golden-morn.webp",
-    price: 14500,
+    price: 13.99,
     slug: "kings-groundnut-oil-3l",
     category: "Cooking Oils & Essentials",
     brand: "Kings",
@@ -339,8 +339,8 @@ export const products: Product[] = [
     description:
       "Nutritious chocolate malt drink fortified with vitamins and minerals.",
     image: "/images/maggi-star.webp",
-    price: 5200,
-    salePrice: 4680,
+    price: 4.99,
+    salePrice: 4.49,
     discountPercentage: 10,
     rating: {
       average: 4.7,

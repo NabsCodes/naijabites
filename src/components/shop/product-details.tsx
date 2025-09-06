@@ -15,6 +15,7 @@ import { useInventory } from "@/hooks/use-inventory";
 import { useCart } from "@/contexts/cart-context";
 import { Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { WishlistButton } from "@/components/shop/wishlist-button";
 
 interface ProductDetailsProps {
   product: Product;
@@ -28,9 +29,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       : null,
   );
   const [quantity, setQuantity] = useState(1);
-  const [cartState, setCartState] = useState<
-    "default" | "adding" | "added" | "quantity"
-  >("default");
+  const [cartState, setCartState] = useState<"default" | "adding" | "added">(
+    "default",
+  );
 
   // Cart context
   const { addItem, updateQuantity, items } = useCart();
@@ -169,86 +170,59 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     }
   };
 
-  // Add to cart function - Fixed to use the same pattern as Product Card
+  // Add to cart function
   const handleAddToCart = () => {
-    if (cartState === "default") {
-      // Check if already at max quantity before showing quantity selector
-      if (isAtMaxQuantity) {
-        toast({
-          title: "Maximum quantity reached",
-          description: `You already have the maximum quantity (${maxQuantity}) of ${product.name}${selectedVariant ? ` (${selectedVariant.title})` : ""} in your cart.`,
-          variant: "error",
-        });
-        return;
-      }
-      // First time clicking - show quantity selector
-      setCartState("quantity");
+    // Check if already at max quantity
+    if (isAtMaxQuantity) {
       return;
     }
 
-    if (cartState === "quantity") {
-      // Adding to cart
-      setCartState("adding");
+    // Adding to cart
+    setCartState("adding");
 
-      // Simulate API call
-      setTimeout(() => {
-        // Use the same pattern as Product Card - update existing or add new
-        if (existingCartItem) {
-          // Update existing item quantity
-          const newTotalQuantity = existingCartItem.quantity + quantity;
-          if (newTotalQuantity > maxQuantity) {
-            const availableQuantity = maxQuantity - existingCartItem.quantity;
-
-            if (availableQuantity <= 0) {
-              toast({
-                title: "Maximum quantity reached",
-                description: `You already have the maximum quantity (${maxQuantity}) of ${product.name}${selectedVariant ? ` (${selectedVariant.title})` : ""} in your cart.`,
-                variant: "error",
-              });
-            } else {
-              toast({
-                title: "Quantity exceeds limit",
-                description: `You can only add ${availableQuantity} more of this item to your cart.`,
-                variant: "error",
-              });
-            }
-            setCartState("quantity");
-            return;
-          }
-
-          // Update existing item
-          updateQuantity(existingCartItem.id, newTotalQuantity);
-          toast({
-            title: "Updated cart",
-            description: `${product.name} quantity updated in your cart.`,
-            variant: "success",
-          });
-        } else {
-          // Add new item
-          addItem({
-            productId: product.id,
-            variantId: selectedVariant?.id,
-            quantity,
-            price: selectedVariant?.price || product.price,
-            salePrice: selectedVariant?.salePrice || product.salePrice,
-            product,
-            variant: selectedVariant || undefined,
-          });
-          toast({
-            title: "Added to cart",
-            description: `${product.name} added to your cart.`,
-            variant: "success",
-          });
+    // Simulate API call
+    setTimeout(() => {
+      // Use the same pattern as Product Card - update existing or add new
+      if (existingCartItem) {
+        // Update existing item quantity
+        const newTotalQuantity = existingCartItem.quantity + quantity;
+        if (newTotalQuantity > maxQuantity) {
+          setCartState("default");
+          return;
         }
 
-        setCartState("added");
+        // Update existing item
+        updateQuantity(existingCartItem.id, newTotalQuantity);
+        toast({
+          title: "Updated cart",
+          description: `${product.name} quantity updated in your cart.`,
+          variant: "success",
+        });
+      } else {
+        // Add new item
+        addItem({
+          productId: product.id,
+          variantId: selectedVariant?.id,
+          quantity,
+          price: selectedVariant?.price || product.price,
+          salePrice: selectedVariant?.salePrice || product.salePrice,
+          product,
+          variant: selectedVariant || undefined,
+        });
+        toast({
+          title: "Added to cart",
+          description: `${product.name} added to your cart.`,
+          variant: "success",
+        });
+      }
 
-        // Auto-reset after 3 seconds
-        setTimeout(() => {
-          setCartState("default");
-        }, 3000);
-      }, 500);
-    }
+      setCartState("added");
+
+      // Auto-reset after 2 seconds
+      setTimeout(() => {
+        setCartState("default");
+      }, 2000);
+    }, 300);
   };
 
   return (
@@ -417,38 +391,41 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         </div>
       )}
 
-      {/* Quantity Selector - Only show after Add to Cart is clicked */}
-      {cartState === "quantity" && (
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex items-center justify-between">
-            <label className="text-lg font-semibold text-gray-900">
-              Quantity
-            </label>
-            {maxQuantity && (
-              <span className="text-base text-gray-500">
-                Max: {availableQuantity} available
-              </span>
-            )}
-          </div>
-          <QuantitySelector
-            quantity={quantity}
-            onQuantityChange={handleQuantityChange}
-            min={1}
-            max={availableQuantity}
-            disabled={!canPurchase}
-            size="lg"
-            className="w-fit"
-          />
+      {/* Quantity Selector */}
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between">
+          <label className="text-lg font-semibold text-gray-900">
+            Quantity
+          </label>
+          {maxQuantity && (
+            <span
+              className={cn(
+                "text-base text-gray-500",
+                availableQuantity === 0 && "hidden",
+                availableQuantity === 0 && "font-medium text-red-600",
+              )}
+            >
+              Max: {maxQuantity} available
+            </span>
+          )}
         </div>
-      )}
+        <QuantitySelector
+          quantity={quantity}
+          onQuantityChange={handleQuantityChange}
+          min={1}
+          max={availableQuantity}
+          disabled={!canPurchase}
+          size="md"
+          className="w-fit"
+        />
+      </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="space-y-3">
         <Button
           variant="ghost"
           size="lg"
           onClick={handleAddToCart}
-          className="h-12 w-full border border-green-dark bg-green-dark text-base font-semibold text-white transition-colors duration-300 hover:border-green-dark/90 hover:bg-green-dark/90 hover:text-white sm:h-14"
+          className="h-12 w-full border border-green-dark bg-green-dark text-base font-semibold text-white transition-colors duration-300 hover:border-green-dark/90 hover:bg-green-dark/90 hover:text-white"
           disabled={!canPurchase || cartState === "adding"}
         >
           {cartState === "adding" ? (
@@ -461,25 +438,30 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               <Check size={24} />
               Added to Cart
             </>
-          ) : cartState === "quantity" ? (
+          ) : isAtMaxQuantity ? (
+            `Maximum quantity (${maxQuantity}) in cart`
+          ) : (
             <>
               <CartIcon size={24} />
               Add {quantity} to Cart
             </>
-          ) : (
-            <>
-              <CartIcon size={24} />
-              Add to Cart
-            </>
           )}
         </Button>
-        {!canPurchase && (
-          <p className="mt-2 text-base text-gray-500">
-            {isAtMaxQuantity
-              ? `Maximum quantity (${maxQuantity}) already in cart`
-              : stockInfo.hasStock
-                ? "Please select an available variant"
-                : "Currently out of stock"}
+
+        {/* Wishlist Button */}
+        <WishlistButton
+          product={product}
+          variant={selectedVariant || undefined}
+          size="md"
+          showText
+          className="rounded-none border-0 bg-transparent py-2 text-sm text-gray-600 transition-colors hover:bg-transparent hover:text-green-dark"
+        />
+
+        {!canPurchase && !isAtMaxQuantity && (
+          <p className="text-sm text-gray-500">
+            {stockInfo.hasStock
+              ? "Please select an available variant"
+              : "Currently out of stock"}
           </p>
         )}
       </div>

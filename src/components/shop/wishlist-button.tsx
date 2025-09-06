@@ -7,12 +7,14 @@ import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { cn } from "@/lib/utils";
 import { WishlistVariantModal } from "@/components/shop/wishlist-variant-modal";
 import type { Product, ProductVariant } from "@/types";
+import { useAuth } from "@/lib/stores/auth-store";
 
 interface WishlistButtonProps {
   product: Product;
   variant?: ProductVariant;
   size?: "sm" | "md" | "lg";
   className?: string;
+  showText?: boolean;
 }
 
 export function WishlistButton({
@@ -20,12 +22,16 @@ export function WishlistButton({
   variant,
   size = "md",
   className,
+  showText = false,
 }: WishlistButtonProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showVariantModal, setShowVariantModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { isInWishlist, toggleWishlist } = useWishlist();
+
+  // Auth store to check if user is logged in
+  const { isLoggedIn } = useAuth();
 
   // Simple hydration guard
   useEffect(() => {
@@ -79,6 +85,11 @@ export function WishlistButton({
     lg: "h-10 w-10 p-2",
   };
 
+  // Hide wishlist button for non-logged in users
+  if (!isLoggedIn) {
+    return null;
+  }
+
   return (
     <>
       <button
@@ -86,28 +97,45 @@ export function WishlistButton({
         onClick={handleToggle}
         disabled={isLoading}
         className={cn(
-          "absolute z-10 rounded-full border border-green-dark bg-white transition-all duration-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50",
-          sizeClasses[size],
+          showText
+            ? "flex items-center justify-center transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+            : "absolute z-10 flex items-center justify-center rounded-full border border-green-dark bg-white transition-all duration-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50",
+          // Only apply default size classes if no custom className is provided and not showing text
+          !showText &&
+            !className?.includes("h-") &&
+            !className?.includes("w-") &&
+            sizeClasses[size],
           className,
         )}
         aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
         {isLoading ? (
-          <div className="h-full w-full animate-spin rounded-full border border-current border-t-transparent" />
-        ) : isWishlisted ? (
-          <HeartIconSolid
-            className={cn(
-              "h-full w-full text-green-dark transition-all duration-200",
-              isAnimating && "scale-110",
-            )}
-          />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
         ) : (
-          <HeartIcon
-            className={cn(
-              "h-full w-full text-gray-600 transition-all duration-200",
-              isAnimating && "scale-110",
+          <>
+            {isWishlisted ? (
+              <HeartIconSolid
+                className={cn(
+                  showText ? "h-4 w-4" : "h-full w-full text-green-dark",
+                  "transition-all duration-200",
+                  isAnimating && "scale-110",
+                )}
+              />
+            ) : (
+              <HeartIcon
+                className={cn(
+                  showText ? "h-4 w-4" : "h-full w-full text-gray-600",
+                  "transition-all duration-200",
+                  isAnimating && "scale-110",
+                )}
+              />
             )}
-          />
+            {showText && (
+              <span className="ml-2 text-sm">
+                {isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
+              </span>
+            )}
+          </>
         )}
       </button>
 

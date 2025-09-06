@@ -13,7 +13,8 @@ import { formatPrice } from "@/lib/utils";
 import { CartItem } from "@/contexts/cart-context";
 import { TrashIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
-import { ProductIcon } from "../icons/product-icon";
+import { ProductIcon } from "@/components/icons/product-icon";
+import { useAuth } from "@/lib/stores/auth-store";
 
 interface CartItemRowProps {
   item: CartItem;
@@ -33,7 +34,7 @@ export function CartItemRow({
 
   const { isInWishlist, toggleWishlist } = useWishlist();
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
-
+  const { isLoggedIn } = useAuth();
   const isWishlisted = isInWishlist(item.product.id, item.variant?.id);
 
   const handleSaveForLater = async (e: React.MouseEvent) => {
@@ -172,28 +173,30 @@ export function CartItemRow({
               size="sm"
               disabled={!inStock}
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSaveForLater}
-              disabled={isWishlistLoading}
-              className={`transition-all duration-200 ${
-                isWishlisted
-                  ? "text-green-dark hover:text-green-700"
-                  : "text-gray-500 hover:text-green-dark"
-              }`}
-            >
-              {isWishlistLoading ? (
-                <div className="mr-1 h-4 w-4 animate-spin rounded-full border border-current border-t-transparent" />
-              ) : isWishlisted ? (
-                <HeartIconSolid className="mr-1 h-4 w-4" />
-              ) : (
-                <HeartIcon className="mr-1 h-4 w-4" />
-              )}
-              <span className="hidden sm:inline">
-                {isWishlisted ? "Saved for Later" : "Save for Later"}
-              </span>
-            </Button>
+            {isLoggedIn && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSaveForLater}
+                disabled={isWishlistLoading}
+                className={`transition-all duration-200 ${
+                  isWishlisted
+                    ? "text-green-dark hover:text-green-700"
+                    : "text-gray-500 hover:text-green-dark"
+                }`}
+              >
+                {isWishlistLoading ? (
+                  <div className="mr-1 h-4 w-4 animate-spin rounded-full border border-current border-t-transparent" />
+                ) : isWishlisted ? (
+                  <HeartIconSolid className="mr-1 h-4 w-4" />
+                ) : (
+                  <HeartIcon className="mr-1 h-4 w-4" />
+                )}
+                <span className="hidden sm:inline">
+                  {isWishlisted ? "Saved for Later" : "Save for Later"}
+                </span>
+              </Button>
+            )}
             <div className="block sm:hidden">
               <Button
                 variant="ghost"

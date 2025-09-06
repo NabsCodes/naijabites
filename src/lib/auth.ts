@@ -1,13 +1,13 @@
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 
-const ACCESS_TOKEN_KEY = "access_token";
-const CUSTOMER_DATA_KEY = "customer_data";
+const ACCESS_TOKEN_KEY = 'access_token';
+const CUSTOMER_DATA_KEY = 'customer_data';
 
 export function saveLogin(token: string) {
-  Cookies.set(ACCESS_TOKEN_KEY, token, {
+  Cookies.set(ACCESS_TOKEN_KEY, token, { 
     expires: 7, // 7 days
     secure: true, // Only sent over HTTPS
-    sameSite: "strict", // CSRF protection
+    sameSite: 'strict' // CSRF protection
   });
 }
 
@@ -31,7 +31,6 @@ export interface CustomerData {
   lastName: string;
   email: string;
   phone?: string;
-  avatar?: string;
 }
 
 export function saveCustomerData(customer: CustomerData) {
@@ -45,90 +44,51 @@ export function getCustomerData(): CustomerData | null {
 
 export function getCustomerInitials(): string {
   const customer = getCustomerData();
-  if (!customer) return "U";
+  if (!customer) return 'U';
   return customer.firstName.charAt(0).toUpperCase();
 }
 
 export function getCustomerName(): string {
   const customer = getCustomerData();
-  if (!customer) return "User";
+  if (!customer) return 'User';
   return `${customer.firstName} ${customer.lastName}`;
 }
 
 export function getCustomerEmail(): string {
   const customer = getCustomerData();
-  if (!customer) return "";
+  if (!customer) return '';
   return customer.email;
 }
 
 // Fetch customer data from Shopify
 export async function fetchCustomerData(): Promise<CustomerData | null> {
   const token = getAccessToken();
-  if (!token) {
-    console.error("❌ No access token found for customer data fetch");
-    return null;
-  }
+  if (!token) return null;
 
   try {
-    console.log("🔍 Attempting to fetch customer data...");
-    const response = await fetch("/api/customer", {
+    const response = await fetch('/api/customer', {
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
     });
 
-    console.log("📡 Response status:", response.status, response.statusText);
-
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("❌ API error response:", errorData);
-      throw new Error(
-        `Failed to fetch customer data: ${response.status} ${response.statusText}`,
-      );
+      throw new Error('Failed to fetch customer data');
     }
 
     const customer = await response.json();
-    console.log("✅ Customer data received:", customer);
     saveCustomerData(customer);
     return customer;
   } catch (error) {
-    console.error("❌ Error fetching customer data:", error);
+    console.error('Error fetching customer data:', error);
     return null;
   }
 }
 
-// Debug utilities for testing
-export function debugAuthState() {
-  const token = getAccessToken();
-  const customerData = getCustomerData();
-
-  console.log("🔍 Auth Debug Info:");
-  console.log("Token:", token ? "Present" : "Not found");
-  console.log("Customer Data:", customerData ? "Present" : "Not found");
-  console.log(
-    "localStorage customer_data:",
-    localStorage.getItem(CUSTOMER_DATA_KEY),
-  );
-  console.log("Cookies:", document.cookie);
-
-  if (customerData) {
-    console.log("Customer Details:", {
-      name: getCustomerName(),
-      email: getCustomerEmail(),
-      initials: getCustomerInitials(),
-    });
-  }
-
-  return {
-    hasToken: !!token,
-    hasCustomerData: !!customerData,
-    customerData,
-  };
-}
 
 export function clearAllAuthData() {
   Cookies.remove(ACCESS_TOKEN_KEY);
   localStorage.removeItem(CUSTOMER_DATA_KEY);
-  console.log("🧹 All auth data cleared");
+  console.log('🧹 All auth data cleared');
 }

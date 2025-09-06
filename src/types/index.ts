@@ -1,12 +1,3 @@
-export interface ProductVariant {
-  id: string;
-  title: string;
-  price: number;
-  salePrice?: number;
-  inventory?: number;
-  isAvailable: boolean;
-}
-
 export interface Product {
   id: string;
   name: string;
@@ -14,17 +5,16 @@ export interface Product {
   description?: string;
   image?: string;
   images?: string[];
-  price: number; // Base price (for single variant products)
+  price: number;
   salePrice?: number;
   discountPercentage?: number;
-  variants?: ProductVariant[]; // Optional variants for products with options
   rating?: {
     average: number;
     count: number;
   };
   slug: string;
-  category: string; // Category name (maps to categories.ts)
-  brand: string; // Brand name (maps to brands.ts)
+  category: string;
+  brand: string;
   inStock: boolean;
   isOnSale: boolean;
   inventory?: number;

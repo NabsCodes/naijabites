@@ -1,10 +1,9 @@
 import { useMemo } from "react";
-import { Product, ProductVariant } from "@/types";
+import { Product } from "@/types";
 import { formatPrice as formatPriceUtil } from "@/lib/utils";
 
 interface UsePricingProps {
   product: Product;
-  selectedVariant?: ProductVariant | null;
 }
 
 interface PricingResult {
@@ -16,44 +15,23 @@ interface PricingResult {
   isOnSale: boolean;
 }
 
-interface ProductCardPricingResult {
-  currentPrice: number;
-  originalPrice: number | null;
-  formatPrice: (price: number) => string;
-  hasVariants: boolean;
-  priceRange: boolean;
-  hasDiscount: boolean;
-}
-
 /**
  * Centralized hook for all product pricing logic
- * Handles variants, sales, discounts, and formatting consistently
+ * Handles sales, discounts, and formatting consistently
  */
 export function useProductPricing({
   product,
-  selectedVariant,
 }: UsePricingProps): PricingResult {
   const pricing = useMemo(() => {
-    // Determine current price based on variant and sale status
+    // Use product-level pricing
     let currentPrice: number;
     let originalPrice: number | null = null;
 
-    if (selectedVariant) {
-      // Use variant pricing
-      if (product.isOnSale && selectedVariant.salePrice) {
-        currentPrice = selectedVariant.salePrice;
-        originalPrice = selectedVariant.price;
-      } else {
-        currentPrice = selectedVariant.price;
-      }
+    if (product.isOnSale && product.salePrice) {
+      currentPrice = product.salePrice;
+      originalPrice = product.price;
     } else {
-      // Use product-level pricing
-      if (product.isOnSale && product.salePrice) {
-        currentPrice = product.salePrice;
-        originalPrice = product.price;
-      } else {
-        currentPrice = product.price;
-      }
+      currentPrice = product.price;
     }
 
     const hasDiscount = originalPrice !== null;
@@ -68,69 +46,37 @@ export function useProductPricing({
       savingsAmount,
       isOnSale: product.isOnSale && hasDiscount,
     };
-  }, [product, selectedVariant]);
+  }, [product]);
 
   return pricing;
 }
 
 /**
- * Specialized hook for product card pricing display
- * Calculates lowest prices across variants for card display
+ * Function for product card pricing display
+ * Calculates pricing for card display
  */
-export function useProductCardPricing(
-  product: Product,
-): ProductCardPricingResult {
-  const pricing = useMemo(() => {
-    if (!product.variants || product.variants.length === 0) {
-      // No variants - use product-level pricing
-      return {
-        currentPrice:
-          product.isOnSale && product.salePrice
-            ? product.salePrice
-            : product.price,
-        originalPrice:
-          product.isOnSale && product.salePrice ? product.price : null,
-        formatPrice: formatPriceUtil,
-        hasVariants: false,
-        priceRange: false,
-        hasDiscount: product.isOnSale && !!product.salePrice,
-      };
-    }
-
-    // Has variants - calculate lowest prices
-    const variantPrices = product.variants.map((variant) => {
-      const currentPrice =
-        product.isOnSale && variant.salePrice
-          ? variant.salePrice
-          : variant.price;
-      const originalPrice =
-        product.isOnSale && variant.salePrice ? variant.price : variant.price;
-      return { currentPrice, originalPrice };
-    });
-
-    const lowestCurrentPrice = Math.min(
-      ...variantPrices.map((p) => p.currentPrice),
-    );
-    const lowestOriginalPrice = Math.min(
-      ...variantPrices.map((p) => p.originalPrice),
-    );
-    const hasVariantSales =
-      product.isOnSale && product.variants.some((v) => v.salePrice);
-
-    // Check if there's a price range (different prices across variants)
-    const hasRange = new Set(variantPrices.map((p) => p.currentPrice)).size > 1;
-
+export function getProductCardPricing(product: Product): {
+  currentPrice: number;
+  originalPrice: number | null;
+  hasDiscount: boolean;
+  isOnSale: boolean;
+} {
+  // Use product-level pricing
+  if (product.isOnSale && product.salePrice) {
     return {
-      currentPrice: lowestCurrentPrice,
-      originalPrice: hasVariantSales ? lowestOriginalPrice : null,
-      formatPrice: formatPriceUtil,
-      hasVariants: true,
-      priceRange: hasRange,
-      hasDiscount: hasVariantSales,
+      currentPrice: product.salePrice,
+      originalPrice: product.price,
+      hasDiscount: true,
+      isOnSale: true,
     };
-  }, [product]);
+  }
 
-  return pricing;
+  return {
+    currentPrice: product.price,
+    originalPrice: null,
+    hasDiscount: false,
+    isOnSale: false,
+  };
 }
 
 /**

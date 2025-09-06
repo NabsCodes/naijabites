@@ -101,9 +101,7 @@ export function buildFilterUrl(
 
 // Get global price range across all products
 function getGlobalPriceRange(products: Product[]) {
-  const prices = products.map(
-    (p) => p.variants?.[0]?.salePrice || p.variants?.[0]?.price || p.price,
-  );
+  const prices = products.map((p) => p.salePrice || p.price);
   return {
     min: Math.min(...prices),
     max: Math.max(...prices),
@@ -143,10 +141,7 @@ function applyPriceFilter(
   maxPrice?: number,
 ): Product[] {
   return products.filter((product) => {
-    const price =
-      product.variants?.[0]?.salePrice ||
-      product.variants?.[0]?.price ||
-      product.price;
+    const price = product.salePrice || product.price;
     if (minPrice !== undefined && price < minPrice) return false;
     if (maxPrice !== undefined && price > maxPrice) return false;
     return true;
@@ -174,18 +169,14 @@ function sortProducts(products: Product[], sortBy: string): Product[] {
       return sorted.sort((a, b) => b.name.localeCompare(a.name));
     case "price-asc":
       return sorted.sort((a, b) => {
-        const priceA =
-          a.variants?.[0]?.salePrice || a.variants?.[0]?.price || a.price;
-        const priceB =
-          b.variants?.[0]?.salePrice || b.variants?.[0]?.price || b.price;
+        const priceA = a.salePrice || a.price;
+        const priceB = b.salePrice || b.price;
         return priceA - priceB;
       });
     case "price-desc":
       return sorted.sort((a, b) => {
-        const priceA =
-          a.variants?.[0]?.salePrice || a.variants?.[0]?.price || a.price;
-        const priceB =
-          b.variants?.[0]?.salePrice || b.variants?.[0]?.price || b.price;
+        const priceA = a.salePrice || a.price;
+        const priceB = b.salePrice || b.price;
         return priceB - priceA;
       });
     case "rating-desc":

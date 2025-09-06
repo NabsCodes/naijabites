@@ -22,18 +22,37 @@ const PRODUCT_FRAGMENT = `
     title
     handle
     description
+    descriptionHtml
+    availableForSale
+    totalInventory
     vendor
     productType
     tags
-    images(first: 1) {
+    createdAt
+    updatedAt
+    publishedAt
+    onlineStoreUrl
+    seo {
+      title
+      description
+    }
+    images(first: 10) {
       edges {
         node {
+          id
           url
+          altText
+          width
+          height
         }
       }
     }
     priceRange {
       minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
         amount
         currencyCode
       }
@@ -44,10 +63,12 @@ const PRODUCT_FRAGMENT = `
         currencyCode
       }
     }
-    variants(first: 1) {
+    collections(first: 10) {
       edges {
         node {
-          availableForSale
+          id
+          title
+          handle
         }
       }
     }

@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,12 +25,9 @@ import { CartIcon, LogoIcon } from "@/components/icons";
 import { useCart } from "@/contexts/cart-context";
 import { useSearch } from "@/hooks/use-search";
 import { SearchAutocomplete } from "@/components/search";
-import { AuthSkeleton } from "@/components/common/auth-skeleton";
-import MobileNav from "@/components/layout/mobile-nav";
+import MobileNav from "./mobile-nav";
+import { isLoggedIn, logout, getCustomerData, getCustomerInitials, getCustomerName, getCustomerEmail } from "@/lib/auth";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
-import { LogOutIcon } from "lucide-react";
-import { useAuth, useAuthActions, useUserInfo } from "@/lib/stores/auth-store";
-import { useToast } from "@/hooks/use-toast";
 
 export default function Header() {
   const pathname = usePathname();
@@ -39,37 +36,27 @@ export default function Header() {
     (typeof locations)[0] | null
   >(null);
   const { totalItems } = useCart();
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [customerData, setCustomerData] = useState<any>(null);
 
-  // Use Zustand auth store
-  const { isLoggedIn: isUserLoggedIn, isLoading } = useAuth();
-  const { logout, initialize } = useAuthActions();
-  const { user: customerData, initials, name, email } = useUserInfo();
-  const { toast } = useToast();
-
-  // Initialize auth state on component mount
+  // Check login status and load customer data on component mount
   useEffect(() => {
-    initialize();
-  }, [initialize]);
-
-  // Handle logout with toast feedback
-  const handleLogout = () => {
-    try {
-      logout();
-
-      toast({
-        variant: "success",
-        title: "Signed out successfully",
-        description: "You have been logged out of your account.",
-      });
-    } catch (error) {
-      console.error("Logout failed:", error);
-      toast({
-        variant: "error",
-        title: "Logout failed",
-        description: "There was an issue signing you out. Please try again.",
-      });
+    const loggedIn = isLoggedIn();
+    setIsUserLoggedIn(loggedIn);
+    
+    if (loggedIn) {
+      const customer = getCustomerData();
+      setCustomerData(customer);
     }
+  }, []);
+
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    setIsUserLoggedIn(false);
+    setCustomerData(null);
   };
+
 
   // Search functionality with autocomplete
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -120,7 +107,7 @@ export default function Header() {
       {/* Desktop Header */}
       <div className="hidden lg:block">
         <div className="container-padding">
-          <div className="section-container py-4">
+          <div className="section-container py-4 lg:py-6">
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-8">
               {/* Logo Section */}
               <div className="flex items-center">
@@ -239,129 +226,50 @@ export default function Header() {
 
                 {/* Navigation Links */}
                 <nav className="flex items-center justify-between">
-                  {navigationItems.map((item) =>
-                    item.hasDropdown ? (
-                      <DropdownMenu key={item.href}>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className={`group hover:bg-transparent hover:text-lemon-light focus-visible:ring-1 focus-visible:ring-lemon-light focus-visible:ring-offset-0 ${
-                              pathname === item.href ||
-                              pathname.startsWith("/shop")
-                                ? "text-lemon-light"
-                                : "text-white"
-                            }`}
-                          >
-                            <item.icon size={18} color="currentColor" />
-                            {item.label}
-                            <ChevronDownIcon className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="start"
-                          className="mt-2 border-0 bg-green-deep shadow-2xl"
-                          sideOffset={8}
-                        >
-                          <div className="p-2">
-                            {item.dropdownItems?.map((dropdownItem) => (
-                              <DropdownMenuItem key={dropdownItem.href} asChild>
-                                <Link
-                                  href={dropdownItem.href}
-                                  className={`group flex cursor-pointer items-start gap-3 rounded-lg p-3 transition-all duration-200 ${
-                                    pathname === dropdownItem.href
-                                      ? "text-lemon-light"
-                                      : "text-white"
-                                  }`}
-                                >
-                                  <div
-                                    className={`flex h-8 w-8 items-center justify-center rounded-md transition-all duration-200 ${
-                                      pathname === dropdownItem.href
-                                        ? "bg-lemon-light/20"
-                                        : "bg-white/10"
-                                    }`}
-                                  >
-                                    <dropdownItem.icon
-                                      className={`h-5 w-5 transition-colors duration-200 ${
-                                        pathname === dropdownItem.href
-                                          ? "text-lemon-light"
-                                          : "text-white group-hover:text-lemon-light/90"
-                                      }`}
-                                    />
-                                  </div>
-                                  <div className="flex flex-col">
-                                    <span
-                                      className={`text-sm font-semibold ${
-                                        pathname === dropdownItem.href
-                                          ? "text-lemon-light"
-                                          : "text-white group-hover:text-lemon-light/90"
-                                      }`}
-                                    >
-                                      {dropdownItem.label}
-                                    </span>
-                                    <span
-                                      className={`mt-0.5 text-xs ${
-                                        pathname === dropdownItem.href
-                                          ? "text-lemon-light/70"
-                                          : "text-white/70"
-                                      }`}
-                                    >
-                                      {dropdownItem.description}
-                                    </span>
-                                  </div>
-                                </Link>
-                              </DropdownMenuItem>
-                            ))}
-                          </div>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={`flex h-10 items-center gap-2 px-3 text-sm font-medium transition-all duration-200 ${
-                          pathname === item.href
-                            ? "text-lemon-light"
-                            : "text-white hover:text-lemon-light"
-                        }`}
-                      >
-                        <item.icon size={18} color="currentColor" />
-                        {item.label}
-                      </Link>
-                    ),
-                  )}
+                  {navigationItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+                        pathname === item.href
+                          ? "text-lemon-light"
+                          : "text-white hover:text-lemon-light"
+                      }`}
+                    >
+                      <item.icon size={18} color="currentColor" />
+                      {item.label}
+                    </Link>
+                  ))}
                 </nav>
               </div>
 
-              {/* Right Side: Cart + Auth + Profile */}
+              {/* Right Side: Auth + Cart + Profile */}
               <div className="flex items-center gap-4">
-                {/* Cart - Always visible */}
-                <Link href="/cart" className="relative" aria-label="Cart">
-                  <button
-                    type="button"
-                    className="relative rounded-md border-none bg-transparent px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10"
-                  >
-                    <div className="relative flex items-center gap-3">
-                      <div className="relative flex h-6 w-6 items-center justify-center">
-                        <CartIcon size={24} color="currentColor" />
-                        {totalItems > 0 && (
-                          <Badge
-                            variant="destructive"
-                            className="absolute -right-2 -top-2 min-w-[1.25rem] bg-orange-dark px-1.5 py-0.5 text-xs font-bold leading-none hover:bg-orange-dark"
-                          >
-                            {totalItems > 99 ? "99+" : totalItems}
-                          </Badge>
-                        )}
-                      </div>
-                      <span className="hidden lg:inline">Cart</span>
-                    </div>
-                  </button>
-                </Link>
-
-                {/* Show loading skeleton while auth initializes */}
-                {isLoading ? (
-                  <AuthSkeleton variant="desktop" />
-                ) : isUserLoggedIn ? (
+                {/* Auth Buttons or User Profile */}
+                {isUserLoggedIn ? (
                   <>
+                    {/* Cart */}
+                    <Link href="/cart" className="relative" aria-label="Cart">
+                      <button
+                        type="button"
+                        className="relative rounded-md border-none bg-transparent px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10"
+                      >
+                        <div className="relative flex items-center gap-3">
+                          <div className="relative flex h-6 w-6 items-center justify-center">
+                            <CartIcon size={24} color="currentColor" />
+                            {totalItems > 0 && (
+                              <Badge
+                                variant="destructive"
+                                className="absolute -right-2 -top-2 min-w-[1.25rem] bg-orange-dark px-1.5 py-0.5 text-xs font-bold leading-none hover:bg-orange-dark"
+                              >
+                                {totalItems > 99 ? "99+" : totalItems}
+                              </Badge>
+                            )}
+                          </div>
+                          <span className="hidden lg:inline">Cart</span>
+                        </div>
+                      </button>
+                    </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -369,14 +277,13 @@ export default function Header() {
                           className="flex h-auto items-center gap-2 rounded-full border border-solid border-white bg-white/5 p-1.5 pr-3 transition-colors hover:bg-white/10 focus:bg-white/10 lg:gap-3 lg:pr-4"
                         >
                           <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
-                            <AvatarImage src={customerData?.avatar} />
                             <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark lg:text-sm">
-                              {initials}
+                              {getCustomerInitials()}
                             </AvatarFallback>
                           </Avatar>
 
                           <span className="hidden max-w-[80px] truncate text-xs font-semibold text-white sm:inline lg:max-w-none lg:text-sm">
-                            {name}
+                            {getCustomerName()}
                           </span>
 
                           <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-lemon-light lg:h-5 lg:w-5" />
@@ -390,17 +297,16 @@ export default function Header() {
                         <div className="border-b border-gray-100 px-4 py-3">
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10">
-                              <AvatarImage src={customerData?.avatar} />
                               <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                                {initials}
+                                {getCustomerInitials()}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
                               <span className="text-sm font-semibold text-gray-900">
-                                {name}
+                                {getCustomerName()}
                               </span>
                               <span className="text-xs text-gray-500">
-                                {email}
+                                {getCustomerEmail()}
                               </span>
                             </div>
                           </div>
@@ -410,9 +316,9 @@ export default function Header() {
                           <DropdownMenuItem key={item.label} asChild>
                             <Link
                               href={item.href}
-                              className="flex cursor-pointer items-center px-3 py-2.5"
+                              className="flex cursor-pointer items-center px-3 py-2.5 hover:bg-gray-50"
                             >
-                              <item.icon className="mr-1 h-4 w-4" />
+                              <item.icon className="mr-3 h-4 w-4" />
                               <span>{item.label}</span>
                             </Link>
                           </DropdownMenuItem>
@@ -423,7 +329,6 @@ export default function Header() {
                             className="cursor-pointer p-3 text-red-600 hover:bg-gray-50 focus:text-red-600"
                             onClick={handleLogout}
                           >
-                            <LogOutIcon className="mr-1 h-4 w-4" />
                             <span>Sign Out</span>
                           </DropdownMenuItem>
                         </div>
@@ -460,7 +365,7 @@ export default function Header() {
       <MobileNav
         cartItemsCount={totalItems}
         isUserLoggedIn={isUserLoggedIn}
-        authLoading={isLoading}
+        setIsUserLoggedIn={setIsUserLoggedIn}
         selectedLocation={selectedLocation}
         setSelectedLocation={setSelectedLocation}
         searchQuery={searchQuery}

@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import * as React from "react";
+import { useState } from "react";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -127,7 +128,7 @@ export const Rating = React.memo<RatingProps>(
     onRatingChange,
     allowHalf = false,
   }) => {
-    const [hoverRating, setHoverRating] = React.useState<number | null>(null);
+    const [hoverRating, setHoverRating] = useState<number | null>(null);
 
     // Determine if this is an interactive variant
     const isInteractive = variant === "interactive";

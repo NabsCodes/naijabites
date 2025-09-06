@@ -9,14 +9,14 @@ import {
   MapPinIcon,
   ChevronDownIcon,
   XMarkIcon,
+  ArrowRightOnRectangleIcon,
   Bars3Icon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
-import { LogOutIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,16 +39,13 @@ import { locations } from "@/lib/mock-data/locations";
 import { CartIcon, LogoIcon, Logo2Icon } from "@/components/icons";
 import { SearchSuggestion } from "@/types/search";
 import { SearchAutocomplete } from "@/components/search";
-import { AuthSkeleton } from "@/components/common/auth-skeleton";
+import { logout, getCustomerData, getCustomerInitials, getCustomerName, getCustomerEmail } from "@/lib/auth";
 import { navigationItems, accountMenuItems } from "@/lib/data/navigation";
-import { Separator } from "@/components/ui/separator";
-import { useAuthActions, useUserInfo } from "@/lib/stores/auth-store";
-import { useToast } from "@/hooks/use-toast";
 
 interface MobileNavProps {
   cartItemsCount: number;
   isUserLoggedIn: boolean;
-  authLoading: boolean;
+  setIsUserLoggedIn: (_value: boolean) => void;
   selectedLocation: (typeof locations)[0] | null;
   setSelectedLocation: (_location: (typeof locations)[0] | null) => void;
   // Search props for expandable header search
@@ -67,7 +64,7 @@ interface MobileNavProps {
 export default function MobileNav({
   cartItemsCount,
   isUserLoggedIn,
-  authLoading,
+  setIsUserLoggedIn,
   selectedLocation,
   setSelectedLocation,
   searchQuery,
@@ -83,14 +80,17 @@ export default function MobileNav({
 }: MobileNavProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [customerData, setCustomerData] = useState<any>(null);
 
-  // Use Zustand auth store
-  const { logout } = useAuthActions();
-  const { user: customerData, initials, name, email } = useUserInfo();
-  const { toast } = useToast();
+  // Load customer data when component mounts
+  useEffect(() => {
+    if (isUserLoggedIn) {
+      const customer = getCustomerData();
+      setCustomerData(customer);
+    }
+  }, [isUserLoggedIn]);
 
   // Handle search expand/collapse
   const handleSearchToggle = () => {
@@ -110,7 +110,6 @@ export default function MobileNav({
         searchContainerRef.current &&
         !searchContainerRef.current.contains(event.target as Node)
       ) {
-        // Close search when clicking outside
         setIsSearchExpanded(false);
         setSearchQuery("");
       }
@@ -120,24 +119,11 @@ export default function MobileNav({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isSearchExpanded, setSearchQuery]);
 
-  // Handle logout with toast feedback
+  // Handle logout
   const handleLogout = () => {
-    try {
-      logout();
-
-      toast({
-        variant: "success",
-        title: "Signed out successfully",
-        description: "You have been logged out of your account.",
-      });
-    } catch (error) {
-      console.error("Logout failed:", error);
-      toast({
-        variant: "error",
-        title: "Logout failed",
-        description: "There was an issue signing you out. Please try again.",
-      });
-    }
+    logout();
+    setIsUserLoggedIn(false);
+    setCustomerData(null);
   };
 
   return (
@@ -176,13 +162,12 @@ export default function MobileNav({
                         <Link href="/" onClick={() => setIsMenuOpen(false)}>
                           <Logo2Icon width={100} height={45} />
                         </Link>
-                        <Button
-                          variant="ghost"
+                        <button
                           onClick={() => setIsMenuOpen(false)}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-900 transition-colors hover:bg-gray-200"
                         >
                           <XMarkIcon className="h-5 w-5" />
-                        </Button>
+                        </button>
                       </div>
 
                       {/* Location Section Only (Search moved to header) */}
@@ -237,30 +222,22 @@ export default function MobileNav({
                       </div>
 
                       {/* User Profile Section */}
-                      {authLoading ? (
-                        <div className="border-b border-gray-200 p-4">
-                          <AuthSkeleton variant="mobile" />
-                        </div>
-                      ) : isUserLoggedIn ? (
+                      {isUserLoggedIn ? (
                         <div className="border-b border-gray-200 p-4">
                           <div className="flex items-center gap-3">
                             <div className="h-12 w-12 flex-shrink-0">
-                              <Avatar className="h-12 w-12">
-                                <AvatarImage
-                                  src={customerData?.avatar}
-                                  className="h-full w-full object-cover"
-                                />
-                                <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                                  {initials}
+                              <Avatar className="h-12 w-12 ring-2 ring-green-200">
+                                <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
+                                  {getCustomerInitials()}
                                 </AvatarFallback>
                               </Avatar>
                             </div>
                             <div className="flex flex-col">
                               <span className="text-base font-semibold text-gray-900">
-                                {name}
+                                {getCustomerName()}
                               </span>
                               <span className="text-xs text-gray-500">
-                                {email}
+                                {getCustomerEmail()}
                               </span>
                             </div>
                           </div>
@@ -302,84 +279,22 @@ export default function MobileNav({
                               Main Menu
                             </p>
                           </div>
-                          {navigationItems.map((item) =>
-                            item.hasDropdown ? (
-                              <div key={item.href} className="space-y-1">
-                                <Button
-                                  variant="ghost"
-                                  className={`group h-12 w-full justify-start gap-3 rounded-lg text-base font-medium hover:bg-green-dark/5 hover:text-green-dark ${
-                                    pathname === item.href ||
-                                    pathname.startsWith("/shop")
-                                      ? "bg-green-dark/5 text-green-dark"
-                                      : "text-gray-700 hover:text-green-dark"
-                                  }`}
-                                  onClick={() => {
-                                    setOpenDropdown(
-                                      openDropdown === item.href
-                                        ? null
-                                        : item.href,
-                                    );
-                                  }}
-                                >
-                                  <item.icon size={20} color="currentColor" />
-                                  <span className="flex-1 text-left">
-                                    {item.label}
-                                  </span>
-                                  <ChevronDownIcon className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                                </Button>
-                                {/* Dropdown items */}
-                                <div
-                                  className={`ml-6 space-y-1 transition-all duration-200 ${
-                                    openDropdown === item.href
-                                      ? "block"
-                                      : "hidden"
-                                  }`}
-                                >
-                                  {item.dropdownItems?.map((dropdownItem) => (
-                                    <Link
-                                      key={dropdownItem.href}
-                                      href={dropdownItem.href}
-                                      className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-200 ${
-                                        pathname === dropdownItem.href
-                                          ? "bg-green-dark/5 text-green-dark"
-                                          : "text-gray-600 hover:bg-green-dark/5 hover:text-green-dark"
-                                      }`}
-                                      onClick={() => setIsMenuOpen(false)}
-                                    >
-                                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-green-dark/10">
-                                        <dropdownItem.icon className="h-4 w-4 text-green-dark" />
-                                      </div>
-                                      <div className="flex flex-col">
-                                        <span className="font-medium">
-                                          {dropdownItem.label}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
-                                          {dropdownItem.description}
-                                        </span>
-                                      </div>
-                                    </Link>
-                                  ))}
-                                </div>
-                              </div>
-                            ) : (
-                              <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`flex items-center gap-3 rounded-lg px-3 py-4 text-base font-medium transition-all duration-200 ${
-                                  pathname === item.href
-                                    ? "bg-green-dark/5 text-green-dark"
-                                    : "text-gray-700 hover:bg-green-dark/5 hover:text-green-dark"
-                                }`}
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                <item.icon size={20} color="currentColor" />
-                                {item.label}
-                              </Link>
-                            ),
-                          )}
+                          {navigationItems.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className={`flex items-center gap-3 rounded-lg px-3 py-4 text-base font-medium transition-all duration-200 ${
+                                pathname === item.href
+                                  ? "bg-green-dark/5 text-green-dark"
+                                  : "text-gray-700 hover:bg-green-dark/5"
+                              }`}
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <item.icon size={20} color="currentColor" />
+                              {item.label}
+                            </Link>
+                          ))}
                         </div>
-
-                        <Separator className="my-4" />
 
                         {/* Account Section (when logged in) */}
                         {isUserLoggedIn && (
@@ -393,7 +308,7 @@ export default function MobileNav({
                               <Link
                                 key={item.label}
                                 href={item.href}
-                                className="flex w-full items-center gap-3 rounded-lg px-3 py-4 text-base font-medium text-gray-700 transition-all duration-200 hover:bg-green-dark/5"
+                                className="flex w-full items-center gap-3 rounded-lg px-3 py-4 text-base font-medium text-gray-700 transition-all duration-200 hover:bg-gray-50"
                                 onClick={() => setIsMenuOpen(false)}
                               >
                                 <item.icon className="h-5 w-5" />
@@ -411,7 +326,7 @@ export default function MobileNav({
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-4 text-base font-medium text-red-600 transition-all duration-200 hover:bg-red-50"
                             onClick={handleLogout}
                           >
-                            <LogOutIcon className="h-5 w-5" />
+                            <ArrowRightOnRectangleIcon className="h-5 w-5" />
                             Sign Out
                           </button>
                         </div>
@@ -460,9 +375,7 @@ export default function MobileNav({
               </Link>
 
               {/* User Profile/Auth */}
-              {authLoading ? (
-                <AuthSkeleton variant="mobile" />
-              ) : isUserLoggedIn ? (
+              {isUserLoggedIn ? (
                 <Popover>
                   <PopoverTrigger asChild>
                     <button
@@ -472,12 +385,8 @@ export default function MobileNav({
                     >
                       <div className="h-7 w-7 flex-shrink-0">
                         <Avatar className="h-7 w-7 border border-white/30">
-                          <AvatarImage
-                            src={customerData?.avatar}
-                            className="h-full w-full object-cover"
-                          />
                           <AvatarFallback className="bg-lemon-dark text-xs font-semibold text-green-dark">
-                            {initials}
+                            {getCustomerInitials()}
                           </AvatarFallback>
                         </Avatar>
                       </div>
@@ -492,16 +401,17 @@ export default function MobileNav({
                     <div className="border-b border-gray-100 px-4 py-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={customerData?.avatar} />
-                          <AvatarFallback className="bg-lemon-dark text-sm font-semibold text-green-dark">
-                            {initials}
+                          <AvatarFallback className="bg-green-600 text-sm font-semibold text-white">
+                            {getCustomerInitials()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold text-gray-900">
-                            {name}
+                            {getCustomerName()}
                           </span>
-                          <span className="text-xs text-gray-500">{email}</span>
+                          <span className="text-xs text-gray-500">
+                            {getCustomerEmail()}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -512,7 +422,7 @@ export default function MobileNav({
                         <Link
                           key={item.label}
                           href={item.href}
-                          className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-green-dark/5 hover:text-green-dark"
+                          className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
                         >
                           <item.icon className="h-4 w-4" />
                           <span>{item.label}</span>
@@ -523,7 +433,7 @@ export default function MobileNav({
                     {/* Navigation Access */}
                     <div className="border-t border-gray-100 py-1">
                       <button
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-green-dark/5 hover:text-green-dark"
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
                         onClick={() => setIsMenuOpen(true)}
                       >
                         <Bars3Icon className="h-4 w-4" />
@@ -537,7 +447,7 @@ export default function MobileNav({
                         className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition-colors hover:bg-gray-50"
                         onClick={handleLogout}
                       >
-                        <LogOutIcon className="h-4 w-4" />
+                        <ArrowRightOnRectangleIcon className="h-4 w-4" />
                         <span>Sign Out</span>
                       </button>
                     </div>

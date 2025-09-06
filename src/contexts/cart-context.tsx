@@ -7,17 +7,15 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { Product, ProductVariant } from "@/types";
+import { Product } from "@/types";
 
 export interface CartItem {
   id: string;
   productId: string;
-  variantId?: string;
   quantity: number;
   price: number;
   salePrice?: number;
   product: Product;
-  variant?: ProductVariant;
 }
 
 interface CartContextType {
@@ -69,9 +67,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = (newItem: Omit<CartItem, "id">) => {
     setItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
-        (item) =>
-          item.productId === newItem.productId &&
-          item.variantId === newItem.variantId,
+        (item) => item.productId === newItem.productId,
       );
 
       if (existingItemIndex >= 0) {
@@ -85,7 +81,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           ...prevItems,
           {
             ...newItem,
-            id: `${newItem.productId}-${newItem.variantId || "default"}-${Date.now()}`,
+            id: `${newItem.productId}-${Date.now()}`,
           },
         ];
       }

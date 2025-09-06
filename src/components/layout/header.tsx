@@ -332,35 +332,36 @@ export default function Header() {
                 </nav>
               </div>
 
-              {/* Right Side: Auth + Cart + Profile */}
+              {/* Right Side: Cart + Auth + Profile */}
               <div className="flex items-center gap-4">
+                {/* Cart - Always visible */}
+                <Link href="/cart" className="relative" aria-label="Cart">
+                  <button
+                    type="button"
+                    className="relative rounded-md border-none bg-transparent px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10"
+                  >
+                    <div className="relative flex items-center gap-3">
+                      <div className="relative flex h-6 w-6 items-center justify-center">
+                        <CartIcon size={24} color="currentColor" />
+                        {totalItems > 0 && (
+                          <Badge
+                            variant="destructive"
+                            className="absolute -right-2 -top-2 min-w-[1.25rem] bg-orange-dark px-1.5 py-0.5 text-xs font-bold leading-none hover:bg-orange-dark"
+                          >
+                            {totalItems > 99 ? "99+" : totalItems}
+                          </Badge>
+                        )}
+                      </div>
+                      <span className="hidden lg:inline">Cart</span>
+                    </div>
+                  </button>
+                </Link>
+
                 {/* Show loading skeleton while auth initializes */}
                 {isLoading ? (
                   <AuthSkeleton variant="desktop" />
                 ) : isUserLoggedIn ? (
                   <>
-                    {/* Cart */}
-                    <Link href="/cart" className="relative" aria-label="Cart">
-                      <button
-                        type="button"
-                        className="relative rounded-md border-none bg-transparent px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10"
-                      >
-                        <div className="relative flex items-center gap-3">
-                          <div className="relative flex h-6 w-6 items-center justify-center">
-                            <CartIcon size={24} color="currentColor" />
-                            {totalItems > 0 && (
-                              <Badge
-                                variant="destructive"
-                                className="absolute -right-2 -top-2 min-w-[1.25rem] bg-orange-dark px-1.5 py-0.5 text-xs font-bold leading-none hover:bg-orange-dark"
-                              >
-                                {totalItems > 99 ? "99+" : totalItems}
-                              </Badge>
-                            )}
-                          </div>
-                          <span className="hidden lg:inline">Cart</span>
-                        </div>
-                      </button>
-                    </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
